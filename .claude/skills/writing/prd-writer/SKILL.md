@@ -9,9 +9,9 @@ description: Write and refine stage-aware Product Requirement Documents (PRDs) f
 
 Read these files before writing or substantially editing any PRD:
 
-- **[examples/prd-reference-guide.md](examples/prd-reference-guide.md)** — Full structural guide: section-by-section instructions, phase guidance, formatting rules, and the review checklist. Read this first.
-- **[examples/example-prd-customer-facing.md](examples/example-prd-customer-facing.md)** — Worked MMP example: Savings Pots and Round-Ups.
-- **[examples/example-prd-internal-tool.md](examples/example-prd-internal-tool.md)** — Worked MVP example: Support Operations Triage Console.
+- **[references/prd-reference-guide.md](references/prd-reference-guide.md)** — Full structural guide: section-by-section instructions, phase guidance, formatting rules, and the review checklist. Read this first.
+- **[references/example-prd-customer-facing.md](references/example-prd-customer-facing.md)** — Worked MMP example: Savings Pots and Round-Ups.
+- **[references/example-prd-internal-tool.md](references/example-prd-internal-tool.md)** — Worked MVP example: Support Operations Triage Console.
 
 ## Workflow
 
@@ -129,7 +129,7 @@ Use the same JTBD lens in:
 
 ### 7. Review before finishing
 
-Run through the checklist in `examples/prd-reference-guide.md` before marking a PRD ready. Key checks:
+Run through the checklist in `references/prd-reference-guide.md` before marking a PRD ready. Key checks:
 
 - TL;DR is brief and useful, not a mini-PRD
 - Header uses the right `Document Status`
