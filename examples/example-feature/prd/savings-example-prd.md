@@ -1,3 +1,10 @@
+---
+title: Savings Pots and Round-Ups
+type: prd
+notion_url: https://childlike-damselfly-6a7.notion.site/Savings-Example-PRD-3405b7b6a16e80ecb5e2d9be33e5fc6c?source=copy_link
+source_skill: prd-writer
+---
+
 # Savings Pots and Round-Ups
 
 Author: Product

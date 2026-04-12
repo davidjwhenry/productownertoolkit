@@ -10,7 +10,7 @@ After cloning, do two setup steps first: connect the MCPs you expect to use, the
 
 If you're a PO or PM who wants to adopt this way of working, clone the repo. Everything you need is here.
 
-If you're a stakeholder who just wants to see what it produces, the live examples are in the companion Notion space: [link coming soon]. This repo is the engine room. Notion, at least for now, is the showroom.
+If you're a stakeholder who just wants to see what it produces, the live published example PRD is here: [Savings Example PRD](https://childlike-damselfly-6a7.notion.site/Savings-Example-PRD-3405b7b6a16e80ecb5e2d9be33e5fc6c?source=copy_link). More live examples can follow. This repo is the engine room. Notion, at least for now, is the showroom.
 
 ## The model: Sense, Synthesise, Ship
 
@@ -23,15 +23,14 @@ Every tool in this toolkit earns its place in one of three capability bands.
 - [GitHub MCP](./mcp-config/github.md) for shipping reality — PRs, commits, what actually went out
 - [Figma Dev Mode MCP](./mcp-config/figma.md) for design context inside your PRDs
 
-**Synthesise** — where Claude, or your LLM of choice turns inputs into artefacts. [Skills](./skills/) are mirrored for Claude Code and Cursor. The post-clone setup skill lives in `.cursor/skills/bootstrap-context/` and `.claude/skills/bootstrap-context/`.
+**Synthesise** — where Claude, or your LLM of choice turns inputs into artefacts. Skills are mirrored for Claude Code and Cursor under `.claude/skills/` and `.cursor/skills/`. The post-clone setup skill lives in `.cursor/skills/bootstrap-context/` and `.claude/skills/bootstrap-context/`.
 
 *Writing skills:*
 - `bootstrap-context` — one-time post-clone setup for company defaults, placeholders, stack, and regulatory context
-- `research-synthesis` — turn Firecrawl output and interview notes into a structured brief
+- `desktop-research` — turn web research into a structured report or synthesis artefact
 - `prd-writer` — PRDs with context, scope, success metrics
 - `backlog-writing` — user stories and acceptance criteria for engineering
 - `meeting-distillation` — extract decisions, actions, open questions from a transcript
-- `weekly-review` — surface themes, blockers, stale items across your notes
 - `stakeholder-report` — render any markdown artefact as a polished, brand-themed HTML report
 
 *Review skills — the quality loop:*
@@ -70,14 +69,14 @@ title: Q2 Discovery Brief — Onboarding Friction
 type: research-brief
 notion_url: https://notion.so/workspace/abc123
 notion_last_synced: 2026-04-10T14:22:00Z
-source_skill: research-synthesis
+source_skill: desktop-research
 ---
 ```
 
 That pattern does a lot of work:
 
 - **Git becomes the version history Notion doesn't have.** Proper diffs, blame, commit messages for every PRD.
-- **The `/examples/` folder is self-documenting.** Click the front matter URL, land on the live rendered page.
+- **The `/examples/` folder can be self-documenting.** When an example has a front matter URL, you can click straight through to the live rendered page.
 - **Round-trip is real.** `notion-drift` reads the URL, fetches the current Notion state, and surfaces changes. Not auto-merge — a report you review and act on, because merge conflicts in prose aren't solvable by rules.
 
 ## Why not just do everything in Notion?
@@ -108,37 +107,32 @@ This repo is intentionally small. It focuses on the PO-specific skills I actuall
 
 Some of the must-have marketplace items for Claude, if you are brave and work in the terminal, would be:
 
-- **Superpowers** (marketplace) — my go-to for brainstorming. When I need a thinking partner rather than a document generator, this is the skill I reach for. Pairs naturally with `research-synthesis` and early-stage `prd-writer`.
+- **Superpowers** (marketplace) — my go-to for brainstorming. When I need a thinking partner rather than a document generator, this is the skill I reach for. Pairs naturally with `desktop-research` and early-stage `prd-writer`.
 - **frontend-design** — makes your HTML files look good, your prototypes sharper, and generally helps you produce work that feels less "AI-like".
 
 Explore, learn, add more, but don't *panic*. There's a temptation to jump on every new tool (again, done it, got that t-shirt and a graveyard of $20 subscriptions to prove it). The world is evolving every day, and so it feels like you'll get left behind if you don't run openclaw on your smart fridge. You won't. If you can master the work in this repo, based on my interviewing experience (not in the bowels of Silicon Valley, in the real world), you'd be in the top 1% globally.
 
 ## Repo structure
 
-```
-po-ai-toolkit/
+```text
+productowner/
 ├── README.md
+├── .claude/
+│   └── skills/
+├── .cursor/
+│   └── skills/
+├── adapters/
 ├── context/
-│   └── company-context.md
-├── skills/
-│   ├── writing/
-│   │   ├── research-synthesis/
-│   │   ├── prd-writer/
-│   │   ├── backlog-writing/
-│   │   ├── meeting-distillation/
-│   │   ├── weekly-review/
-│   │   └── stakeholder-report/
-│   ├── review/
-│   │   ├── prd-reviewer/
-│   │   └── backlog-review/
-│   └── sync/
-│       ├── notion-sync/
-│       └── notion-drift/
+│   ├── company-context.md
+│   ├── team-context.md
+│   └── README.md
 ├── mcp-config/
 ├── conventions/
 │   └── front-matter.md
 ├── design-system/
-└── examples/
+├── examples/
+├── personal/
+└── requirements/
 ```
 
 ## Getting started
@@ -147,7 +141,7 @@ po-ai-toolkit/
 2. Connect the recommended MCPs from [`mcp-config/`](./mcp-config/): start with `Firecrawl` and `Pencil`, add `Notion` if your team uses it, and add `Figma` if you want design context in the repo.
 3. Run the `bootstrap-context` skill and fill in your company defaults in [`context/company-context.md`](./context/company-context.md).
 4. Review the updated starter docs and confirm the placeholder replacements and workflow defaults look right.
-5. Add the skills to your Claude Code or Cursor setup using your preferred local config approach.
+5. Review the shipped skills under `.claude/skills/` or `.cursor/skills/` and wire them into your preferred local setup.
 6. Drop your brand tokens into [`design-system/`](./design-system/).
 7. Run your first skill. `meeting-distillation` is the fastest way to feel the value.
 
@@ -164,7 +158,8 @@ AI is not an excuse to outsource thinking. It is a force multiplier for people w
 - `competitive-teardown` — structured competitor analysis with feature matrix and positioning
 - `roadmap-narrative` — turn a backlog plus strategy context into a quarterly story for leadership
 - `retro-synthesis` — extract patterns across sprint retros, not just single sessions
-- A public Notion companion space with every example rendered live
+- `weekly-review` — surface themes, blockers, and stale items across your notes
+- More live published Notion examples beyond the PRD
 
 More coming soon:
 - More agent memory and context loop tricks
