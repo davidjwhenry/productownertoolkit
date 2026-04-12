@@ -1,10 +1,10 @@
 # synctonotionbanking
-description: Sync retail banking backlog markdown (Epics and User Stories) to the {Company XYZ} Banking Notion project. Allowed roots: Banking_Requirements/, Retail_Banking_Requirements/, and Mobile_App_Requirements/ (e.g. profile/settings mobile backlogs). Creates Roadmap Epics and Tasks (stories), linked via Project relation. PFM and Agentic_Requirements use a separate Notion project. Triggers on "sync banking backlog to Notion", "push epics to Notion", "sync this folder to Notion", or "upload banking stories to Notion".
+description: Sync retail banking backlog markdown (Epics and User Stories) to the {Company XYZ} banking Notion project. Allowed roots: Banking_Requirements/, Retail_Banking_Requirements/, and Mobile_App_Requirements/ (e.g. profile/settings mobile backlogs). Creates Roadmap Epics and Tasks (stories), linked via Project relation. PFM and Agentic_Requirements use a separate Notion project. Triggers on "sync banking backlog to Notion", "push epics to Notion", "sync this folder to Notion", or "upload banking stories to Notion".
 ---
 
 # Notion Banking Backlog Sync
 
-Sync backlog `.md` files from the **allowed retail banking trees** to the **{Company XYZ} Banking Notion project**, creating Roadmap entries (from Epics) and Tasks (from Stories) with proper relationships.
+Sync backlog `.md` files from the **allowed retail banking trees** to the **{Company XYZ} banking Notion project**, creating Roadmap entries (from Epics) and Tasks (from Stories) with proper relationships.
 
 ## Allowed source roots (use this skill only here)
 
@@ -156,7 +156,7 @@ Batch up to 3 Epics per `notion-create-pages` call. Store the returned page URLs
         "Technical Lead": "[\"217d872b-594c-81d5-9137-00026b9668fd\"]",
         "Priority": "High",
         "Tags": "[\"Feature\"]",
-        "Description": "The marketing and discovery surface for Investment Product: a dashboard promotion card and full-screen Story Tabs component."
+        "Description": "The marketing and discovery surface for {Company XYZ}: a dashboard promotion card and full-screen Story Tabs component."
       },
       "content": "## Overview\n\n..."
     }
@@ -288,7 +288,7 @@ Path: `Banking_Requirements/wealth_management/backlog/` (or `Retail_Banking_Requ
 | --- | --- | --- |
 | US-52.1: Investment Promotion Card | {Assignee} | https://www.notion.so/{page-id} |
 | US-52.2: Story Tab Component | {Assignee} | https://www.notion.so/{page-id} |
-| US-52.3: Investment Product Story Content | {Assignee} | https://www.notion.so/{page-id} |
+| US-52.3: {Company XYZ} Story Content | {Assignee} | https://www.notion.so/{page-id} |
 | US-53.1: Product Header and Slider | {Assignee} | https://www.notion.so/{page-id} |
 | US-53.2: Coupon Schedule and Timeline | {Assignee} | https://www.notion.so/{page-id} |
 | US-53.3: Pool Progress and FAQ | {Assignee} | https://www.notion.so/{page-id} |

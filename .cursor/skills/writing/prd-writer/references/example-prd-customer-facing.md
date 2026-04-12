@@ -74,9 +74,9 @@ Document Type: PRD
 
 | Rabbit Hole | Why it is out of scope now |
 | --- | --- |
-| **Interest-bearing savings products** | This stage is about helping customers make progress on the saving job, not launching a new regulated deposit structure. |
+| **Interest-bearing savings products** | This stage is about helping customers make progress on the saving job, not launching a new financial product structure. |
 | **Shared or family pots** | Shared ownership introduces permissions, social UX, and disclosures that do not help prove the core habit loop. |
-| **Funding from external bank accounts** | Staying inside the {Company XYZ} account ecosystem keeps the experience simpler and more trustworthy at this stage. |
+| **Funding from external bank accounts** | Staying inside the {Company XYZ} ecosystem keeps the experience simpler and more trustworthy at this stage. |
 | **Investment-linked goals** | Investing serves a related but different job and belongs in a separate product stream. |
 
 ## 5. Functional Requirements

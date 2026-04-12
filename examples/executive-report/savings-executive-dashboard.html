@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savings Executive Dashboard</title>
+  <style>
+    :root {
+      --bg: #f2f3f0;
+      --surface: #ffffff;
+      --surface-muted: #e7e8e5;
+      --surface-warm: #e9e3d8;
+      --surface-success: #dfe6e1;
+      --surface-violet: #dfdfe6;
+      --text: #111111;
+      --muted: #666666;
+      --border: #cbccc9;
+      --accent: #ff8400;
+      --accent-dark: #804200;
+      --success: #004d1a;
+      --violet: #000066;
+      --banner: #111111;
+      --shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      --radius: 16px;
+      --radius-sm: 8px;
+      --page-width: 1400px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #ecece8;
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+
+    .page {
+      max-width: var(--page-width);
+      margin: 28px auto;
+      background: var(--bg);
+      border: 1px solid #d9dad7;
+      box-shadow: 0 8px 24px rgba(17, 17, 17, 0.06);
+    }
+
+    .top,
+    .bottom {
+      padding-left: 48px;
+      padding-right: 48px;
+    }
+
+    .top {
+      padding-top: 40px;
+      padding-bottom: 32px;
+    }
+
+    .bottom {
+      padding-top: 0;
+      padding-bottom: 48px;
+    }
+
+    .stack-lg {
+      display: grid;
+      gap: 32px;
+    }
+
+    .stack-md {
+      display: grid;
+      gap: 20px;
+    }
+
+    .stack-sm {
+      display: grid;
+      gap: 16px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .title {
+      margin: 0;
+      font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 28px;
+      line-height: 1.1;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .badge.warm {
+      background: var(--surface-warm);
+      color: var(--accent-dark);
+    }
+
+    .badge.muted {
+      background: var(--surface-muted);
+      color: var(--text);
+    }
+
+    .badge.success {
+      background: var(--surface-success);
+      color: var(--success);
+    }
+
+    .badge.violet {
+      background: var(--surface-violet);
+      color: var(--violet);
+    }
+
+    .progress-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .progress-track {
+      height: 16px;
+      border-radius: 999px;
+      background: var(--surface-muted);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 30%;
+      height: 100%;
+      background: var(--accent);
+    }
+
+    .progress-value {
+      margin: 0;
+      color: var(--accent);
+      font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .section-title.lg {
+      font-size: 22px;
+    }
+
+    .section-subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .grid-5,
+    .grid-4,
+    .grid-3,
+    .grid-2 {
+      display: grid;
+      gap: 12px;
+    }
+
+    .grid-5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .grid-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .metric-card {
+      display: grid;
+      min-height: 168px;
+      grid-template-rows: 68px 1fr;
+    }
+
+    .metric-card .card-head,
+    .metric-card .card-body {
+      padding: 24px;
+    }
+
+    .metric-card .card-head {
+      display: flex;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(203, 204, 201, 0.45);
+    }
+
+    .metric-card .value {
+      margin: 0 0 8px;
+      font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 26px;
+      line-height: 1.1;
+      font-weight: 700;
+    }
+
+    .metric-card .detail,
+    .copy-sm,
+    .copy-md {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .copy-sm {
+      font-size: 11px;
+    }
+
+    .copy-md {
+      font-size: 13px;
+    }
+
+    .scope-card,
+    .entry-card,
+    .assumption-card,
+    .risk-card,
+    .out-card {
+      padding: 20px 24px 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .scope-card,
+    .assumption-card,
+    .entry-card,
+    .risk-card {
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      margin: 0;
+      font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .card-title.md {
+      font-size: 14px;
+    }
+
+    .card-title.lg {
+      font-size: 16px;
+    }
+
+    .bullets,
+    .tight-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .bullets li {
+      font-size: 12px;
+    }
+
+    .bullets li::before {
+      content: "-> ";
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    hr {
+      margin: 0 48px 32px;
+      border: 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .entry-card {
+      display: grid;
+      gap: 12px;
+    }
+
+    .entry-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .entry-icon.orange {
+      background: var(--accent);
+    }
+
+    .entry-icon.green {
+      background: var(--surface-success);
+    }
+
+    .entry-icon.violet {
+      background: var(--surface-violet);
+    }
+
+    .tag {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--surface-muted);
+      color: var(--text);
+    }
+
+    .tag.green {
+      background: var(--surface-success);
+      color: var(--success);
+    }
+
+    .tag.violet {
+      background: var(--surface-violet);
+      color: var(--violet);
+    }
+
+    .assumption-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mini-badge {
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .mini-badge.warm {
+      background: var(--surface-warm);
+      color: var(--accent-dark);
+    }
+
+    .mini-badge.violet {
+      background: var(--surface-violet);
+      color: var(--violet);
+    }
+
+    .threshold {
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-muted);
+      display: grid;
+      gap: 4px;
+    }
+
+    .threshold-label {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .threshold-value {
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .out-card {
+      box-shadow: none;
+      display: grid;
+      gap: 8px;
+      padding: 20px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--muted);
+    }
+
+    .risk-columns {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .risk-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .risk-card {
+      padding: 16px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .gate {
+      background: var(--banner);
+      color: var(--bg);
+      border-radius: var(--radius);
+      padding: 28px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .gate-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .gate-label {
+      margin: 0;
+      color: var(--accent);
+      font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+    }
+
+    .gate-title {
+      margin: 4px 0 0;
+      font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .gate-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 6px 14px;
+      background: var(--accent);
+      color: var(--text);
+      font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .gate-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .gate-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .gate-card h4 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .gate-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 1240px) {
+      .grid-5 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 980px) {
+      .page {
+        margin: 0;
+        border: 0;
+        box-shadow: none;
+      }
+
+      .top,
+      .bottom {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .top {
+        padding-top: 24px;
+      }
+
+      hr {
+        margin-left: 20px;
+        margin-right: 20px;
+      }
+
+      .header,
+      .gate-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .badge-row {
+        justify-content: flex-start;
+      }
+
+      .progress-row,
+      .grid-5,
+      .grid-4,
+      .grid-3,
+      .grid-2,
+      .risk-columns,
+      .gate-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="top stack-lg">
+      <header class="header">
+        <div>
+          <h1 class="title">Savings Pots &amp; Round-Ups</h1>
+          <p class="subtitle">MMP Phase - Stakeholder Summary</p>
+        </div>
+        <div class="badge-row" aria-label="Document metadata">
+          <span class="badge warm">MMP</span>
+          <span class="badge muted">v0.3</span>
+          <span class="badge success">Reviewing</span>
+        </div>
+      </header>
+
+      <section class="progress-row" aria-label="Phase progress">
+        <p class="eyebrow">MMP Phase Progress</p>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="30" aria-label="MMP phase progress">
+          <div class="progress-fill"></div>
+        </div>
+        <p class="progress-value">30%</p>
+      </section>
+
+      <section class="stack-sm">
+        <h2 class="section-title">Success Metrics &amp; Targets</h2>
+        <div class="grid-5">
+          <article class="card metric-card">
+            <div class="card-head">Consecutive Progress Rate</div>
+            <div class="card-body">
+              <p class="value">&gt;40%</p>
+              <p class="copy-sm">Customers saving in 2 consecutive months, within 12 weeks</p>
+            </div>
+          </article>
+          <article class="card metric-card">
+            <div class="card-head">Funded Goal Activation</div>
+            <div class="card-body">
+              <p class="value">&gt;18%</p>
+              <p class="copy-sm">Eligible customers creating or using a funded pot</p>
+            </div>
+          </article>
+          <article class="card metric-card">
+            <div class="card-head">Automation Adoption</div>
+            <div class="card-body">
+              <p class="value">&gt;35%</p>
+              <p class="copy-sm">Activated customers enabling recurring contributions or round-ups</p>
+            </div>
+          </article>
+          <article class="card metric-card">
+            <div class="card-head">Contribution Success Rate</div>
+            <div class="card-body">
+              <p class="value">&gt;95%</p>
+              <p class="copy-sm">Recurring and round-up contributions completing successfully</p>
+            </div>
+          </article>
+          <article class="card metric-card">
+            <div class="card-head">Withdrawal Contact Rate</div>
+            <div class="card-body">
+              <p class="value">Baseline</p>
+              <p class="copy-sm">No material increase in support contacts about fund access</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="stack-sm">
+        <h2 class="section-title">Feature Scope</h2>
+        <div class="grid-3">
+          <article class="scope-card stack-sm">
+            <h3 class="card-title">Automated Funding</h3>
+            <ul class="bullets">
+              <li>Recurring contributions (weekly/monthly)</li>
+              <li>Card round-ups on posted transactions</li>
+              <li>Pause or disable without closing pot</li>
+              <li>Failure notifications with reasons</li>
+            </ul>
+          </article>
+          <article class="scope-card stack-sm">
+            <h3 class="card-title">Progress &amp; Motivation</h3>
+            <ul class="bullets">
+              <li>Balance, target, and contribution activity per pot</li>
+              <li>Contribution history per pot</li>
+              <li>Target-reached notification</li>
+              <li>Nudges for inactive or near-target pots</li>
+            </ul>
+          </article>
+          <article class="scope-card stack-sm">
+            <h3 class="card-title">Controls &amp; Transparency</h3>
+            <ul class="bullets">
+              <li>Clear round-up explanation (timing, refunds)</li>
+              <li>Balance transparency (available vs pot funds)</li>
+              <li>Editable pot name, target, date, settings</li>
+              <li>Withdrawals with clear fund-availability timing</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </section>
+
+    <hr>
+
+    <section class="bottom stack-lg">
+      <section class="stack-md">
+        <div class="stack-sm">
+          <h2 class="section-title lg">Entry Points</h2>
+          <p class="section-subtitle">Where customers encounter Savings Pots &amp; Round-Ups in the app</p>
+        </div>
+        <div class="grid-3">
+          <article class="entry-card">
+            <span class="entry-icon orange" aria-hidden="true">HUB</span>
+            <h3 class="card-title lg">Savings Hub</h3>
+            <p class="copy-md">Default home for explicit saving intent. Accessible from the app home screen.</p>
+            <span class="tag">Primary entry point</span>
+          </article>
+          <article class="entry-card">
+            <span class="entry-icon green" aria-hidden="true">PAY</span>
+            <h3 class="card-title lg">Post-Salary Prompt</h3>
+            <p class="copy-md">Suggested savings surfaces after a salary deposit lands. Customers decide what to save when income arrives.</p>
+            <span class="tag green">Contextual - salary moment</span>
+          </article>
+          <article class="entry-card">
+            <span class="entry-icon violet" aria-hidden="true">CARD</span>
+            <h3 class="card-title lg">Card Settings</h3>
+            <p class="copy-md">Round-up setup from card settings. Customers already thinking about day-to-day spend.</p>
+            <span class="tag violet">Contextual - card settings</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="stack-md">
+        <div class="stack-sm">
+          <h2 class="section-title lg">Key Assumptions to Test</h2>
+          <p class="section-subtitle">Hypotheses that will be validated within 12 weeks of launch</p>
+        </div>
+        <div class="grid-2">
+          <article class="assumption-card stack-sm">
+            <div class="assumption-header">
+              <span class="mini-badge warm">A1</span>
+              <h3 class="card-title md">Automation Drives Consistency</h3>
+            </div>
+            <p class="copy-md">Customers with automation enabled will contribute more consistently than manual-only pot customers.</p>
+            <div class="threshold">
+              <p class="threshold-label">Validation threshold</p>
+              <p class="threshold-value">Automated cohort is at least 1.5x more likely to contribute in two consecutive months</p>
+            </div>
+            <p class="copy-md">Method: Compare month-over-month contribution continuity across cohorts</p>
+          </article>
+          <article class="assumption-card stack-sm">
+            <div class="assumption-header">
+              <span class="mini-badge violet">A2</span>
+              <h3 class="card-title md">Contextual Entry Points Boost Activation</h3>
+            </div>
+            <p class="copy-md">Entry points tied to salary and card settings will increase activation versus a savings-hub-only entry model.</p>
+            <div class="threshold">
+              <p class="threshold-label">Validation threshold</p>
+              <p class="threshold-value">Contextual entry points outperform hub-only entry by at least 20% on activation and setup-completion rates</p>
+            </div>
+            <p class="copy-md">Method: Compare activation and setup-completion rates by entry point</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="stack-md">
+        <div class="stack-sm">
+          <h2 class="section-title lg">Out of Scope for MMP</h2>
+          <p class="section-subtitle">Rabbit holes deliberately excluded to maintain focus on the core habit loop</p>
+        </div>
+        <div class="grid-4">
+          <article class="out-card">
+            <span class="dot" aria-hidden="true"></span>
+            <h3 class="card-title md">Interest-Bearing Products</h3>
+            <p class="copy-md">Not a new financial product structure. Focus is on habit formation, not product launch.</p>
+          </article>
+          <article class="out-card">
+            <span class="dot" aria-hidden="true"></span>
+            <h3 class="card-title md">Shared or Family Pots</h3>
+            <p class="copy-md">Shared ownership introduces permissions and social UX complexity not needed to prove the core loop.</p>
+          </article>
+          <article class="out-card">
+            <span class="dot" aria-hidden="true"></span>
+            <h3 class="card-title md">External Bank Funding</h3>
+            <p class="copy-md">Staying inside the {Company XYZ} ecosystem keeps the experience simpler and more trustworthy.</p>
+          </article>
+          <article class="out-card">
+            <span class="dot" aria-hidden="true"></span>
+            <h3 class="card-title md">Investment-Linked Goals</h3>
+            <p class="copy-md">Investing serves a different job and belongs in a separate product stream.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="stack-md">
+        <div class="stack-sm">
+          <h2 class="section-title lg">Systems &amp; Compliance Dependencies</h2>
+          <p class="section-subtitle">Critical platform dependencies required for MMP delivery</p>
+        </div>
+        <div class="risk-columns">
+          <div class="risk-stack">
+            <article class="risk-card">
+              <h3 class="card-title md">Current-Account Ledger</h3>
+              <p class="copy-md">Must reflect real available balances and completed transfers accurately. Inconsistency kills trust.</p>
+            </article>
+            <article class="risk-card">
+              <h3 class="card-title md">Internal Transfer Service</h3>
+              <p class="copy-md">Must support recurring contributions, round-up transfers, withdrawals, and pause/stop controls.</p>
+            </article>
+            <article class="risk-card">
+              <h3 class="card-title md">Card Transaction Event Feed</h3>
+              <p class="copy-md">Round-ups triggered by eligible posted card activity. Unreliable events = failed round-ups.</p>
+            </article>
+          </div>
+          <div class="risk-stack">
+            <article class="risk-card">
+              <h3 class="card-title md">Refund &amp; Reconciliation Rules</h3>
+              <p class="copy-md">Refunds, reversals, and partial settlements need explicit handling. Exceptions create visible trust problems.</p>
+            </article>
+            <article class="risk-card">
+              <h3 class="card-title md">Notification Infrastructure</h3>
+              <p class="copy-md">Must support failure alerts, target-reached moments, and configurable nudges. Core to the MMP feedback loop.</p>
+            </article>
+            <article class="risk-card">
+              <h3 class="card-title md">Financial Disclosures &amp; Accessibility</h3>
+              <p class="copy-md">Must explain where funds sit and meet WCAG 2.1 AA. RTL and localization support required.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="gate">
+        <div class="gate-head">
+          <div>
+            <p class="gate-label">12-WEEK GATE</p>
+            <h2 class="gate-title">Move from MMP toward MLP</h2>
+          </div>
+          <span class="gate-pill">Within 12 weeks of launch</span>
+        </div>
+        <div class="gate-grid">
+          <article class="gate-card">
+            <h4>Consecutive progress improves materially</h4>
+            <p>&gt;40% of activated customers saving in 2 consecutive months</p>
+          </article>
+          <article class="gate-card">
+            <h4>Automation adoption is healthy</h4>
+            <p>&gt;35% of activated customers using recurring contributions or round-ups</p>
+          </article>
+          <article class="gate-card">
+            <h4>Trust-related contact rates stable</h4>
+            <p>No material increase in withdrawal confusion or fund-access support contacts</p>
+          </article>
+        </div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
