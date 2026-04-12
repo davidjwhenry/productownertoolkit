@@ -4,7 +4,7 @@ A toolkit for Product Owners who want AI to carry more of the load across resear
 
 So, welcome to the new world order. In this repo, markdown becomes your source of truth, so it helps to get comfortable with `#` and `*` as early as possible. Cursor 3.0 at least gives you a decent integrated markdown previewer and editor. Your LLM of choice helps synthesise your thinking. Notion, or another friendly markdown and ticket-tracking tool, can be where the work lands for stakeholder review and alignment, while the repo still supports a local-first setup if you are working solo. You still own every document that leaves your virtual desk, but this stack gives you a serious force multiplier.
 
-After cloning, start with the `bootstrap-context` skill. It captures your company name, stack, geographies, regulatory context, delivery workflow, team context, and current business goals, writes them into `context/company-context.md`, and replaces the starter placeholders in the key docs.
+After cloning, do two setup steps first: connect the MCPs you expect to use, then run the `bootstrap-context` skill. For most people that means `Firecrawl MCP` for research and `Pencil MCP` for prototyping. Add `Notion MCP` if your team uses Notion for PRDs, tickets, or notes, and consider `Figma Dev Mode MCP` if design context matters in your workflow. Then run `bootstrap-context`: it captures your company name, stack, geographies, regulatory context, delivery workflow, team context, and current business goals, writes them into `context/company-context.md`, and replaces the starter placeholders in the key docs.
 
 ## Two audiences, two entry points
 
@@ -21,15 +21,12 @@ Every tool in this toolkit earns its place in one of three capability bands.
 - [Firecrawl MCP](./mcp-config/firecrawl.md) for external research and scraping
 - [Notion MCP](./mcp-config/notion.md) for displaying internal knowledge, PRDs, tickets, and meeting notes when your team uses Notion
 - [GitHub MCP](./mcp-config/github.md) for shipping reality — PRs, commits, what actually went out
-- [Meeting transcripts](./mcp-config/meetings.md) routed into Notion
-- [Voice capture](./mcp-config/voice-capture.md) for thoughts that arrive away from the keyboard
 - [Figma Dev Mode MCP](./mcp-config/figma.md) for design context inside your PRDs
 
 **Synthesise** — where Claude, or your LLM of choice turns inputs into artefacts. [Skills](./skills/) are mirrored for Claude Code and Cursor. The post-clone setup skill lives in `.cursor/skills/bootstrap-context/` and `.claude/skills/bootstrap-context/`.
 
 *Writing skills:*
 - `bootstrap-context` — one-time post-clone setup for company defaults, placeholders, stack, and regulatory context
-- `discovery-prep` — interview guides, hypothesis lists, and research plans before you talk to users
 - `research-synthesis` — turn Firecrawl output and interview notes into a structured brief
 - `prd-writer` — PRDs with context, scope, success metrics
 - `backlog-writing` — user stories and acceptance criteria for engineering
@@ -48,7 +45,7 @@ Every tool in this toolkit earns its place in one of three capability bands.
 **Ship** — where the work lands.
 
 - Notion, if you use it, for PRDs, tickets, and stakeholder-facing pages
-- [Pencil](./mcp-config/pencil.md) for in-IDE prototypes, because specs aren't always enough
+- [Pencil](./mcp-config/pencil.md) for in-IDE prototypes, because specs aren't always enough (also download the desktop app from their website - it's very fun to watch AI do it's thing)
 - HTML reports for anything a senior leader will actually open
 - A `/design-system/` folder for brand tokens, voice, and components skills reference automatically
 
@@ -125,7 +122,6 @@ po-ai-toolkit/
 │   └── company-context.md
 ├── skills/
 │   ├── writing/
-│   │   ├── discovery-prep/
 │   │   ├── research-synthesis/
 │   │   ├── prd-writer/
 │   │   ├── backlog-writing/
@@ -148,9 +144,9 @@ po-ai-toolkit/
 ## Getting started
 
 1. Clone the repo.
-2. Run the `bootstrap-context` skill and fill in your company defaults in [`context/company-context.md`](./context/company-context.md).
-3. Review the updated starter docs and confirm the placeholder replacements look right.
-4. Install the MCPs you want from [`mcp-config/`](./mcp-config/). Start with Firecrawl, then add Notion if your team uses it.
+2. Connect the recommended MCPs from [`mcp-config/`](./mcp-config/): start with `Firecrawl` and `Pencil`, add `Notion` if your team uses it, and add `Figma` if you want design context in the repo.
+3. Run the `bootstrap-context` skill and fill in your company defaults in [`context/company-context.md`](./context/company-context.md).
+4. Review the updated starter docs and confirm the placeholder replacements and workflow defaults look right.
 5. Add the skills to your Claude Code or Cursor setup using your preferred local config approach.
 6. Drop your brand tokens into [`design-system/`](./design-system/).
 7. Run your first skill. `meeting-distillation` is the fastest way to feel the value.

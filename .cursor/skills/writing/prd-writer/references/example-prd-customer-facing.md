@@ -52,9 +52,9 @@ Document Type: PRD
 
 ### 3.3. Market, Competitive & Substitute Context
 
-| Signal or Alternative | What it says about the job | Implication for Mal Bank |
+| Signal or Alternative | What it says about the job | Implication for {Company XYZ} |
 | --- | --- | --- |
-| **Current substitutes** | Customers already patch together the job with manual transfers, budgeting tools, separate savings accounts, or offline tracking habits. | Mal Bank should reduce setup and follow-through friction. |
+| **Current substitutes** | Customers already patch together the job with manual transfers, budgeting tools, separate savings accounts, or offline tracking habits. | {Company XYZ} should reduce setup and follow-through friction. |
 | **Market evidence** | The job is common and recurring: customers want help turning intent into repeated action, not just a place to park money. | `MMP` should improve habit formation and discoverability, not only add more controls. |
 | **Traditional savings accounts** | They provide separation, but often weak goal framing and weak day-to-day motivation. | Keep the experience goal-led, not account-setup-led. |
 | **Digital banks with round-ups and goal pots** | They automate some of the habit, but can feel generic or not aligned to local salary and spending norms. | Lean into current-account context, salary timing, and trust. |
@@ -74,9 +74,9 @@ Document Type: PRD
 
 | Rabbit Hole | Why it is out of scope now |
 | --- | --- |
-| **Interest-bearing savings products** | This stage is about helping customers make progress on the saving job, not launching a new regulated deposit structure. |
+| **Interest-bearing savings products** | This stage is about helping customers make progress on the saving job, not launching a new financial product structure. |
 | **Shared or family pots** | Shared ownership introduces permissions, social UX, and disclosures that do not help prove the core habit loop. |
-| **Funding from external bank accounts** | Staying inside the Mal Bank account ecosystem keeps the experience simpler and more trustworthy at this stage. |
+| **Funding from external bank accounts** | Staying inside the {Company XYZ} ecosystem keeps the experience simpler and more trustworthy at this stage. |
 | **Investment-linked goals** | Investing serves a related but different job and belongs in a separate product stream. |
 
 ## 5. Functional Requirements

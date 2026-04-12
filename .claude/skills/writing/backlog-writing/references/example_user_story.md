@@ -1,6 +1,6 @@
 ## User Story
 
-As a **Mal Bank customer**, I want to **instantly freeze my debit card from the app**, so that **I can prevent unauthorized transactions if I suspect my card is lost or compromised**.
+As a **{Company XYZ} customer**, I want to **instantly freeze my debit card from the app**, so that **I can prevent unauthorized transactions if I suspect my card is lost or compromised**.
 
 ## Description
 

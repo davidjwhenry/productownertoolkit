@@ -1,10 +1,10 @@
 # synctonotionbanking
-description: Sync retail banking backlog markdown (Epics and User Stories) to the Mal Bank Banking Notion project. Allowed roots: Banking_Requirements/, Retail_Banking_Requirements/, and Mobile_App_Requirements/ (e.g. profile/settings mobile backlogs). Creates Roadmap Epics and Tasks (stories), linked via Project relation. PFM and Agentic_Requirements use a separate Notion project. Triggers on "sync banking backlog to Notion", "push epics to Notion", "sync this folder to Notion", or "upload banking stories to Notion".
+description: Sync retail banking backlog markdown (Epics and User Stories) to the {Company XYZ} banking Notion project. Allowed roots: Banking_Requirements/, Retail_Banking_Requirements/, and Mobile_App_Requirements/ (e.g. profile/settings mobile backlogs). Creates Roadmap Epics and Tasks (stories), linked via Project relation. PFM and Agentic_Requirements use a separate Notion project. Triggers on "sync banking backlog to Notion", "push epics to Notion", "sync this folder to Notion", or "upload banking stories to Notion".
 ---
 
 # Notion Banking Backlog Sync
 
-Sync backlog `.md` files from the **allowed retail banking trees** to the **Mal Bank Banking Notion project**, creating Roadmap entries (from Epics) and Tasks (from Stories) with proper relationships.
+Sync backlog `.md` files from the **allowed retail banking trees** to the **{Company XYZ} banking Notion project**, creating Roadmap entries (from Epics) and Tasks (from Stories) with proper relationships.
 
 ## Allowed source roots (use this skill only here)
 
@@ -156,7 +156,7 @@ Batch up to 3 Epics per `notion-create-pages` call. Store the returned page URLs
         "Technical Lead": "[\"217d872b-594c-81d5-9137-00026b9668fd\"]",
         "Priority": "High",
         "Tags": "[\"Feature\"]",
-        "Description": "The marketing and discovery surface for Mal 786: a dashboard promotion card and full-screen Story Tabs component."
+        "Description": "The marketing and discovery surface for {Company XYZ}: a dashboard promotion card and full-screen Story Tabs component."
       },
       "content": "## Overview\n\n..."
     }
@@ -203,7 +203,7 @@ Batch up to 3 Stories per `notion-create-pages` call. Link each story to its par
         "Tags": "[\"New Functionality\"]",
         "Project": "[\"https://www.notion.so/3106409321d9815194e4d4d4e8ef3586\"]"
       },
-      "content": "## User Story\n\nAs a Mal Bank customer..."
+      "content": "## User Story\n\nAs a {Company XYZ} customer..."
     }
   ]
 }
@@ -288,7 +288,7 @@ Path: `Banking_Requirements/wealth_management/backlog/` (or `Retail_Banking_Requ
 | --- | --- | --- |
 | US-52.1: Investment Promotion Card | Omar Mouki | https://www.notion.so/3106409321d981b99816eab98ec743b2 |
 | US-52.2: Story Tab Component | Omar Mouki | https://www.notion.so/3106409321d9810ca1f0e1828881e683 |
-| US-52.3: Mal 786 Story Content | Omar Mouki | https://www.notion.so/3106409321d98186af6eef36e88517af |
+| US-52.3: {Company XYZ} Story Content | Omar Mouki | https://www.notion.so/3106409321d98186af6eef36e88517af |
 | US-53.1: Product Header and Slider | Omar Mouki | https://www.notion.so/3106409321d981e68821e931592d4fa5 |
 | US-53.2: Coupon Schedule and Timeline | Omar Mouki | https://www.notion.so/3106409321d98161a3fad1b426816f34 |
 | US-53.3: Pool Progress and FAQ | Omar Mouki | https://www.notion.so/3106409321d98127a4a7ec22a732cad6 |
