@@ -23,9 +23,10 @@ Read the full persona details before conducting each review:
 ## Workflow
 
 1. **Read the PRD** in full before beginning any review. Note both the document status (`Draft`, `In review`, `Approved`) and the PRD phase (`MVP`, `MMP`, `MLP`, `Enhancement`, or `Unknown`).
-2. **Read both persona reference files** to load the full lens before writing either review.
-3. **Conduct each review independently** — do not let one lens bleed into the other.
-4. **Produce a single output file** in the format below.
+2. **Read `context/company-context.md`** to calibrate the review against the company's stack, compliance context, target audience, business goals, team context, and delivery workflow defaults.
+3. **Read both persona reference files** to load the full lens before writing either review.
+4. **Conduct each review independently** — do not let one lens bleed into the other.
+5. **Produce a single output file** in the format below.
 
 ## Review Calibration
 
@@ -53,6 +54,7 @@ When the document status is `Draft` or the document is clearly incomplete:
 - GTM No-Go verdicts still apply — a draft should still have a PMF rationale and commercial link even if requirements aren't fully formed
 - Call out missing sections explicitly rather than inferring their absence is intentional
 - Judge completeness relative to the phase. A lean `MVP` draft should not be penalised for missing `MLP`-level polish detail.
+- If the PRD assumes a delivery surface or operating model that conflicts with `context/company-context.md` such as a Notion-only workflow in a local-first setup, call that out explicitly.
 
 ## Output Format
 
