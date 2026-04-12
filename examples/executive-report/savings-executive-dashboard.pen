@@ -1,0 +1,130 @@
+# Executive Dashboard — Savings Pots & Round-Ups
+## Stakeholder Briefing · MMP · Document Status: Reviewing
+
+---
+
+## At a Glance
+
+| | |
+|---|---|
+| **Feature** | Savings Pots & Round-Ups |
+| **Phase** | MMP — building on a shipped MVP |
+| **Status** | Reviewing |
+| **Owner** | Product |
+| **Doc Version** | 0.3 |
+
+---
+
+## The Job We're Solving
+
+> **Customers want to put money aside steadily for a future life event without turning saving into another chore.**
+
+Today they patch this together with manual transfers, spreadsheets, and separate savings accounts — all with weak progress visibility and no connection to the moments when money actually moves (salary arrivals, card purchases).
+
+The MVP proved customers will create and use named pots. The MMP question is: **will they keep making progress once the novelty fades?**
+
+---
+
+## What This Stage Adds
+
+| Capability | Why now |
+|---|---|
+| **Recurring contributions** (weekly / monthly) | Removes dependence on memory — the core step from MVP to habit loop |
+| **Card round-ups** | Connects saving to daily spending moments automatically |
+| **Pause / stop controls** | Trust requires customers to always feel in control of automatic money movement |
+| **Failure notifications** | Automation that fails silently erodes trust faster than no automation at all |
+| **Progress visibility** | Balance + target + contribution history on every pot |
+| **Contextual entry points** | Salary deposit moments and card settings surface the feature where intent is already high |
+
+---
+
+## What's Out of Scope (Intentionally)
+
+| Out of Scope | Rationale |
+|---|---|
+| Interest-bearing savings products | Different regulatory structure; not needed to prove the habit loop |
+| Shared or family pots | Adds permissions and social UX that don't test the core behavior |
+| Funding from external accounts | Staying inside the app keeps trust and complexity manageable |
+| Investment-linked goals | Separate product stream, separate job |
+
+---
+
+## Entry Points
+
+```
+Savings Hub (app home)   →  Default intent entry
+After salary deposit     →  Customers are deciding what to do with money
+Card settings            →  Customers thinking about spending are primed for round-ups
+```
+
+---
+
+## P0 Requirements Summary
+
+**Automated Funding**
+- AF.1 · Recurring contributions on weekly and monthly cadences
+- AF.2 · Card round-ups from eligible posted transactions
+- AF.3 · Pause or disable without closing the pot
+- AF.4 · Failure notifications with explanations
+
+**Controls & Transparency**
+- CT.1 · Clear explanation of round-up mechanics (timing, refunds, transfers)
+- CT.2 · Available balance display with explanation of pot fund status
+- CT.4 · Withdrawal to current account with clear spendability timing
+
+**Progress Visibility**
+- PM.1 · Balance, target progress, and latest contribution visible from pots overview
+
+---
+
+## Success Metrics & Targets (12-week window)
+
+| Metric | Target | Why it matters |
+|---|---|---|
+| Consecutive progress rate | **>40%** of activated customers contribute in two consecutive months | Core proof the product builds durable saving habits |
+| Funded goal activation rate | **>18%** of eligible customers create or use a funded pot | Confirms MMP is reaching beyond existing heavy users |
+| Automation adoption rate | **>35%** of activated customers enable recurring contributions or round-ups | Validates the new features are solving a real need |
+| Contribution success rate | **>95%** of attempted contributions complete | Reliability floor — automation that fails breaks trust |
+| Withdrawal confusion contacts | No material increase vs. baseline | Guardrail against accidental trust erosion |
+
+---
+
+## Gate to MLP Investment
+
+| Condition | Timeframe |
+|---|---|
+| Consecutive progress improves materially, automation adoption is healthy, and trust-related contact rates remain stable | Within 12 weeks of launch |
+
+---
+
+## Key Assumptions Being Tested
+
+| # | Assumption | Threshold |
+|---|---|---|
+| A1 | Customers with automation enabled contribute more consistently than manual-only users | Automated cohort ≥1.5× more likely to contribute in two consecutive months |
+| A2 | Salary and card-settings entry points outperform savings-hub-only entry | Contextual entry points ≥20% higher activation |
+
+---
+
+## Risk Radar
+
+| Risk | Mitigation |
+|---|---|
+| Round-up calculation errors on refunds / reversals | Explicit handling rules required in card transaction event feed |
+| Balance display inconsistency creating confusion | Ledger and balance services must reflect completed transfers accurately |
+| Notification fatigue reducing opt-in | Nudges configurable and bounded in frequency |
+| Automation feeling opaque | Every automated movement paired with a clear, jargon-free explanation |
+
+---
+
+## Systems That Must Be Ready
+
+- Current-account ledger & balance services
+- Internal transfer service (recurring + round-ups + withdrawals + pause/stop)
+- Card transaction event feed (posted transactions only)
+- Refund and reconciliation rules
+- Notification infrastructure
+
+---
+
+*Source: Savings Pots & Round-Ups PRD v0.3 · examples/features/prd/savings-example-prd.md*
