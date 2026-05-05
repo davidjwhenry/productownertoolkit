@@ -9,9 +9,9 @@ description: Write and refine stage-aware Product Requirement Documents (PRDs) f
 
 Read these files before writing or substantially editing any PRD:
 
-- **[examples/prd-reference-guide.md](examples/prd-reference-guide.md)** — Full structural guide: section-by-section instructions, phase guidance, formatting rules, and the review checklist. Read this first.
-- **[examples/example-prd-customer-facing.md](examples/example-prd-customer-facing.md)** — Worked MMP example: Savings Pots and Round-Ups.
-- **[examples/example-prd-internal-tool.md](examples/example-prd-internal-tool.md)** — Worked MVP example: Support Operations Triage Console.
+- **[references/prd-reference-guide.md](references/prd-reference-guide.md)** — Full structural guide: section-by-section instructions, phase guidance, formatting rules, and the review checklist. Read this first.
+- **[references/example-prd-customer-facing.md](references/example-prd-customer-facing.md)** — Worked MMP example: Savings Pots and Round-Ups.
+- **[references/example-prd-internal-tool.md](references/example-prd-internal-tool.md)** — Worked MVP example: Support Operations Triage Console.
 
 ## Workflow
 
@@ -42,6 +42,7 @@ If the user has not specified both `PRD Phase` and `Document Status`, ask before
 Before writing, inspect the repo for context that shapes platform fit:
 
 - Check `context/company-context.md` for company name, tech stack, compliance requirements, default audience assumptions, team context, current business goals, and delivery workflow defaults — use these throughout the PRD
+- Read `context/preferences.md` for learned user preferences — apply any relevant entries to tone, structure, level of detail, naming conventions, and formatting throughout the draft
 - Scan existing PRDs in the repo to understand adjacent products, naming conventions, and recurring integration surfaces
 - Identify likely entry points and where the new feature fits in the existing product landscape
 - Identify the current workaround, substitute behavior, or adjacent surfaces users are already relying on
@@ -129,7 +130,7 @@ Use the same JTBD lens in:
 
 ### 7. Review before finishing
 
-Run through the checklist in `examples/prd-reference-guide.md` before marking a PRD ready. Key checks:
+Run through the checklist in `references/prd-reference-guide.md` before marking a PRD ready. Key checks:
 
 - TL;DR is brief and useful, not a mini-PRD
 - Header uses the right `Document Status`
@@ -142,3 +143,12 @@ Run through the checklist in `examples/prd-reference-guide.md` before marking a 
 - Diagram is included only if it improves clarity
 - Success metrics reflect job outcomes, not just feature adoption
 - AI sections appear only if AI is materially part of the product behavior, operator workflow, or risk profile
+
+### 8. Observe and propose preference updates
+
+At the end of the session, if the user corrected tone, restructured sections, changed naming conventions, adjusted detail level, or expressed a repeatable preference:
+
+- Propose adding it to `context/preferences.md` under the most relevant heading
+- Confirm with the user before writing — never write silently
+- Only record durable patterns, not one-off task instructions
+- If the new preference conflicts with an existing entry, propose replacing the old one

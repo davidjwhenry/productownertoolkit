@@ -7,6 +7,10 @@ description: Ingest a meeting transcript or notes and produce structured outputs
 
 ## Workflow
 
+### Phase 0: Load context
+
+- Read `context/preferences.md` — apply any relevant entries to note structure, action item formatting, level of detail, and how team observations are framed.
+
 ### Phase 1: Parse
 
 Extract from the transcript or notes:
@@ -85,6 +89,14 @@ Rules:
 ## File Naming
 
 `YYYY-MM-DD-[brief-slug].md` — e.g. `2024-03-15-q2-planning.md`
+
+## Preference Observation
+
+At the end of the session, if the user corrected note structure, changed action item formatting, adjusted how decisions or open questions are captured, or expressed a repeatable preference:
+
+- Propose adding it to `context/preferences.md` under the most relevant heading
+- Confirm with the user before writing — never write silently
+- Only record durable patterns, not one-off task instructions
 
 ## Maintenance
 

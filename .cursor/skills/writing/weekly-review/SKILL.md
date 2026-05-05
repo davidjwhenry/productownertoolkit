@@ -7,6 +7,10 @@ description: Review the last week of work and produce a structured weekly summar
 
 ## Workflow
 
+### Phase 0: Load Preferences
+
+- Read `context/preferences.md` — apply any relevant entries to report structure, level of detail, how corporate vs. personal work is weighted, and next-week framing.
+
 ### Phase 1: Set The Review Window
 
 - Default to the last 7 days ending today.
@@ -156,6 +160,14 @@ Date range: [start] to [end]
 ```
 
 Adapt section density to the evidence. Keep it sharp and scannable.
+
+## Preference Observation
+
+At the end of the session, if the user corrected report structure, adjusted detail level, changed how themes or next-week items are framed, or expressed a repeatable preference:
+
+- Propose adding it to `context/preferences.md` under the most relevant heading
+- Confirm with the user before writing — never write silently
+- Only record durable patterns, not one-off task instructions
 
 ## Maintenance
 

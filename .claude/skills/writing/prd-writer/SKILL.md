@@ -42,6 +42,7 @@ If the user has not specified both `PRD Phase` and `Document Status`, ask before
 Before writing, inspect the repo for context that shapes platform fit:
 
 - Check `context/company-context.md` for company name, tech stack, compliance requirements, default audience assumptions, team context, current business goals, and delivery workflow defaults — use these throughout the PRD
+- Read `context/preferences.md` for learned user preferences — apply any relevant entries to tone, structure, level of detail, naming conventions, and formatting throughout the draft
 - Scan existing PRDs in the repo to understand adjacent products, naming conventions, and recurring integration surfaces
 - Identify likely entry points and where the new feature fits in the existing product landscape
 - Identify the current workaround, substitute behavior, or adjacent surfaces users are already relying on
@@ -142,3 +143,12 @@ Run through the checklist in `references/prd-reference-guide.md` before marking 
 - Diagram is included only if it improves clarity
 - Success metrics reflect job outcomes, not just feature adoption
 - AI sections appear only if AI is materially part of the product behavior, operator workflow, or risk profile
+
+### 8. Observe and propose preference updates
+
+At the end of the session, if the user corrected tone, restructured sections, changed naming conventions, adjusted detail level, or expressed a repeatable preference:
+
+- Propose adding it to `context/preferences.md` under the most relevant heading
+- Confirm with the user before writing — never write silently
+- Only record durable patterns, not one-off task instructions
+- If the new preference conflicts with an existing entry, propose replacing the old one
