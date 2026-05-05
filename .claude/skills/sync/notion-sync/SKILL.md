@@ -9,6 +9,8 @@ Use this skill to sync repo markdown into Notion without hardcoding one team, on
 
 Read `context/company-context.md` before asking setup questions. Use it to understand whether Notion is part of the team's normal workflow, what artefacts are tracked there, and any default Project IDs, tracking locations, or custom sync fields already captured during bootstrap.
 
+Read `context/preferences.md` for any sync-related preferences — field naming conventions, default mappings, or workflow choices observed in previous sessions.
+
 ## Ask First
 
 Before reading backlog files, collect the missing project-specific inputs from the user.
