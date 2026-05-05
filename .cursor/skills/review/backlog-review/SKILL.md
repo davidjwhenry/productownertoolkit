@@ -72,6 +72,9 @@ Default case: review the backlog that was just created by `backlog-writing` befo
 4. **Read `context/company-context.md`**
    - capture company defaults that change how the backlog should be interpreted, especially audience assumptions, compliance context, team priorities, and whether delivery is `Notion-enabled` or `local-first`
 
+4a. **Read `context/preferences.md`**
+   - apply any relevant entries to review tone, finding format, detail level, and traceability expectations
+
 5. **Read the relevant root requirements**
    - for customer-facing work, check `customer-functional-requirements/` and also `platform-requirements/` when shared capabilities apply
    - for internal tooling, check `internal-functional-requirements/`
@@ -242,3 +245,11 @@ Use `REWORK` when:
 - cite missing coverage at the requirement level, not only at the file level
 - if the backlog is incomplete because the requirements folders are empty or the PRD is thin, say so plainly
 - recommend fixing structure before rewriting ticket detail when both are broken
+
+## Preference Observation
+
+At the end of the session, if the user redirected review tone, changed how findings should be grouped, adjusted severity thresholds, or expressed a repeatable review preference:
+
+- Propose adding it to `context/preferences.md` under the most relevant heading
+- Confirm with the user before writing — never write silently
+- Only record durable patterns, not one-off task instructions

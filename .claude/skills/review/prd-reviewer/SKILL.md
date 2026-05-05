@@ -24,9 +24,10 @@ Read the full persona details before conducting each review:
 
 1. **Read the PRD** in full before beginning any review. Note both the document status (`Draft`, `In review`, `Approved`) and the PRD phase (`MVP`, `MMP`, `MLP`, `Enhancement`, or `Unknown`).
 2. **Read `context/company-context.md`** to calibrate the review against the company's stack, compliance context, target audience, business goals, team context, and delivery workflow defaults.
-3. **Read both persona reference files** to load the full lens before writing either review.
-4. **Conduct each review independently** — do not let one lens bleed into the other.
-5. **Produce a single output file** in the format below.
+3. **Read `context/preferences.md`** — apply any relevant entries to review tone, finding format, detail level, and how recommendations are framed.
+4. **Read both persona reference files** to load the full lens before writing either review.
+5. **Conduct each review independently** — do not let one lens bleed into the other.
+6. **Produce a single output file** in the format below.
 
 ## Review Calibration
 
@@ -130,3 +131,11 @@ Only treat a gap as a blocker if it is required for the current phase and docume
 ## Output delivery
 
 Save the review as a `.md` file in the same directory as the PRD, named `[prd-filename]-review.md`. Then summarise the two verdicts and the top 3 priorities in the chat.
+
+## Preference Observation
+
+At the end of the session, if the user redirected review tone, asked for different finding formats, adjusted severity thresholds, or expressed a repeatable review preference:
+
+- Propose adding it to `context/preferences.md` under the most relevant heading
+- Confirm with the user before writing — never write silently
+- Only record durable patterns, not one-off task instructions

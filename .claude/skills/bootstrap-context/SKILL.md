@@ -14,7 +14,8 @@ Use this skill for the initial post-clone setup pass.
 3. Ask the user for the missing company defaults, team context, and current business context.
 4. Normalize the answers into concise, reusable values.
 5. Update `context/company-context.md` as the source of truth.
-6. Update the obvious starter placeholders in key docs:
+6. Verify `context/preferences.md` exists. If it is missing, create it from the standard template with empty placeholder sections. Do not pre-populate preferences during bootstrap — they are learned from usage.
+7. Update the obvious starter placeholders in key docs:
    - `examples/prd-reference-guide.md`
    - `examples/example-prd-internal-tool.md`
    - `examples/example-prd-customer-facing.md`
@@ -81,4 +82,5 @@ After updating files:
 - summarize what was captured
 - mention any fields still left as placeholders
 - mention whether the repo is now configured as `Notion-enabled` or `local-first`
-- point the user to `context/company-context.md` for future edits
+- confirm that `context/preferences.md` is present and ready for use
+- point the user to `context/company-context.md` for future edits and explain that `context/preferences.md` will accumulate preferences from future working sessions

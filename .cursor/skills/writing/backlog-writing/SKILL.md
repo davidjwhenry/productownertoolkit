@@ -93,9 +93,10 @@ Before Phase 1:
 1. Read the parent PRD in full.
 2. Read the `prd-writer` guidance listed above.
 3. Read `context/company-context.md`.
-4. Read the relevant root requirements for the product type.
-5. Scan `backlog/` for the highest existing Epic and User Story numbers.
-6. Build a lightweight traceability map from source requirements to likely backlog homes.
+4. Read `context/preferences.md` — apply any relevant entries to story writing style, acceptance criteria format, naming conventions, and level of detail.
+5. Read the relevant root requirements for the product type.
+6. Scan `backlog/` for the highest existing Epic and User Story numbers.
+7. Build a lightweight traceability map from source requirements to likely backlog homes.
 
 Capture at least:
 
@@ -236,3 +237,12 @@ After writing files, report:
 
 Run `backlog-review` against the backlog just written and the parent PRD.
 ```
+
+## Preference Observation
+
+At the end of the session, if the user corrected story structure, changed naming conventions, adjusted acceptance criteria style, or expressed a repeatable preference:
+
+- Propose adding it to `context/preferences.md` under the most relevant heading
+- Confirm with the user before writing — never write silently
+- Only record durable patterns, not one-off task instructions
+- If the new preference conflicts with an existing entry, propose replacing the old one

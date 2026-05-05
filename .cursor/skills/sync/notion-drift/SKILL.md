@@ -9,6 +9,8 @@ Use this skill to review whether repo markdown and the corresponding Notion page
 
 Read `context/company-context.md` before asking setup questions. Use it to understand whether Notion is part of the team's normal workflow, what artefacts are tracked there, and any default Project IDs, tracking locations, custom sync fields, or special review expectations already captured during bootstrap.
 
+Read `context/preferences.md` for any drift-review preferences — comparison scope defaults, how findings should be presented, or workflow choices observed in previous sessions.
+
 ## Ask First
 
 Before reading files, ask the user exactly which document or documents to review.
