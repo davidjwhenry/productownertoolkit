@@ -10,6 +10,10 @@ Use this skill for two common workflows:
 1. **Create a new stakeholder report** — gather context, design in Pencil, review, then export to HTML.
 2. **Export an existing `.pen` report to HTML** — inspect the supplied design, verify it visually, extract its structure, and recreate it as clean HTML.
 
+## Phase 0: Load Preferences
+
+- Read `context/preferences.md` — apply any relevant entries to report tone, visual style, density, page format, and stakeholder communication preferences.
+
 ## Phase 1: Context Gathering
 
 If the user's prompt already answers a question, skip it. Gather missing context by asking the most critical questions first — avoid asking everything at once.
@@ -118,5 +122,13 @@ See [references/html-export.md](references/html-export.md) for the A4 HTML templ
 | Design system reference | `design-system/example-design-system.pen` |
 
 If the user supplies an existing `.pen` file directly, place the HTML export alongside that file unless asked otherwise.
+
+## Preference Observation
+
+At the end of the session, if the user corrected report tone, adjusted layout density, changed how metrics or risks are presented, or expressed a repeatable preference:
+
+- Propose adding it to `context/preferences.md` under the most relevant heading
+- Confirm with the user before writing — never write silently
+- Only record durable patterns, not one-off task instructions
 
 Keep `.cursor` and `.claude` copies of this skill and its reference files in sync.
