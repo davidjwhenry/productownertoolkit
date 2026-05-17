@@ -47,7 +47,7 @@ Rules for proposing preference updates:
 
 ## Writing Standards
 
-- American spelling, serial commas
+- British spelling, serial commas
 - Use `backticks` for event names, states, endpoints, and code-like identifiers
 - Use **bold** for UI elements and emphasis
 - Lead with what to do, then why

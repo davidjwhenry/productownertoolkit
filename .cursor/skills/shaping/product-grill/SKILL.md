@@ -41,7 +41,7 @@ Privately identify the riskiest unresolved ambiguity, then ask exactly one quest
 - **Question:** the ambiguity or decision to resolve
 - **Why it matters:** downstream impact on requirements, backlog, research, compliance, rollout, or stakeholders
 - **My recommendation:** your proposed answer and rationale
-- **Artifact impact:** what this changes or unlocks
+- **Artefact impact:** what this changes or unlocks
 
 Then stop and wait.
 
@@ -69,7 +69,7 @@ Update `context/product-language.md` when a resolved term will recur across PRDs
 
 Offer a product decision record in `requirements/decisions/` only when the decision is all three:
 
-1. **Durable** — it shapes more than one artifact, sprint, launch, or stakeholder conversation
+1. **Durable** — it shapes more than one artefact, sprint, launch, or stakeholder conversation
 2. **Non-obvious** — a future reader may ask why this path was chosen
 3. **Trade-off based** — credible alternatives existed
 

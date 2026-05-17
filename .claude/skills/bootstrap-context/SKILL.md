@@ -32,7 +32,7 @@ Ask for these company defaults:
 - primary product surface: `Web`, `Mobile`, `Internal tooling`, or `Mixed`
 - operating geographies
 - whether the company is in financial services
-- if yes, licenses held
+- if yes, licences held
 - if yes, regulators
 - applicable data protection regimes
 - standard tech stack

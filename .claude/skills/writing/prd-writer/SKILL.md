@@ -25,7 +25,7 @@ Before drafting, collect:
 - **Document Status** — Ideating, Reviewing, Building, or In Production (ask if unclear)
 - **Audience** — customer-facing or internal tool
 - **Lineage** — new PRD, extends earlier PRD, replaces earlier PRD, or depends on earlier PRD
-- **AI relevance** — whether AI is materially part of the product behavior, risk profile, or quality bar
+- **AI relevance** — whether AI is materially part of the product behaviour, risk profile, or quality bar
 - **Any known constraints** — deadlines, dependencies, out-of-scope items
 - **Known rabbit holes** — tempting expansions already discussed or explicitly out of scope
 
@@ -49,7 +49,7 @@ Before writing, inspect the repo for context that shapes platform fit:
 - Scan `requirements/decisions/` for accepted product decisions that constrain scope, ownership, rollout posture, or terminology
 - Scan existing PRDs in the repo to understand adjacent products, naming conventions, and recurring integration surfaces
 - Identify likely entry points and where the new feature fits in the existing product landscape
-- Identify the current workaround, substitute behavior, or adjacent surfaces users are already relying on
+- Identify the current workaround, substitute behaviour, or adjacent surfaces users are already relying on
 - Check whether this looks like a new capability or an extension of an existing one
 - When multiple plausible homes exist for a feature, ask the user to confirm before writing
 - If the brief uses fuzzy or conflicting language that changes scope, actor definitions, states, or product boundaries, run a `product-grill` style question before drafting instead of guessing
@@ -91,7 +91,7 @@ Add optional AI sections (`AI Role, Guardrails & Failure Modes` and `AI Evaluati
 
 `Document Status` changes how complete the draft should be:
 
-| `Document Status` | Drafting behavior |
+| `Document Status` | Drafting behaviour |
 | --- | --- |
 | `Ideating` | Stay short. Open questions and rough edges are acceptable. Do not fake certainty. |
 | `Reviewing` | Make the document critique-ready. Core decisions and trade-offs should be explicit. |
@@ -105,7 +105,7 @@ Cut sections that do not change scope or sequencing for the current `PRD Phase` 
 Keep the document anchored to the user objective, not the mechanism.
 
 - Prefer the job the user is trying to make progress on
-- Describe the current workaround or substitute behavior
+- Describe the current workaround or substitute behaviour
 - Avoid framing the mechanism itself as the goal unless the mechanism is the real product decision
 
 Good:
@@ -121,7 +121,7 @@ Use the same JTBD lens in:
 - problem framing
 - market and substitute context
 - success metrics
-- AI behavior descriptions, if AI is involved
+- AI behaviour descriptions, if AI is involved
 
 ### 6. Apply writing standards
 
@@ -132,8 +132,8 @@ Use the same JTBD lens in:
 - Use `backticks` for event names, states, endpoints, and code-like identifiers
 - Use **bold** for UI elements and emphasis
 - Use tables for multi-attribute comparisons; bullets for short lists
-- American spelling, serial commas
-- Avoid "we" for product behavior — use the company name, "the app", or the team name
+- British spelling, serial commas
+- Avoid "we" for product behaviour — use the company name, "the app", or the team name
 - Avoid "easy", "simple", or vague time language like "quickly"
 
 ### 7. Review before finishing
@@ -150,7 +150,7 @@ Run through the checklist in `references/prd-reference-guide.md` before marking 
 - Functional requirements are prioritized and use testable language
 - Diagram is included only if it improves clarity
 - Success metrics reflect job outcomes, not just feature adoption
-- AI sections appear only if AI is materially part of the product behavior, operator workflow, or risk profile
+- AI sections appear only if AI is materially part of the product behaviour, operator workflow, or risk profile
 - Product language matches `context/product-language.md`, or conflicts are flagged for resolution
 - Accepted product decisions in `requirements/decisions/` are reflected, or intentional departures are called out
 

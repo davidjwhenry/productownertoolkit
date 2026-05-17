@@ -42,7 +42,7 @@ description: [TODO: Complete and informative explanation of what the skill does 
 
 **3. Reference/Guidelines** (best for standards or specifications)
 - Works well for brand guidelines, coding standards, or requirements
-- Example: Brand styling with "Brand Guidelines" → "Colors" → "Typography" → "Features"
+- Example: Brand styling with "Brand Guidelines" → "Colours" → "Typography" → "Features"
 - Structure: ## Overview → ## Guidelines → ## Specifications → ## Usage...
 
 **4. Capabilities-Based** (best for integrated systems)
@@ -64,7 +64,7 @@ Delete this entire "Structuring This Skill" section when done - it's just guidan
 
 ## Resources
 
-This skill includes example resource directories that demonstrate how to organize different types of bundled resources:
+This skill includes example resource directories that demonstrate how to organise different types of bundled resources:
 
 ### scripts/
 Executable code (Python/Bash/etc.) that can be run directly to perform specific operations.

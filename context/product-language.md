@@ -2,7 +2,7 @@
 
 Canonical product and domain language used across this toolkit.
 
-Use this file for durable terms that affect how PRDs, requirements, backlog items, reviews, and stakeholder artifacts should be interpreted. Keep one-off assumptions in the relevant working artifact instead.
+Use this file for durable terms that affect how PRDs, requirements, backlog items, reviews, and stakeholder artefacts should be interpreted. Keep one-off assumptions in the relevant working artefact instead.
 
 ## Terms
 
