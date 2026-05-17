@@ -9,6 +9,7 @@ The top-level split is intentional because skills may read these folders directl
 - `platform-requirements/` for shared customer-facing platform capabilities such as login, password reset, profile management, and similar cross-cutting journeys
 - `customer-functional-requirements/` for customer-facing feature requirements
 - `internal-functional-requirements/` for internal tooling functional requirements
+- `decisions/` for lightweight product decision records that preserve durable, non-obvious, trade-off-based choices across artefacts
 
 ## Expected Layout Inside Each Requirement Area
 
@@ -41,4 +42,6 @@ requirements/
 - Use requirement-area folders underneath the top level to keep related work together.
 - Treat `research/` and `notes/` as exploratory inputs, not canonical product decisions.
 - Treat approved PRDs, backlog items, and reports as derived artefacts that should stay traceable to the source requirement area.
+- Treat `decisions/` as cross-cutting product decision memory, not as a replacement for PRDs, backlog items, or research evidence.
+- Create a product decision only when it is durable, non-obvious, and trade-off based.
 - If a requirement area does not need every subfolder, omit the empty ones rather than creating noise.

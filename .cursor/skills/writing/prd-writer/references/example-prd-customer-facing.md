@@ -40,7 +40,7 @@ Document Type: PRD
 | **Main job** | Put money aside steadily for a future life event or planned purchase without turning saving into another chore. |
 | **Current approach** | Customers use manual transfers, spreadsheets, notes apps, cash envelopes, or generic savings accounts with weak progress visibility. |
 | **Current friction** | Saving gets skipped, progress feels abstract, and the activity is disconnected from the moments when customers actually have money or spend money. |
-| **Desired progress** | Customers should feel that saving is visible, automatic when appropriate, and naturally part of daily banking behavior. |
+| **Desired progress** | Customers should feel that saving is visible, automatic when appropriate, and naturally part of daily banking behaviour. |
 
 **Who experiences this:** Retail current-account customers, especially digitally active customers who want lightweight habit-forming tools rather than formal savings-product journeys.
 
@@ -48,7 +48,7 @@ Document Type: PRD
 
 - The `MVP` proves that customers will create and use named pots.
 - The next risk is not pot creation, but whether customers keep making progress once the novelty fades.
-- This `MMP` focuses on automation, contextual entry points, and trust so the behavior becomes more durable.
+- This `MMP` focuses on automation, contextual entry points, and trust so the behaviour becomes more durable.
 
 ### 3.3. Market, Competitive & Substitute Context
 
@@ -85,7 +85,7 @@ Document Type: PRD
 
 | ID | Requirement | Priority | Notes |
 | --- | --- | --- | --- |
-| AF.1 | Allow customers to enable recurring contributions on at least weekly and monthly cadences for an existing or newly created pot. | P0 | This is a core `MMP` behavior. |
+| AF.1 | Allow customers to enable recurring contributions on at least weekly and monthly cadences for an existing or newly created pot. | P0 | This is a core `MMP` behaviour. |
 | AF.2 | Allow customers to enable card round-ups that move spare change from eligible posted card purchases into a selected pot. | P0 | Round-ups should use posted, not merely authorized, transactions. |
 | AF.3 | Allow customers to pause or disable recurring contributions and round-ups without closing the pot. | P0 | Automation must stay easy to control. |
 | AF.4 | Notify customers when an automated contribution fails and explain the reason where possible. | P0 | Failure handling is trust-critical. |
@@ -116,7 +116,7 @@ Document Type: PRD
 | --- | --- |
 | **Savings Pots** from the app home screen | This remains the default home for explicit saving intent. |
 | **Suggested savings** after salary deposit | Customers often decide what they can save when income lands. |
-| **Save with round-ups** from card settings | Customers exploring card behavior are already thinking about day-to-day spend. |
+| **Save with round-ups** from card settings | Customers exploring card behaviour are already thinking about day-to-day spend. |
 
 ### 6.2. Core Journey
 
@@ -124,8 +124,8 @@ Document Type: PRD
 | --- | --- | --- |
 | 1 | Customer enters from the savings hub, salary prompt, or card settings and selects a pot. | The app shows the pot state and the available automation options that fit the entry point. |
 | 2 | Customer enables recurring contributions or round-ups. | The app explains how the automation works, what account it draws from, and how to pause it later. |
-| 3 | Customer confirms the setup. | The app saves the funding rule, confirms the next expected contribution behavior, and returns the customer to the pot overview. |
-| 4 | Customer continues daily banking behavior. | The app applies eligible recurring contributions or round-ups, updates progress, and surfaces failures or milestones clearly. |
+| 3 | Customer confirms the setup. | The app saves the funding rule, confirms the next expected contribution behaviour, and returns the customer to the pot overview. |
+| 4 | Customer continues daily banking behaviour. | The app applies eligible recurring contributions or round-ups, updates progress, and surfaces failures or milestones clearly. |
 
 ### 6.3. Platform Fit & Adjacent Surfaces
 
@@ -167,7 +167,7 @@ flowchart TD
 | Area | What matters | Why it matters now |
 | --- | --- | --- |
 | **Current-account ledger and balance services** | Must reflect real available balances and completed transfers accurately. | Customers will lose trust quickly if the pot view feels inconsistent with spendable balance. |
-| **Internal transfer service** | Must support recurring contributions, round-up transfers, withdrawals, and pause or stop controls. | Money movement is the core behavior of this stage. |
+| **Internal transfer service** | Must support recurring contributions, round-up transfers, withdrawals, and pause or stop controls. | Money movement is the core behaviour of this stage. |
 | **Card transaction event feed** | Must trigger round-up calculations from eligible posted card activity. | Round-ups fail if the event model is unreliable or poorly timed. |
 | **Refund and reconciliation rules** | Refunds, reversals, and partial settlements need explicit handling. | Hidden exceptions here will create visible trust problems later. |
 | **Notification infrastructure** | Must support failure alerts, target-reached moments, and nudges. | The `MMP` promise depends on clear feedback loops. |

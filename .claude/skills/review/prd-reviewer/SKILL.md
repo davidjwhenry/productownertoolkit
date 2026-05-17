@@ -24,10 +24,13 @@ Read the full persona details before conducting each review:
 
 1. **Read the PRD** in full before beginning any review. Note both the document status (`Draft`, `In review`, `Approved`) and the PRD phase (`MVP`, `MMP`, `MLP`, `Enhancement`, or `Unknown`).
 2. **Read `context/company-context.md`** to calibrate the review against the company's stack, compliance context, target audience, business goals, team context, and delivery workflow defaults.
-3. **Read `context/preferences.md`** — apply any relevant entries to review tone, finding format, detail level, and how recommendations are framed.
-4. **Read both persona reference files** to load the full lens before writing either review.
-5. **Conduct each review independently** — do not let one lens bleed into the other.
-6. **Produce a single output file** in the format below.
+3. **Read `context/team-context.md`** for durable stakeholder or decision dynamics that affect review posture.
+4. **Read `context/preferences.md`** — apply any relevant entries to review tone, finding format, detail level, and how recommendations are framed.
+5. **Read `context/product-language.md`** and flag terminology drift, overloaded actors, unclear states, or conflicting canonical language.
+6. **Read `requirements/decisions/`** and flag any PRD claim that contradicts an accepted product decision or should explicitly supersede one.
+7. **Read both persona reference files** to load the full lens before writing either review.
+8. **Conduct each review independently** — do not let one lens bleed into the other.
+9. **Produce a single output file** in the format below.
 
 ## Review Calibration
 
@@ -56,6 +59,8 @@ When the document status is `Draft` or the document is clearly incomplete:
 - Call out missing sections explicitly rather than inferring their absence is intentional
 - Judge completeness relative to the phase. A lean `MVP` draft should not be penalised for missing `MLP`-level polish detail.
 - If the PRD assumes a delivery surface or operating model that conflicts with `context/company-context.md` such as a Notion-only workflow in a local-first setup, call that out explicitly.
+- If the PRD uses terminology that conflicts with `context/product-language.md`, call it out as a requirements risk, not just a wording issue.
+- If the PRD contradicts an accepted product decision, recommend either updating the PRD or creating a superseding decision record before delivery planning.
 
 ## Output Format
 
@@ -85,7 +90,8 @@ Produce a single markdown file. Use this exact structure:
 #### [Finding title]
 **Signal:** [What's present, weak, or missing]  
 **Why it matters:** [GTM impact]  
-**Recommendation:** [Specific, actionable improvement]
+**Recommendation:** [Specific, actionable improvement]  
+**Traceability (required):** Provide a relevant PRD section, product-language term, product decision, or use `N/A` or `General` when no specific source exists.
 
 [Repeat for each finding. Include both strengths worth preserving and gaps to fix.]
 
@@ -104,7 +110,8 @@ Produce a single markdown file. Use this exact structure:
 #### [Finding title]
 **Signal:** [What's present, unclear, or missing]  
 **Why it matters:** [Engineering risk or friction]  
-**Recommendation:** [Specific, actionable improvement]
+**Recommendation:** [Specific, actionable improvement]  
+**Traceability (required):** Provide a relevant PRD section, product-language term, product decision, or use `N/A` or `General` when no specific source exists.
 
 [Repeat for each finding.]
 

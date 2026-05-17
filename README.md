@@ -6,13 +6,13 @@ This repo is shaped by practical use, not theory. I've been using a similar setu
 
 The model is local-first and markdown-first. Markdown becomes the source of truth. Your LLM of choice helps you synthesise thinking into useful outputs. Notion, if your team uses it, can act as the review and publishing layer for PRDs, tickets, and notes, while the repo still works well as a standalone setup for solo or early-stage work. You still own the quality of every document that leaves your desk, but this stack gives you a serious force multiplier.
 
-After cloning, do two setup steps first: connect the MCPs you expect to use, then run the `bootstrap-context` skill. For most people that means `Firecrawl MCP` for research and `Pencil MCP` for prototyping. Add `Notion MCP` if your team uses Notion for PRDs, tickets, or notes, and consider `Figma Dev Mode MCP` if design context matters in your workflow. Then run `bootstrap-context`: it captures your company name, stack, geographies, regulatory context, delivery workflow, team context, and current business goals, writes them into `context/company-context.md`, and replaces the starter placeholders in the key docs.
+After cloning, do two setup steps first: connect the MCPs you expect to use, then run the `bootstrap-context` skill. For most people that means `Firecrawl MCP` for research and `Pencil MCP` for prototyping. Add `Notion MCP` if your team uses Notion for PRDs, tickets, or notes, and consider `Figma Dev Mode MCP` if design context matters in your workflow (though beware the token feast that can become for an LLM). Then run `bootstrap-context`: it captures your company name, stack, geographies, regulatory context, delivery workflow, team context, and current business goals, writes them into `context/company-context.md`, and replaces the starter placeholders in the key docs.
 
 ## Two audiences, two entry points
 
 If you're a PO or PM who wants to adopt this way of working, clone the repo. Everything you need is here.
 
-If you're a stakeholder who just wants to see what it produces, the live published example PRD is here: [Savings Example PRD](https://childlike-damselfly-6a7.notion.site/Savings-Example-PRD-3405b7b6a16e80ecb5e2d9be33e5fc6c?source=copy_link). More live examples can follow. This repo is the engine room. Notion, at least for now, is the showroom.
+If you're a stakeholder who just wants to see what it produces, the live published example PRD is here: [Savings Example PRD](https://childlike-damselfly-6a7.notion.site/Savings-Example-PRD-3405b7b6a16e80ecb5e2d9be33e5fc6c?source=copy_link). More live examples can follow. This repo is the engine room. Notion, at least for now, is the showroom, as a relatively inexpsenive counterpart that provides a less technical presentation layer.
 
 ## The model: Sense, Synthesise, Ship
 
@@ -27,15 +27,27 @@ Every tool in this toolkit earns its place in one of three capability bands.
 
 **Synthesise** — where Claude, or your LLM of choice turns inputs into artefacts. Skills are mirrored for Claude Code and Cursor under `.claude/skills/` and `.cursor/skills/`. The post-clone setup skill lives in `.cursor/skills/bootstrap-context/` and `.claude/skills/bootstrap-context/`.
 
-*Writing skills:*
+The intended flow is:
+
+1. **Shape** the thinking before the artefact hardens.
+2. **Write** the PRD, backlog, research report, meeting note, or stakeholder output.
+3. **Review** the written artefact for consistency, traceability, and readiness.
+4. **Sync or ship** it to the place stakeholders will actually use.
+
+*Setup skills:*
 - `bootstrap-context` — one-time post-clone setup for company defaults, placeholders, stack, and regulatory context
-- `desktop-research` — turn web research into a structured report or synthesis artefact
+
+*Shaping skills — before writing:*
+- `product-grill` — interrogate an idea, PRD, requirement, or backlog plan one question at a time before the artefact hardens
+- `desktop-research` — turn web research into a structured report or synthesis artefact that can inform shaping and writing
+
+*Writing skills:*
 - `prd-writer` — PRDs with context, scope, success metrics
 - `backlog-writing` — user stories and acceptance criteria for engineering
 - `meeting-distillation` — extract decisions, actions, open questions from a transcript
 - `stakeholder-report` — render any markdown artefact as a polished, brand-themed HTML report
 
-*Review skills — the quality loop:*
+*Review skills — after writing:*
 - `prd-reviewer` — check a PRD for internal consistency
 - `backlog-review` — check a backlog internally and against its parent PRD
 
@@ -50,16 +62,32 @@ Every tool in this toolkit earns its place in one of three capability bands.
 - HTML reports for anything a senior leader will actually open
 - A `/design-system/` folder for brand tokens, voice, and components skills reference automatically
 
-## Quality loops: review is a first-class step
+## Quality loops: shape before you write, review before you ship
 
 The single biggest failure of AI-assisted PO work is plausible-sounding drift. A PRD reads fine. The backlog generated from it reads fine. Three sprints in, someone notices the acceptance criteria contradict a success metric, and trust collapses. You get accused of producing slop (I've been there).
 
-There are two solves here. First, each key authoring skill has a paired review skill, and the intended flow ends with a review pass. Reviews are structured, scannable, and traceable — not prose critique. The output is itself an artefact you can screenshot and share. For example:
+The first quality loop happens before writing. `product-grill` is the repo-native thinking partner for requirements shaping: one question at a time, with a recommended answer, grounded in existing context, product language, requirements, and product decisions. Use it when a stakeholder request sounds plausible but the actors, states, scope, assumptions, or trade-offs are not yet crisp enough for `prd-writer`.
 
-- `prd-reviewer` checks internal consistency: do the metrics match the scope, do the assumptions hold across sections, does the narrative justify the solution?
-- `backlog-review` checks internal consistency *and* external consistency against the parent PRD: is every backlog item justified by something in the PRD, is there scope in the PRD the backlog doesn't cover?
+The second quality loop happens after writing. Each key authoring skill has a paired review skill, and the intended flow ends with a review pass before the work is trusted for planning, stakeholder review, or delivery.
 
-Second, you. You are the quality gate that matters. You can produce content 100x faster than before, but do not think you don't need to read it still. You do.
+The third quality loop is memory. Shared language and durable decisions stay in the repo so future artefacts can challenge drift instead of repeating it.
+
+For example:
+
+- `product-grill` checks the thinking before drafting: what terms are ambiguous, what assumptions are doing hidden work, what decision needs to be made before the PRD is worth writing?
+- `prd-reviewer` checks the written PRD: do the metrics match the scope, do the assumptions hold across sections, does the narrative justify the solution?
+- `backlog-review` checks the written backlog internally *and* against the parent PRD: is every backlog item justified by something in the PRD, is there scope in the PRD the backlog doesn't cover?
+
+Finally, you. You are the quality gate that matters. You can produce content 100x faster than before, but do not think you don't need to read it still. You do.
+
+## Shared language and product decisions
+
+Product work breaks when the same words mean different things in different rooms. This repo now has two lightweight memory layers for that:
+
+- `context/product-language.md` — canonical product and domain vocabulary: actors, objects, states, relationships, and resolved ambiguities.
+- `requirements/decisions/` — durable, non-obvious, trade-off-based product decisions that future PRDs, backlog items, and reviews should respect.
+
+`product-grill` is the main skill that updates these. It should capture a term when language has stabilized enough to reuse, and create a decision record only when the decision is durable, non-obvious, and based on a real trade-off. This is not bureaucracy. It is a small way to stop the same conversation reopening in every PRD review.
 
 ## The bridge: markdown source, Notion render, front matter link
 
@@ -109,7 +137,7 @@ This repo is intentionally small. It focuses on the PO-specific skills I actuall
 
 Some of the must-have marketplace items for Claude, if you are brave and work in the terminal, would be:
 
-- **Superpowers** (marketplace) — my go-to for brainstorming. When I need a thinking partner rather than a document generator, this is the skill I reach for. Pairs naturally with `desktop-research` and early-stage `prd-writer`.
+- **Superpowers** (marketplace) — my go-to for broad brainstorming. When I need a thinking partner rather than a document generator, this is the skill I reach for. For requirements-specific back-and-forth, this repo now includes `product-grill`, inspired by Matt Pocock's `grill-with-docs` pattern and adapted for product language, PRDs, backlog scope, and product decision records. Pairs naturally with `desktop-research` and early-stage `prd-writer`.
 - **frontend-design** — makes your HTML files look good, your prototypes sharper, and generally helps you produce work that feels less "AI-like".
 
 Explore, learn, add more, but don't *panic*. There's a temptation to jump on every new tool (again, done it, got that t-shirt and a graveyard of $20 subscriptions to prove it). The world is evolving every day, and so it feels like you'll get left behind if you don't run openclaw on your smart fridge. You won't. If you can master the work in this repo, based on my interviewing experience (not in the bowels of Silicon Valley, in the real world), you'd be in the top 1% globally.
@@ -127,6 +155,8 @@ productowner/
 ├── context/
 │   ├── company-context.md
 │   ├── team-context.md
+│   ├── preferences.md
+│   ├── product-language.md
 │   └── README.md
 ├── mcp-config/
 ├── conventions/
@@ -134,7 +164,8 @@ productowner/
 ├── design-system/
 ├── examples/
 ├── personal/
-└── requirements/
+├── requirements/
+│   └── decisions/
 ```
 
 ## Getting started
@@ -144,8 +175,10 @@ productowner/
 3. Run the `bootstrap-context` skill and fill in your company defaults in [`context/company-context.md`](./context/company-context.md).
 4. Review the updated starter docs and confirm the placeholder replacements and workflow defaults look right.
 5. Review the shipped skills under `.claude/skills/` or `.cursor/skills/` and wire them into your preferred local setup.
-6. Drop your brand tokens into [`design-system/`](./design-system/).
-7. Run your first skill. `meeting-distillation` is the fastest way to feel the value.
+6. Use `product-grill` on a messy idea or stakeholder request before drafting the first serious PRD.
+7. Run the relevant writing skill once the shape is clear enough: `prd-writer`, `backlog-writing`, `meeting-distillation`, or `stakeholder-report`.
+8. Run the paired review skill before treating a PRD or backlog as ready.
+9. Drop your brand tokens into [`design-system/`](./design-system/).
 
 ## v1: human execution first
 

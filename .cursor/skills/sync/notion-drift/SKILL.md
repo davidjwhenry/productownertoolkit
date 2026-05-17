@@ -49,7 +49,7 @@ Primary scope:
 - parent or relation link
 - any custom sync fields captured during bootstrap
 
-Default behavior:
+Default behaviour:
 
 - treat frontmatter as the local source of truth for metadata
 - compare the local values against the current Notion page state

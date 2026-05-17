@@ -23,8 +23,10 @@ Review the backlog against all relevant sources, in this order:
 
 1. The parent PRD
 2. The backlog files being reviewed
-3. `context/company-context.md`
-4. The root `requirements/` folders, when present
+3. Accepted product decisions in `requirements/decisions/`
+4. `context/product-language.md`
+5. `context/company-context.md`
+6. The root `requirements/` folders, when present
 
 Treat the requirements folders like this:
 
@@ -75,6 +77,12 @@ Default case: review the backlog that was just created by `backlog-writing` befo
 4a. **Read `context/preferences.md`**
    - apply any relevant entries to review tone, finding format, detail level, and traceability expectations
 
+4b. **Read `context/product-language.md`**
+   - check whether Epic names, User Story titles, states, and acceptance criteria use canonical terms consistently
+
+4c. **Read `requirements/decisions/`**
+   - check whether backlog scope and sequencing respect accepted product decisions, or explicitly supersede them
+
 5. **Read the relevant root requirements**
    - for customer-facing work, check `customer-functional-requirements/` and also `platform-requirements/` when shared capabilities apply
    - for internal tooling, check `internal-functional-requirements/`
@@ -83,6 +91,7 @@ Default case: review the backlog that was just created by `backlog-writing` befo
 6. **Build a traceability map before judging quality**
    - map each PRD functional requirement to the Epic and User Story or stories that should implement it
    - map any relevant root requirement items the same way
+   - map accepted product decisions when they constrain scope, ownership, rollout posture, or terminology
    - identify `Covered`, `Partially Covered`, `Missing`, `Over-scoped`, and `Unclear` items
 
 7. **Review the backlog in three passes**
@@ -142,7 +151,8 @@ At the detailed ticket layer, check that:
 - dependencies, integrations, and compliance implications are surfaced when the PRD makes them relevant
 - analytics, audit, permissions, error handling, and state handling are covered where they materially affect delivery
 - placeholders remain placeholders when the source material does not yet provide the answer
-- tickets do not invent scope beyond the PRD or relevant requirements
+- tickets do not invent scope beyond the PRD, accepted product decisions, or relevant requirements
+- canonical terms from `context/product-language.md` are used consistently in titles, descriptions, states, and acceptance criteria
 - tracking or handoff assumptions do not conflict with `context/company-context.md`
 
 Flag these issues:
@@ -173,8 +183,12 @@ Use `Source` values such as:
 - `platform-requirements`
 - `customer-functional-requirements`
 - `internal-functional-requirements`
+- `product-language`
+- `product-decision`
 
 If the PRD and root requirements disagree, call out the mismatch explicitly rather than choosing one silently.
+
+If the backlog conflicts with `context/product-language.md` or an accepted product decision, treat that as a traceability issue and recommend whether to update the backlog, update the source PRD, or create a superseding decision record.
 
 ## Output Format
 
