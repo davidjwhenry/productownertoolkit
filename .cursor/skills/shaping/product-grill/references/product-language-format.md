@@ -1,6 +1,6 @@
 # Product Language Format
 
-`context/product-language.md` stores durable product and domain language for this repo. It helps skills challenge ambiguous terms, keep PRDs consistent, and avoid re-litigating vocabulary across backlog, research, and stakeholder artifacts.
+`context/product-language.md` stores durable product and domain language for this repo. It helps skills challenge ambiguous terms, keep PRDs consistent, and avoid re-litigating vocabulary across backlog, research, and stakeholder artefacts.
 
 ## Purpose
 
@@ -65,7 +65,7 @@ _Avoid:_ Sent, created, raised
 ## Rules
 
 - **Be opinionated.** Pick one canonical term and list aliases or tempting alternatives under `_Avoid:_`.
-- **Keep definitions tight.** One sentence is usually enough. Define what the thing is, not every behavior it supports.
+- **Keep definitions tight.** One sentence is usually enough. Define what the thing is, not every behaviour it supports.
 - **Separate states from actors and objects.** Put lifecycle states under `## States` and format them with backticks when they are system-like labels.
 - **Show relationships.** Use relationship bullets to clarify cardinality or ownership when it affects requirements.
 - **Use example dialogue sparingly.** Add dialogue only when it clarifies how terms interact in realistic product discussion.
@@ -73,7 +73,7 @@ _Avoid:_ Sent, created, raised
 - **Avoid implementation detail.** Product language is not the place for endpoints, database fields, package names, or internal architecture.
 - **Do not silently overwrite.** If an existing term conflicts with a new usage, ask the user which meaning should win before editing.
 
-## Update Behavior
+## Update Behaviour
 
 During `product-grill`:
 

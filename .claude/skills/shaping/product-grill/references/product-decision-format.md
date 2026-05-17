@@ -8,7 +8,7 @@ They are deliberately lightweight. The goal is to preserve context, not create g
 
 Create a product decision record only when all three are true:
 
-1. **Durable** — the decision is likely to shape more than one artifact, sprint, launch, or stakeholder conversation.
+1. **Durable** — the decision is likely to shape more than one artefact, sprint, launch, or stakeholder conversation.
 2. **Non-obvious** — a future reader may reasonably ask why this path was chosen.
 3. **Trade-off based** — credible alternatives existed and the team chose one for specific reasons.
 
@@ -63,7 +63,7 @@ source_skill: product-grill
 
 ## Context
 
-[Why this decision came up, including the product area, artifact, stakeholder pressure, or ambiguity it resolves.]
+[Why this decision came up, including the product area, artefact, stakeholder pressure, or ambiguity it resolves.]
 
 ## Considered Options
 
@@ -81,7 +81,7 @@ source_skill: product-grill
 - [What this rules out or defers]
 - [What future PRDs or backlog items must respect]
 
-## Related Artifacts
+## Related Artefacts
 
 - [Link to PRD, requirement area, backlog item, research note, or meeting note if available]
 ```
@@ -103,6 +103,6 @@ If a decision is superseded, add a link to the newer decision in the old record.
 - State the decision plainly before giving context.
 - Include rejected options only when remembering them will prevent future churn.
 - Avoid implementation details unless the product decision depends on them.
-- Use American spelling and serial commas.
+- Use British spelling and serial commas.
 - Use `backticks` for states, event names, endpoints, and code-like identifiers.
 - Use **bold** for UI labels or named product surfaces.

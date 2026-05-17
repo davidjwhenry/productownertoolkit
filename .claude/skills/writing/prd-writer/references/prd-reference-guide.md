@@ -267,7 +267,7 @@ Keep rabbit holes concrete. They should sound like real temptations, not boilerp
 
 ### 5. Functional Requirements
 
-Organize requirements by feature area.
+Organise requirements by feature area.
 
 ```markdown
 ### 5.X. [Feature Area]
@@ -282,14 +282,14 @@ Priority guidance:
 - `P1`: Important, but not stage-blocking
 
 Aim for:
-- concrete product behavior
+- concrete product behaviour
 - language that is testable
 - enough detail for backlog creation
 
 Avoid:
 - user stories
 - acceptance criteria
-- technical design choices unless they change product behavior
+- technical design choices unless they change product behaviour
 
 For `Enhancement` PRDs, focus on changed areas rather than repeating unchanged capability.
 
@@ -299,12 +299,12 @@ If the product uses AI meaningfully, add the AI sections below. Do not let them 
 
 Use them when:
 - AI is customer-facing or operator-facing
-- AI materially changes risk, quality expectations, or operational behavior
-- rollout depends on evaluation, fallback behavior, or model-specific guardrails
+- AI materially changes risk, quality expectations, or operational behaviour
+- rollout depends on evaluation, fallback behaviour, or model-specific guardrails
 
 Skip them when:
 - the feature is not AI-enabled
-- AI is incidental infrastructure rather than part of the product behavior being specified
+- AI is incidental infrastructure rather than part of the product behaviour being specified
 
 ### AI Role, Guardrails & Failure Modes
 
@@ -317,14 +317,14 @@ Use this section to describe what role the AI plays in helping the user get the 
 | **Inputs and context available** | [Data, tools, retrieval, product context] |
 | **Expected output shape** | [Summary, draft, classification, recommendation, extraction, etc.] |
 | **Guardrails** | [Brand, policy, privacy, safety, or compliance rules] |
-| **Disallowed behavior** | [What the AI must not do] |
+**Disallowed behaviour** | [What the AI must not do]
 | **Fallback or handoff** | [What happens when confidence is low, policy blocks apply, or the model fails] |
 ```
 
 Also include a few concrete examples:
 
 ```markdown
-| Scenario | Expected behavior | Failure mode to avoid |
+| Scenario | Expected behaviour | Failure mode to avoid |
 | --- | --- | --- |
 | [Happy path] | [What good looks like] | [What must not happen] |
 | [Edge case] | [How it should recover or narrow scope] | [Bad output to avoid] |
@@ -342,7 +342,7 @@ Use this section when launch confidence depends on AI quality, safety, or operat
 | **Quality evaluation** | [Offline eval, golden set, rubric, or human review] |
 | **Operational targets** | [Latency, uptime, cost, or throughput expectations] |
 | **Rollout approach** | [Shadow mode, phased rollout, limited cohort, human review gate] |
-| **Kill switch or fallback** | [How the team disables, narrows, or routes around the AI behavior] |
+- **Kill switch or fallback** | [How the team disables, narrows, or routes around the AI behaviour]
 ```
 
 For AI-enabled work, the PRD should make it obvious:
@@ -497,10 +497,10 @@ Lists and tables:
 - use tables when comparing several attributes across several items
 
 Language:
-- use American spelling
+- use British spelling
 - use serial commas
 - avoid calling work "easy" or "simple"
-- avoid "we" when describing product behavior; use `{Company XYZ}`, "the app", or the relevant team name
+- avoid "we" when describing product behaviour; use `{Company XYZ}`, "the app", or the relevant team name
 
 ## Company-Specific Context
 
@@ -557,7 +557,7 @@ Before marking a PRD ready for review:
 - [ ] A diagram is included only if it improves clarity
 - [ ] Success metrics reflect the job outcome, not just feature usage
 - [ ] Systems, risks, and compliance constraints cover what could affect scope or delivery
-- [ ] If AI is part of the product, the AI role, guardrails, evaluation plan, and fallback behavior are explicit
+- [ ] If AI is part of the product, the AI role, guardrails, evaluation plan, and fallback behaviour are explicit
 - [ ] Optional sections are included only when they genuinely help
 
 ## Quick Reference

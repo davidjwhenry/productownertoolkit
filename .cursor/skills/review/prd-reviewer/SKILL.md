@@ -90,8 +90,8 @@ Produce a single markdown file. Use this exact structure:
 #### [Finding title]
 **Signal:** [What's present, weak, or missing]  
 **Why it matters:** [GTM impact]  
-**Recommendation:** [Specific, actionable improvement]
-**Traceability:** [Relevant PRD section, product-language term, or product decision if applicable]
+**Recommendation:** [Specific, actionable improvement]  
+**Traceability (required):** Provide a relevant PRD section, product-language term, product decision, or use `N/A` or `General` when no specific source exists.
 
 [Repeat for each finding. Include both strengths worth preserving and gaps to fix.]
 
@@ -110,8 +110,8 @@ Produce a single markdown file. Use this exact structure:
 #### [Finding title]
 **Signal:** [What's present, unclear, or missing]  
 **Why it matters:** [Engineering risk or friction]  
-**Recommendation:** [Specific, actionable improvement]
-**Traceability:** [Relevant PRD section, product-language term, or product decision if applicable]
+**Recommendation:** [Specific, actionable improvement]  
+**Traceability (required):** Provide a relevant PRD section, product-language term, product decision, or use `N/A` or `General` when no specific source exists.
 
 [Repeat for each finding.]
 
