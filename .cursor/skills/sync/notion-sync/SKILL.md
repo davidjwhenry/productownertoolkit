@@ -141,7 +141,7 @@ If a child record has no resolvable parent and the relation is required, stop an
 
 After successful page creation, update each synced source file with the returned Notion URL.
 
-Default behavior:
+Default behaviour:
 
 - write the URL to `notion_ticket`
 - if the field already exists, replace it

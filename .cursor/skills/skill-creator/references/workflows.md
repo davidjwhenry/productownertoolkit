@@ -7,7 +7,7 @@ For complex tasks, break operations into clear, sequential steps. It is often he
 ```markdown
 Filling a PDF form involves these steps:
 
-1. Analyze the form (run analyze_form.py)
+1. Analyse the form (run analyze_form.py)
 2. Create field mapping (edit fields.json)
 3. Validate mapping (run validate_fields.py)
 4. Fill the form (run fill_form.py)

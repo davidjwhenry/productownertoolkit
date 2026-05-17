@@ -36,7 +36,7 @@ Run the `bootstrap-context` skill after cloning the repo, then replace the start
 ## Regulatory Context
 
 - **Financial services company:** `[Yes/No]`
-- **Licenses held:** `[List licenses or write None]`
+- **Licences held:** `[List licences or write None]`
 - **Regulators:** `[List regulators or write None]`
 - **Other regulatory obligations:** `[Optional]`
 
@@ -59,7 +59,7 @@ Run the `bootstrap-context` skill after cloning the repo, then replace the start
 
 - `[Primary customer or user segment]`
 - `[Geographic or demographic qualifier]`
-- `[Behavioral or channel qualifier]`
+- `[Behavioural or channel qualifier]`
 
 ## Common Integration Points
 
