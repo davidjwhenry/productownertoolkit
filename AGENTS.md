@@ -9,6 +9,7 @@ Before any substantive drafting, reviewing, or presenting work, read:
 1. `context/company-context.md` — company defaults, stack, compliance, delivery workflow
 2. `context/team-context.md` — team members, stakeholder dynamics, working styles
 3. `context/preferences.md` — learned user preferences from previous sessions
+4. `context/product-language.md` — canonical product and domain language, if relevant to the artefact
 
 Apply preferences from `context/preferences.md` to output unless the user gives an explicit instruction that overrides them for the current task.
 
@@ -36,8 +37,8 @@ Rules for proposing preference updates:
 
 | Path | Purpose |
 |---|---|
-| `context/` | Canonical working context — company, team, preferences |
-| `requirements/` | Requirement libraries by type (platform, customer, internal) |
+| `context/` | Canonical working context — company, team, preferences, product language |
+| `requirements/` | Requirement libraries by type (platform, customer, internal), plus cross-cutting product decisions |
 | `backlog/` | Generated backlog items grouped by Epic |
 | `examples/` | Worked examples |
 | `personal/` | Personal notes, to-dos, reports |

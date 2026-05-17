@@ -36,6 +36,7 @@ Every tool in this toolkit earns its place in one of three capability bands.
 - `stakeholder-report` — render any markdown artefact as a polished, brand-themed HTML report
 
 *Review skills — the quality loop:*
+- `product-grill` — interrogate an idea, PRD, requirement, or backlog plan one question at a time before the artifact hardens
 - `prd-reviewer` — check a PRD for internal consistency
 - `backlog-review` — check a backlog internally and against its parent PRD
 
@@ -54,12 +55,24 @@ Every tool in this toolkit earns its place in one of three capability bands.
 
 The single biggest failure of AI-assisted PO work is plausible-sounding drift. A PRD reads fine. The backlog generated from it reads fine. Three sprints in, someone notices the acceptance criteria contradict a success metric, and trust collapses. You get accused of producing slop (I've been there).
 
-There are two solves here. First, each key authoring skill has a paired review skill, and the intended flow ends with a review pass. Reviews are structured, scannable, and traceable — not prose critique. The output is itself an artefact you can screenshot and share. For example:
+`product-grill` adds a back-and-forth loop before formal review. It is the repo-native thinking partner for requirements shaping: one question at a time, with a recommended answer, grounded in existing context, product language, requirements, and product decisions. Use it when a stakeholder request sounds plausible but the actors, states, scope, assumptions, or trade-offs are not yet crisp enough for `prd-writer`.
 
+There are three solves here. First, grill the thinking before it becomes documentation. Second, each key authoring skill has a paired review skill, and the intended flow ends with a review pass. Third, keep shared language and durable decisions in the repo so future artifacts can challenge drift instead of repeating it. Reviews are structured, scannable, and traceable — not prose critique. The output is itself an artifact you can screenshot and share. For example:
+
+- `product-grill` checks the thinking before drafting: what terms are ambiguous, what assumptions are doing hidden work, what decision needs to be made before the PRD is worth writing?
 - `prd-reviewer` checks internal consistency: do the metrics match the scope, do the assumptions hold across sections, does the narrative justify the solution?
 - `backlog-review` checks internal consistency *and* external consistency against the parent PRD: is every backlog item justified by something in the PRD, is there scope in the PRD the backlog doesn't cover?
 
-Second, you. You are the quality gate that matters. You can produce content 100x faster than before, but do not think you don't need to read it still. You do.
+Finally, you. You are the quality gate that matters. You can produce content 100x faster than before, but do not think you don't need to read it still. You do.
+
+## Shared language and product decisions
+
+Product work breaks when the same words mean different things in different rooms. This repo now has two lightweight memory layers for that:
+
+- `context/product-language.md` — canonical product and domain vocabulary: actors, objects, states, relationships, and resolved ambiguities.
+- `requirements/decisions/` — durable, non-obvious, trade-off-based product decisions that future PRDs, backlog items, and reviews should respect.
+
+`product-grill` is the main skill that updates these. It should capture a term when language has stabilized enough to reuse, and create a decision record only when the decision is durable, non-obvious, and based on a real trade-off. This is not bureaucracy. It is a small way to stop the same conversation reopening in every PRD review.
 
 ## The bridge: markdown source, Notion render, front matter link
 
@@ -109,7 +122,7 @@ This repo is intentionally small. It focuses on the PO-specific skills I actuall
 
 Some of the must-have marketplace items for Claude, if you are brave and work in the terminal, would be:
 
-- **Superpowers** (marketplace) — my go-to for brainstorming. When I need a thinking partner rather than a document generator, this is the skill I reach for. Pairs naturally with `desktop-research` and early-stage `prd-writer`.
+- **Superpowers** (marketplace) — my go-to for broad brainstorming. When I need a thinking partner rather than a document generator, this is the skill I reach for. For requirements-specific back-and-forth, this repo now includes `product-grill`, inspired by Matt Pocock's `grill-with-docs` pattern and adapted for product language, PRDs, backlog scope, and product decision records. Pairs naturally with `desktop-research` and early-stage `prd-writer`.
 - **frontend-design** — makes your HTML files look good, your prototypes sharper, and generally helps you produce work that feels less "AI-like".
 
 Explore, learn, add more, but don't *panic*. There's a temptation to jump on every new tool (again, done it, got that t-shirt and a graveyard of $20 subscriptions to prove it). The world is evolving every day, and so it feels like you'll get left behind if you don't run openclaw on your smart fridge. You won't. If you can master the work in this repo, based on my interviewing experience (not in the bowels of Silicon Valley, in the real world), you'd be in the top 1% globally.
@@ -127,6 +140,8 @@ productowner/
 ├── context/
 │   ├── company-context.md
 │   ├── team-context.md
+│   ├── preferences.md
+│   ├── product-language.md
 │   └── README.md
 ├── mcp-config/
 ├── conventions/
@@ -134,7 +149,8 @@ productowner/
 ├── design-system/
 ├── examples/
 ├── personal/
-└── requirements/
+├── requirements/
+│   └── decisions/
 ```
 
 ## Getting started
@@ -144,8 +160,9 @@ productowner/
 3. Run the `bootstrap-context` skill and fill in your company defaults in [`context/company-context.md`](./context/company-context.md).
 4. Review the updated starter docs and confirm the placeholder replacements and workflow defaults look right.
 5. Review the shipped skills under `.claude/skills/` or `.cursor/skills/` and wire them into your preferred local setup.
-6. Drop your brand tokens into [`design-system/`](./design-system/).
-7. Run your first skill. `meeting-distillation` is the fastest way to feel the value.
+6. Use `product-grill` on a messy idea or stakeholder request before drafting the first serious PRD.
+7. Drop your brand tokens into [`design-system/`](./design-system/).
+8. Run your first writing skill. `meeting-distillation` is the fastest way to feel the value.
 
 ## v1: human execution first
 

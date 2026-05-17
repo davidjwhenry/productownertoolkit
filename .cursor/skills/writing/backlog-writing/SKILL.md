@@ -22,8 +22,10 @@ Backlogs should be grounded in these sources, in this order:
 
 1. The parent PRD
 2. The root `requirements/` folders, when present
-3. `context/company-context.md`
-4. Existing backlog numbering and nearby backlog patterns in `backlog/`
+3. Accepted product decisions in `requirements/decisions/`
+4. `context/product-language.md`
+5. `context/company-context.md`
+6. Existing backlog numbering and nearby backlog patterns in `backlog/`
 
 Treat the requirements folders like this:
 
@@ -93,10 +95,13 @@ Before Phase 1:
 1. Read the parent PRD in full.
 2. Read the `prd-writer` guidance listed above.
 3. Read `context/company-context.md`.
-4. Read `context/preferences.md` — apply any relevant entries to story writing style, acceptance criteria format, naming conventions, and level of detail.
-5. Read the relevant root requirements for the product type.
-6. Scan `backlog/` for the highest existing Epic and User Story numbers.
-7. Build a lightweight traceability map from source requirements to likely backlog homes.
+4. Read `context/team-context.md` for durable stakeholder or approval dynamics that affect backlog sequencing.
+5. Read `context/preferences.md` — apply any relevant entries to story writing style, acceptance criteria format, naming conventions, and level of detail.
+6. Read `context/product-language.md` and use canonical actors, objects, and states in Epic and User Story language.
+7. Read `requirements/decisions/` and treat accepted product decisions as constraints unless the user explicitly says they are superseded.
+8. Read the relevant root requirements for the product type.
+9. Scan `backlog/` for the highest existing Epic and User Story numbers.
+10. Build a lightweight traceability map from source requirements to likely backlog homes.
 
 Capture at least:
 
@@ -197,10 +202,13 @@ At minimum:
 - if a requirement is foundational but not user-visible, represent it in the Epic scope and in the relevant User Story detail where it affects delivery
 - if a requirement exists in root requirements but not in the PRD, flag it for confirmation rather than silently dropping it
 - if the PRD and root requirements conflict, ask the user to resolve the mismatch before writing detailed tickets
+- if the PRD conflicts with accepted product language or product decisions, ask whether to update the backlog scope, update the PRD, or supersede the decision before writing tickets
 
 ## Writing Standards
 
 - mirror the persona, product surface, and company name from `context/company-context.md`
+- use canonical terms from `context/product-language.md` consistently across Epics, User Stories, states, and acceptance criteria
+- respect accepted product decisions in `requirements/decisions/` and preserve traceability when they shape backlog scope
 - respect the delivery workflow in `context/company-context.md`; do not imply Notion syncing or Notion-only tracking when the repo is configured as local-first
 - acceptance criteria use Given / When / Then
 - priorities: `P0` = must-have for the Epic to ship, `P1` = should-have, `P2` = nice-to-have

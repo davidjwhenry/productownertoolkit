@@ -12,6 +12,7 @@ Read these files before writing or substantially editing any PRD:
 - **[references/prd-reference-guide.md](references/prd-reference-guide.md)** — Full structural guide: section-by-section instructions, phase guidance, formatting rules, and the review checklist. Read this first.
 - **[references/example-prd-customer-facing.md](references/example-prd-customer-facing.md)** — Worked MMP example: Savings Pots and Round-Ups.
 - **[references/example-prd-internal-tool.md](references/example-prd-internal-tool.md)** — Worked MVP example: Support Operations Triage Console.
+- **[../../review/product-grill/SKILL.md](../../review/product-grill/SKILL.md)** — Use when the brief is ambiguous enough to need back-and-forth before drafting.
 
 ## Workflow
 
@@ -42,12 +43,17 @@ If the user has not specified both `PRD Phase` and `Document Status`, ask before
 Before writing, inspect the repo for context that shapes platform fit:
 
 - Check `context/company-context.md` for company name, tech stack, compliance requirements, default audience assumptions, team context, current business goals, and delivery workflow defaults — use these throughout the PRD
+- Read `context/team-context.md` for durable stakeholder and decision dynamics that affect framing or review readiness
 - Read `context/preferences.md` for learned user preferences — apply any relevant entries to tone, structure, level of detail, naming conventions, and formatting throughout the draft
+- Read `context/product-language.md` for canonical product and domain terms — use those terms consistently, and flag conflicts before drafting
+- Scan `requirements/decisions/` for accepted product decisions that constrain scope, ownership, rollout posture, or terminology
 - Scan existing PRDs in the repo to understand adjacent products, naming conventions, and recurring integration surfaces
 - Identify likely entry points and where the new feature fits in the existing product landscape
 - Identify the current workaround, substitute behavior, or adjacent surfaces users are already relying on
 - Check whether this looks like a new capability or an extension of an existing one
 - When multiple plausible homes exist for a feature, ask the user to confirm before writing
+- If the brief uses fuzzy or conflicting language that changes scope, actor definitions, states, or product boundaries, run a `product-grill` style question before drafting instead of guessing
+- If the PRD would contradict an accepted product decision, ask the user whether to revise the PRD or supersede the decision record before proceeding
 - If `context/company-context.md` says Notion is not part of the working flow, do not imply a Notion handoff, Notion page structure, or Notion-specific operating assumption in the PRD
 
 This avoids PRDs that are internally coherent but disconnected from the actual product.
@@ -120,6 +126,8 @@ Use the same JTBD lens in:
 ### 6. Apply writing standards
 
 - Lead with what to do, then why
+- Use canonical terms from `context/product-language.md`; do not swap between aliases for the same concept
+- Respect accepted product decisions in `requirements/decisions/`; if the current PRD intentionally changes one, call that out explicitly
 - Use headings that say something specific, not generic labels
 - Use `backticks` for event names, states, endpoints, and code-like identifiers
 - Use **bold** for UI elements and emphasis
@@ -143,6 +151,8 @@ Run through the checklist in `references/prd-reference-guide.md` before marking 
 - Diagram is included only if it improves clarity
 - Success metrics reflect job outcomes, not just feature adoption
 - AI sections appear only if AI is materially part of the product behavior, operator workflow, or risk profile
+- Product language matches `context/product-language.md`, or conflicts are flagged for resolution
+- Accepted product decisions in `requirements/decisions/` are reflected, or intentional departures are called out
 
 ### 8. Observe and propose preference updates
 
