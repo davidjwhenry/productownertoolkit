@@ -47,6 +47,7 @@ The intended flow is:
 - `uat-writer` — black-box UAT test cases as structured JSON, one file per feature area
 - `meeting-distillation` — extract decisions, actions, open questions from a transcript
 - `stakeholder-report` — render any markdown artefact as a polished, brand-themed HTML report
+- `weekly-review` — structured weekly summary across personal notes and committed/local corporate work, written to `personal/reports/`
 
 *Review skills — after writing:*
 - `prd-reviewer` — check a PRD for internal consistency
@@ -198,7 +199,6 @@ AI is not an excuse to outsource thinking. It is a force multiplier for people w
 - `competitive-teardown` — structured competitor analysis with feature matrix and positioning
 - `roadmap-narrative` — turn a backlog plus strategy context into a quarterly story for leadership
 - `retro-synthesis` — extract patterns across sprint retros, not just single sessions
-- `weekly-review` — surface themes, blockers, and stale items across your notes
 - More live published Notion examples beyond the PRD
 
 More coming soon:
