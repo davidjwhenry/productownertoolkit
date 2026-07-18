@@ -44,6 +44,7 @@ The intended flow is:
 *Writing skills:*
 - `prd-writer` — PRDs with context, scope, success metrics
 - `backlog-writing` — user stories and acceptance criteria for engineering
+- `uat-writer` — black-box UAT test cases as structured JSON, one file per feature area
 - `meeting-distillation` — extract decisions, actions, open questions from a transcript
 - `stakeholder-report` — render any markdown artefact as a polished, brand-themed HTML report
 
@@ -166,6 +167,10 @@ productowner/
 ├── personal/
 ├── requirements/
 │   └── decisions/
+├── testing/
+│   └── uat/
+│       └── test_cases/
+│           └── README.md
 ```
 
 ## Getting started
