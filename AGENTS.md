@@ -40,6 +40,7 @@ Rules for proposing preference updates:
 | `context/` | Canonical working context — company, team, preferences, product language |
 | `requirements/` | Requirement libraries by type (platform, customer, internal), plus cross-cutting product decisions |
 | `backlog/` | Generated backlog items grouped by Epic |
+| `testing/` | UAT test-case library — one JSON file per feature area under `testing/uat/test_cases/` |
 | `examples/` | Worked examples |
 | `personal/` | Personal notes, to-dos, reports |
 | `design-system/` | Brand tokens, voice/tone, UI patterns |

@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://productownertoolkit/testing/uat/case.schema.json",
+  "title": "UAT Feature-Area File",
+  "description": "One file per feature area. Wraps reusable UAT test cases with area-level metadata.",
+  "type": "object",
+  "required": ["feature_area", "description", "test_cases"],
+  "additionalProperties": false,
+  "properties": {
+    "feature_area": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human name for the feature area; must match the feature_area on every case in this file."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "One line describing the feature area's scope."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional. Scope boundaries and cross-references; cite other files and TC-XXX ids to prevent duplicate coverage."
+    },
+    "test_cases": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/testCase" }
+    }
+  },
+  "definitions": {
+    "testCase": {
+      "type": "object",
+      "required": [
+        "id",
+        "description",
+        "feature_area",
+        "priority",
+        "test_type",
+        "active",
+        "pre_conditions",
+        "steps"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^TC-[0-9]{3,}$",
+          "description": "TC-XXX, globally unique across every file in the library."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "One sentence: scenario + outcome, present tense."
+        },
+        "feature_area": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Repeat the file's area name."
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["P0", "P1", "P2"]
+        },
+        "test_type": {
+          "type": "string",
+          "enum": ["Happy path", "Unhappy path", "Edge case"]
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "pre_conditions": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Declarative state that must be true before step 1."
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/step" }
+        }
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": ["step", "action", "expected_result"],
+      "additionalProperties": false,
+      "properties": {
+        "step": { "type": "integer", "minimum": 1 },
+        "action": { "type": "string", "minLength": 1 },
+        "expected_result": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}
