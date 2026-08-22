@@ -7,7 +7,7 @@ Unless noted otherwise, the code samples in this folder are `mcp.json` extracts 
 ## Recommended first
 
 - `Firecrawl` for external research and web extraction
-- `Pencil` for rapid prototypes and UI exploration
+- `pen.dev` for rapid prototypes and UI exploration
 
 ## Add if relevant
 

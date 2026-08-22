@@ -6,7 +6,7 @@ This repo is shaped by practical use, not theory. I've been using a similar setu
 
 The model is local-first and markdown-first. Markdown becomes the source of truth. Your LLM of choice helps you synthesise thinking into useful outputs. Notion, if your team uses it, can act as the review and publishing layer for PRDs, tickets, and notes, while the repo still works well as a standalone setup for solo or early-stage work. You still own the quality of every document that leaves your desk, but this stack gives you a serious force multiplier.
 
-After cloning, do two setup steps first: connect the MCPs you expect to use, then run the `bootstrap-context` skill. For most people that means `Firecrawl MCP` for research and `Pencil MCP` for prototyping. Add `Notion MCP` if your team uses Notion for PRDs, tickets, or notes, and consider `Figma Dev Mode MCP` if design context matters in your workflow (though beware the token feast that can become for an LLM). Then run `bootstrap-context`: it captures your company name, stack, geographies, regulatory context, delivery workflow, team context, and current business goals, writes them into `context/company-context.md`, and replaces the starter placeholders in the key docs.
+After cloning, do two setup steps first: connect the MCPs you expect to use, then run the `bootstrap-context` skill. For most people that means `Firecrawl MCP` for research and `pen.dev MCP` for prototyping (formerly Pencil). Add `Notion MCP` if your team uses Notion for PRDs, tickets, or notes, and consider `Figma Dev Mode MCP` if design context matters in your workflow (though beware the token feast that can become for an LLM). Then run `bootstrap-context`: it captures your company name, stack, geographies, regulatory context, delivery workflow, team context, and current business goals, writes them into `context/company-context.md`, and replaces the starter placeholders in the key docs.
 
 ## Two audiences, two entry points
 
@@ -58,7 +58,7 @@ The intended flow is:
 **Ship** — where the work lands.
 
 - Notion, if you use it, for PRDs, tickets, and stakeholder-facing pages
-- [Pencil](./mcp-config/pencil.md) for in-IDE prototypes, because specs aren't always enough (also download the desktop app from their website - it's very fun to watch AI do it's thing)
+- [pen.dev](./mcp-config/pen-dev.md) for in-IDE prototypes, because specs aren't always enough (formerly Pencil; also download the desktop app from their website - it's very fun to watch AI do its thing)
 - HTML reports for anything a senior leader will actually open
 - A `/design-system/` folder for brand tokens, voice, and components skills reference automatically
 
@@ -117,7 +117,7 @@ Notion is the art gallery in my current workflow, and their AI is coming along v
 
 2. **AI pricing is in flux.** Notion's AI pricing is shifting toward token-based billing, and the economics at scale aren't clear. Keep the heavy reasoning in Claude or Cursor, which are more likely to be sanctioned as part of a corporate stack, and have a lot more clear pricing today (Q2 2026).
 
-3. **Notion doesn't prototype.** PRDs are half the job now. Pencil closes the loop from spec to tangible artefact inside the same IDE. Notion has no equivalent.
+3. **Notion doesn't prototype.** PRDs are half the job now. pen.dev closes the loop from spec to tangible artefact inside the same IDE. Notion has no equivalent.
 
 4. **No skills primitive yet.** Notion is adding agents in beta, but it's missing the composability Claude Code or Cursor skills give you: versioned, portable, testable instructions that travel with you across tools and jobs. Betting the workflow layer on a vendor roadmap is risky. Skills are yours.
 
@@ -171,7 +171,7 @@ productowner/
 ## Getting started
 
 1. Clone the repo.
-2. Connect the recommended MCPs from [`mcp-config/`](./mcp-config/): start with `Firecrawl` and `Pencil`, add `Notion` if your team uses it, and add `Figma` if you want design context in the repo.
+2. Connect the recommended MCPs from [`mcp-config/`](./mcp-config/): start with `Firecrawl` and `pen.dev`, add `Notion` if your team uses it, and add `Figma` if you want design context in the repo.
 3. Run the `bootstrap-context` skill and fill in your company defaults in [`context/company-context.md`](./context/company-context.md).
 4. Review the updated starter docs and confirm the placeholder replacements and workflow defaults look right.
 5. Review the shipped skills under `.claude/skills/` or `.cursor/skills/` and wire them into your preferred local setup.

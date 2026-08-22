@@ -19,7 +19,7 @@ Each requirement area or feature folder should follow the same structure where i
 - `notes/` for working thoughts, hypotheses, musings, and open questions
 - `prd/` for the current PRD and major revisions
 - `backlog/` for Epics, User Stories, and related delivery artefacts
-- `prototypes/` for Pencil files, HTML mocks, wireframes, or other explorations
+- `prototypes/` for pen.dev (`.pen`) files, HTML mocks, wireframes, or other explorations
 - `reports/` for executive reports, stakeholder summaries, and review outputs
 
 Example:

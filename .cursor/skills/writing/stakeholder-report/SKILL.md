@@ -1,13 +1,13 @@
 ---
 name: stakeholder-report
-description: Create polished, visually designed stakeholder reports as print-ready HTML artefacts. Use when the user wants to generate an executive report, status update, product summary, sprint review, dashboard, or any stakeholder-facing document. Supports both full report creation in Pencil and direct HTML export from an existing `.pen` file.
+description: Create polished, visually designed stakeholder reports as print-ready HTML artefacts. Use when the user wants to generate an executive report, status update, product summary, sprint review, dashboard, or any stakeholder-facing document. Supports both full report creation in pen.dev and direct HTML export from an existing `.pen` file.
 ---
 
 # Stakeholder Report
 
 Use this skill for two common workflows:
 
-1. **Create a new stakeholder report** — gather context, design in Pencil, review, then export to HTML.
+1. **Create a new stakeholder report** — gather context, design in pen.dev, review, then export to HTML.
 2. **Export an existing `.pen` report to HTML** — inspect the supplied design, verify it visually, extract its structure, and recreate it as clean HTML.
 
 ## Phase 0: Load Preferences
@@ -37,21 +37,21 @@ Summarise your understanding in 3–5 bullet points and ask the user to confirm 
 
 ---
 
-## Phase 2: Design in Pencil
+## Phase 2: Design in pen.dev
 
-See [references/pencil-workflow.md](references/pencil-workflow.md) for the full step-by-step Pencil workflow.
+See [references/pen-dev-workflow.md](references/pen-dev-workflow.md) for the full step-by-step pen.dev workflow.
 
 ### Summary
 
 1. If the user supplied a `.pen` file and asked for HTML, skip new design creation and move to the **Existing `.pen` shortcut** below.
-2. Otherwise, open `design-system/example-design-system.pen` with `open_document`.
-3. Immediately call `get_editor_state(include_schema: true)` before any read or write work.
-4. Use `batch_get` to extract the colour palette, typography, and reusable component styles from the design system.
+2. Otherwise, open `design-system/example-design-system.pen` in the editor.
+3. Immediately call `get_app_state` before any read or write work.
+4. Use `execute` `Get` and `GetVariables` to extract the colour palette, typography, and reusable component styles from the design system.
 5. Determine the output path:
    - Prefer `[feature-folder]/reports/` (for example `requirements/savings/reports/`)
    - For examples, prefer `examples/[name]/reports/`
    - If the user points at an existing `.pen` file directly, it is acceptable to export the HTML alongside that file
-6. Create a new `.pen` file at that path using `open_document('new')`, then rename/save it.
+6. Create a new `.pen` file at that path in the editor.
 7. Build the design:
    - Default: one frame per A4 page (`794 × 1123 px`)
    - For dashboards or wide review artefacts, a wider canvas is acceptable if the user wants browser-first output rather than print-first output
@@ -61,14 +61,14 @@ See [references/pencil-workflow.md](references/pencil-workflow.md) for the full 
 
 Use this path when the user asks for HTML from an already-designed `.pen` file.
 
-1. Open the supplied `.pen` file with `open_document`.
-2. Call `get_editor_state(include_schema: true)` immediately.
-3. Use `batch_get` to inspect top-level nodes first.
+1. Open the supplied `.pen` file in the editor.
+2. Call `get_app_state` immediately.
+3. Use `execute` `Get` to inspect top-level nodes first.
 4. Read deeper only where needed:
    - first top-level frames
    - then specific sections
    - then individual cards or text groups if structure is still unclear
-5. Use `get_screenshot` on the main report frame to verify visual intent before rebuilding it in HTML.
+5. Use `execute` `TakeScreenshot` on the main report frame to verify visual intent before rebuilding it in HTML.
 6. Prefer **semantic reconstruction** in HTML:
    - recreate the layout as sections, cards, lists, headers, and metadata badges
    - carry over the real text content, hierarchy, colours, spacing, and grouping
@@ -81,7 +81,7 @@ Use this path when the user asks for HTML from an already-designed `.pen` file.
 
 After completing the initial design:
 
-1. Use `get_screenshot` to capture the canvas and show it to the user.
+1. Use `execute` `TakeScreenshot` to capture the canvas and show it to the user.
 2. Ask: *"Here's the initial design — what would you like to adjust? (layout, content, colours, hierarchy, wording)"*
 3. Iterate until the user confirms they are satisfied.
 
@@ -95,7 +95,7 @@ See [references/html-export.md](references/html-export.md) for the A4 HTML templ
 
 ### Summary
 
-1. Use `batch_get` to extract the final layout, text content, colours, and structure from the `.pen` file.
+1. Use `execute` `Get` to extract the final layout, text content, colours, and structure from the `.pen` file.
 2. Generate a single self-contained `.html` file:
    - for reports created in this workflow, use the same directory as the `.pen` file
    - for direct exports, place the HTML alongside the source `.pen` unless the user asks for another location
