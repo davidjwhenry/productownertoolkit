@@ -38,8 +38,8 @@ Choose the output format based on the source artefact:
 
 ## Practical Workflow
 
-1. Inspect the `.pen` structure with `batch_get`.
-2. Capture a screenshot of the main report frame with `get_screenshot`.
+1. Inspect the `.pen` structure with `execute` `Get`.
+2. Capture a screenshot of the main report frame with `execute` `TakeScreenshot`.
 3. Reconstruct the main sections in HTML.
 4. Translate visual tokens:
    - pills and badges -> inline-flex spans
@@ -52,7 +52,7 @@ Choose the output format based on the source artefact:
 
 Before finishing:
 
-1. Compare the HTML against the screenshot and structure read from Pencil.
+1. Compare the HTML against the screenshot and structure read from pen.dev.
 2. Confirm the main sections and card groups are present.
 3. Confirm all important text content was carried over.
 4. Check that colours, spacing, and hierarchy are reasonably faithful.

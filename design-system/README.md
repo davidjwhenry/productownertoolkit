@@ -7,7 +7,7 @@ This folder stores reusable brand and UI reference material that drafting and re
 - Brand tokens
 - Voice and tone guidance
 - UI patterns or component references
-- Pencil files or other design artefacts used as examples
+- pen.dev (`.pen`) files or other design artefacts used as examples
 
 ## Rules
 
