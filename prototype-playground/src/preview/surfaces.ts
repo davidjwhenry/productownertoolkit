@@ -77,5 +77,7 @@ export function zoomScale(mode: ZoomMode, container: { width: number; height: nu
   if (mode !== 'fit') return Number(mode) / 100
   if (container.width <= 0 || container.height <= 0) return 1
   const scale = Math.min(container.width / frame.width, container.height / frame.height)
-  return Math.min(1, Math.max(0.05, scale))
+  // Allow moderate upscaling so portrait devices fill tall canvases;
+  // cap at 1.5× to avoid oversized rendering on very large monitors.
+  return Math.min(1.5, Math.max(0.05, scale))
 }

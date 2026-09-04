@@ -72,98 +72,293 @@
       --font-secondary: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
     }
 
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; }
 
     body {
-      margin: 0;
       background: var(--background);
       color: var(--foreground);
       font-family: var(--font-secondary);
       line-height: 1.5;
-      padding-top: calc(var(--prototype-safe-area-top, 0px) + 24px);
-      padding-bottom: calc(var(--prototype-safe-area-bottom, 0px) + 32px);
-      padding-left: calc(var(--prototype-safe-area-left, 0px) + 24px);
-      padding-right: calc(var(--prototype-safe-area-right, 0px) + 24px);
+      font-size: 15px;
+      padding-top: calc(var(--prototype-safe-area-top, 0px) + 16px);
+      padding-bottom: calc(var(--prototype-safe-area-bottom, 0px) + 24px);
+      padding-left: calc(var(--prototype-safe-area-left, 0px) + 20px);
+      padding-right: calc(var(--prototype-safe-area-right, 0px) + 20px);
+      -webkit-font-smoothing: antialiased;
     }
 
-    main { display: block; max-width: 720px; margin: 0 auto; }
+    main { display: block; max-width: 480px; margin: 0 auto; }
     section[data-prototype-screen] { outline: none; }
+    p { margin: 0; }
 
-    .stack { display: grid; gap: 20px; }
+    .stack { display: grid; gap: 16px; }
+
+    /* Cards */
     .card {
       background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-m);
+      border-radius: 20px;
       padding: 24px;
     }
-    .eyebrow { color: var(--muted-foreground); font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 4px; }
-    h1 { font-size: 26px; margin: 0 0 8px; }
-    h2 { font-size: 19px; margin: 0 0 8px; }
-    .muted { color: var(--muted-foreground); }
 
-    .stepper { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; font-size: 13px; color: var(--muted-foreground); }
-    .stepper li { border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 4px 12px; }
+    /* Typography */
+    .eyebrow {
+      color: var(--muted-foreground);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+    h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 4px; }
+    .muted { color: var(--muted-foreground); font-size: 14px; }
 
-    .pot-row { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
-    .pot-icon { flex: none; }
-    .pot-meta { flex: 1 1 240px; }
-    .pot-figures { text-align: right; font-family: var(--font-primary); }
-    .pot-figures .balance { font-size: 26px; font-weight: 600; }
-    .progress-track { height: 10px; background: var(--secondary); border-radius: var(--radius-pill); overflow: hidden; }
-    .progress-fill { height: 100%; width: 24%; background: var(--primary); border-radius: var(--radius-pill); }
-    .progress-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted-foreground); margin-top: 6px; }
+    /* Step progress bar */
+    .stepper {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+      padding: 0;
+    }
+    .stepper li {
+      flex: 1;
+      height: 4px;
+      border-radius: var(--radius-pill);
+      background: var(--secondary);
+      font-size: 0;
+      overflow: hidden;
+    }
+    .stepper li:first-child { background: var(--primary); }
+    [data-prototype-screen="step-amount"] .stepper li:nth-child(-n+2) { background: var(--primary); }
+    [data-prototype-screen="step-roundups"] .stepper li:nth-child(-n+3) { background: var(--primary); }
+    [data-prototype-screen="review"] .stepper li { background: var(--primary); }
 
-    fieldset { border: 1px solid var(--border); border-radius: var(--radius-m); padding: 16px 20px 20px; margin: 0; }
-    legend { padding: 0 8px; font-weight: 600; font-size: 14px; }
-    .choices { display: flex; flex-wrap: wrap; gap: 12px; }
-    .choice { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 10px 18px; cursor: pointer; }
-    .choice:has(input:checked) { border-color: var(--primary); background: var(--secondary); }
-    .choice input { accent-color: var(--primary); margin: 0; }
+    /* Pot card — hero balance layout */
+    .pot-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 4px;
+      padding: 28px 24px;
+    }
+    .pot-balance {
+      font-family: var(--font-primary);
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-top: 12px;
+    }
+    .pot-detail {
+      color: var(--muted-foreground);
+      font-size: 13px;
+    }
+    .progress {
+      width: 100%;
+      margin-top: 16px;
+    }
+    .progress-track {
+      height: 6px;
+      background: var(--secondary);
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 24%;
+      background: var(--primary);
+      border-radius: var(--radius-pill);
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--muted-foreground);
+      margin-top: 6px;
+    }
+    .pot-note {
+      color: var(--muted-foreground);
+      font-size: 13px;
+      text-align: left;
+      width: 100%;
+      margin-top: 12px;
+    }
 
-    .amount-row { display: flex; align-items: baseline; gap: 10px; }
-    .amount-row .currency { font-size: 20px; color: var(--muted-foreground); }
+    /* Setup steps list */
+    .setup-steps {
+      margin: 16px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 0;
+    }
+    .setup-steps li {
+      padding: 14px 0;
+      font-size: 14px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .setup-steps li + li { border-top: 1px solid var(--secondary); }
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--secondary);
+      color: var(--foreground);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+    }
+
+    /* Form sections */
+    fieldset { border: none; padding: 0; margin: 0; }
+    legend {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+      display: block;
+      width: 100%;
+    }
+
+    .choices { display: grid; gap: 10px; }
+    .choice {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--card);
+      border: 2px solid var(--secondary);
+      border-radius: 14px;
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: border-color 0.15s ease;
+      font-size: 15px;
+    }
+    .choice:has(input:checked) {
+      border-color: var(--primary);
+    }
+    .choice input { accent-color: var(--primary); margin: 0; flex: none; }
+
+    /* Amount input */
+    .amount-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 4px;
+      padding: 8px 0;
+    }
+    .amount-row .currency {
+      font-family: var(--font-primary);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--muted-foreground);
+    }
     input[name="amount"] {
       font-family: var(--font-primary);
-      font-size: 24px;
-      padding: 10px 14px;
-      width: 180px;
-      border: 1px solid var(--input);
-      border-radius: var(--radius-m);
+      font-size: 32px;
+      font-weight: 700;
+      text-align: center;
+      padding: 10px 12px;
+      width: 140px;
+      border: 2px solid var(--secondary);
+      border-radius: 14px;
       background: var(--popover);
       color: var(--foreground);
+      transition: border-color 0.15s ease;
+      outline: none;
     }
-    .field-message { color: var(--color-error-foreground); background: var(--color-error); border-radius: var(--radius-m); padding: 10px 14px; margin: 10px 0 0; font-size: 14px; }
+    input[name="amount"]:focus { border-color: var(--primary); }
+
+    .field-hint {
+      color: var(--muted-foreground);
+      font-size: 13px;
+      margin-top: 8px;
+      text-align: center;
+    }
+    .field-message {
+      color: var(--color-error-foreground);
+      background: var(--color-error);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: 500;
+    }
     .field-message:empty { display: none; }
-    .field-hint { color: var(--muted-foreground); font-size: 13px; margin: 8px 0 0; }
 
-    .explain { background: var(--color-info); color: var(--color-info-foreground); border-radius: var(--radius-m); padding: 14px 18px; }
-    .explain ul { margin: 8px 0 0; padding-left: 20px; }
-    .explain-warning { background: var(--color-warning); color: var(--color-warning-foreground); }
+    /* Info/explanation boxes */
+    .explain {
+      background: var(--color-info);
+      color: var(--color-info-foreground);
+      border-radius: 16px;
+      padding: 16px 20px;
+      font-size: 14px;
+    }
+    .explain strong { font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .explain ul { margin: 8px 0 0; padding-left: 18px; }
+    .explain li + li { margin-top: 4px; }
+    .explain-warning {
+      background: var(--color-warning);
+      color: var(--color-warning-foreground);
+    }
 
-    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+    /* Actions — full-width stacked */
+    .actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
     button {
       font-family: var(--font-secondary);
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 600;
       border-radius: var(--radius-pill);
-      padding: 12px 22px;
+      padding: 16px 24px;
       cursor: pointer;
-      border: 1px solid transparent;
+      border: none;
+      width: 100%;
+      transition: transform 0.1s ease;
     }
-    .button-primary { background: var(--primary); color: var(--primary-foreground); }
-    .button-secondary { background: var(--secondary); color: var(--secondary-foreground); border-color: var(--border); }
-    .button-destructive { background: transparent; color: var(--destructive); border-color: var(--destructive); }
+    button:active { transform: scale(0.98); }
+    .button-primary {
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+    .button-secondary {
+      background: var(--secondary);
+      color: var(--secondary-foreground);
+    }
+    .button-destructive {
+      background: transparent;
+      color: var(--destructive);
+      border: 1.5px solid var(--destructive);
+    }
 
-    .alert { border-radius: var(--radius-m); padding: 16px 20px; }
+    /* Alerts */
+    .alert { border-radius: 20px; padding: 24px; }
     .alert-success { background: var(--color-success); color: var(--color-success-foreground); }
     .alert-error { background: var(--color-error); color: var(--color-error-foreground); }
     .alert-info { background: var(--color-info); color: var(--color-info-foreground); }
-    .alert h2 { margin: 0 0 6px; }
+    .alert h2 { margin-bottom: 6px; }
 
+    /* Summary */
     .summary { display: grid; gap: 0; }
-    .summary-row { display: flex; justify-content: space-between; gap: 24px; padding: 12px 0; border-bottom: 1px solid var(--border); }
-    .summary-row:last-child { border-bottom: none; }
-    .summary-value { font-family: var(--font-primary); font-weight: 600; }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      padding: 14px 0;
+      font-size: 14px;
+    }
+    .summary-row + .summary-row { border-top: 1px solid var(--secondary); }
+    .summary-value { font-family: var(--font-primary); font-weight: 600; text-align: right; }
     [data-prototype-bind] { font-family: var(--font-primary); font-weight: 600; }
   </style>
 </head>
@@ -174,34 +369,30 @@
         <div>
           <p class="eyebrow">Savings pots</p>
           <h1>Flat deposit</h1>
-          <p class="muted">Progress toward your £1,000 target for the flat deposit.</p>
+          <p class="muted">Progress toward your £1,000 target.</p>
         </div>
-        <div class="card pot-row">
-          <svg class="pot-icon" width="56" height="56" viewBox="0 0 56 56" role="img" aria-label="Savings pot">
-            <circle cx="28" cy="28" r="26" fill="var(--secondary)"></circle>
+        <div class="card pot-card">
+          <svg class="pot-icon" width="44" height="44" viewBox="0 0 56 56" role="img" aria-label="Savings pot">
+            <rect width="56" height="56" rx="16" fill="var(--secondary)"></rect>
             <path d="M18 30a10 10 0 0 1 20 0v6a4 4 0 0 1-4 4h-12a4 4 0 0 1-4-4z" fill="var(--primary)"></path>
             <rect x="23" y="16" width="10" height="4" rx="2" fill="var(--primary)"></rect>
           </svg>
-          <div class="pot-meta">
-            <div aria-label="Progress toward target">
-              <div class="progress-track"><div class="progress-fill"></div></div>
-              <div class="progress-label"><span>£240 saved</span><span>24% of £1,000</span></div>
-            </div>
-            <p class="muted" style="font-size:13px; margin:10px 0 0;">Pot funds stay part of your overall balance. Your available current-account balance today is £1,214.50.</p>
+          <div class="pot-balance">£240.00</div>
+          <p class="pot-detail">Last top-up £40 · 3 days ago</p>
+          <div class="progress" aria-label="Progress toward target">
+            <div class="progress-track"><div class="progress-fill"></div></div>
+            <div class="progress-label"><span>£240 saved</span><span>24% of £1,000</span></div>
           </div>
-          <div class="pot-figures">
-            <div class="balance">£240.00</div>
-            <div class="muted" style="font-size:13px;">Last top-up £40 · 3 days ago</div>
-          </div>
+          <p class="pot-note">Pot funds stay part of your overall balance. Your available current-account balance today is £1,214.50.</p>
         </div>
         <div class="card">
           <h2>Save steadily, with the facts first</h2>
-          <p class="muted">A short guided setup explains each money movement before you confirm anything. Four steps, and you can go back at any point.</p>
-          <ol class="muted" style="margin:12px 0 0; padding-left:20px; font-size:14px;">
-            <li>Choose how often to save</li>
-            <li>Set the amount</li>
-            <li>Decide on card round-ups</li>
-            <li>Review and confirm</li>
+          <p class="muted">A short guided setup explains each money movement before you confirm anything.</p>
+          <ol class="setup-steps">
+            <li><span class="step-num">1</span> Choose how often to save</li>
+            <li><span class="step-num">2</span> Set the amount</li>
+            <li><span class="step-num">3</span> Decide on card round-ups</li>
+            <li><span class="step-num">4</span> Review and confirm</li>
           </ol>
           <div class="actions">
             <button type="button" class="button-primary" data-prototype-go="step-cadence">Start guided setup</button>
@@ -219,15 +410,17 @@
         <ul class="stepper" aria-hidden="true">
           <li>1 · Cadence</li><li>2 · Amount</li><li>3 · Round-ups</li><li>4 · Review</li>
         </ul>
-        <form id="cadence-form">
-          <fieldset>
-            <legend>Recurring contribution</legend>
-            <div class="choices" role="radiogroup" aria-label="Contribution cadence">
-              <label class="choice"><input type="radio" name="cadence" value="Weekly" checked> Weekly, every Friday</label>
-              <label class="choice"><input type="radio" name="cadence" value="Monthly"> Monthly, on the 1st</label>
-            </div>
-          </fieldset>
-        </form>
+        <div class="card">
+          <form id="cadence-form">
+            <fieldset>
+              <legend>Recurring contribution</legend>
+              <div class="choices" role="radiogroup" aria-label="Contribution cadence">
+                <label class="choice"><input type="radio" name="cadence" value="Weekly" checked> Weekly, every Friday</label>
+                <label class="choice"><input type="radio" name="cadence" value="Monthly"> Monthly, on the 1st</label>
+              </div>
+            </fieldset>
+          </form>
+        </div>
         <div class="explain">
           <strong>What this means</strong>
           <ul>
@@ -251,18 +444,20 @@
         <ul class="stepper" aria-hidden="true">
           <li>1 · Cadence</li><li>2 · Amount</li><li>3 · Round-ups</li><li>4 · Review</li>
         </ul>
-        <form id="amount-form">
-          <fieldset>
-            <legend>Amount per contribution</legend>
-            <div class="amount-row">
-              <span class="currency">£</span>
-              <input type="number" id="amount" name="amount" value="25" min="1" max="500" required aria-describedby="amount-hint">
-            </div>
-            <p class="field-hint" id="amount-hint">Between £1 and £500, from your current account.</p>
-            <p class="field-message" data-prototype-validation-for="amount" id="amount-message" aria-live="polite"></p>
-            <p class="field-hint" data-prototype-scenario="validation-error">Try an amount outside the range, such as 750, then choose Continue.</p>
-          </fieldset>
-        </form>
+        <div class="card">
+          <form id="amount-form">
+            <fieldset>
+              <legend>Amount per contribution</legend>
+              <div class="amount-row">
+                <span class="currency">£</span>
+                <input type="number" id="amount" name="amount" value="25" min="1" max="500" required aria-describedby="amount-hint">
+              </div>
+              <p class="field-hint" id="amount-hint">Between £1 and £500</p>
+              <p class="field-message" data-prototype-validation-for="amount" id="amount-message" aria-live="polite"></p>
+              <p class="field-hint" data-prototype-scenario="validation-error">Try an amount outside the range, such as 750, then choose Continue.</p>
+            </fieldset>
+          </form>
+        </div>
         <div class="explain">
           <strong>Where the money comes from</strong>
           <ul>
@@ -288,15 +483,17 @@
         <ul class="stepper" aria-hidden="true">
           <li>1 · Cadence</li><li>2 · Amount</li><li>3 · Round-ups</li><li>4 · Review</li>
         </ul>
-        <form id="roundups-form">
-          <fieldset>
-            <legend>Card round-ups</legend>
-            <div class="choices" role="radiogroup" aria-label="Round-ups">
-              <label class="choice"><input type="radio" name="round-ups" value="On" checked> Yes, round up card purchases</label>
-              <label class="choice"><input type="radio" name="round-ups" value="Off"> No, recurring saving only</label>
-            </div>
-          </fieldset>
-        </form>
+        <div class="card">
+          <form id="roundups-form">
+            <fieldset>
+              <legend>Card round-ups</legend>
+              <div class="choices" role="radiogroup" aria-label="Round-ups">
+                <label class="choice"><input type="radio" name="round-ups" value="On" checked> Yes, round up card purchases</label>
+                <label class="choice"><input type="radio" name="round-ups" value="Off"> No, recurring saving only</label>
+              </div>
+            </fieldset>
+          </form>
+        </div>
         <div class="explain">
           <strong>Exactly how round-ups work</strong>
           <ul>
@@ -366,9 +563,9 @@
           </div>
         </div>
         <div class="actions">
+          <button type="button" class="button-primary" data-prototype-reset>Done</button>
           <button type="button" class="button-secondary" data-prototype-go="step-cadence">Change details</button>
           <button type="button" class="button-destructive" data-prototype-go="paused">Pause automation</button>
-          <button type="button" class="button-primary" data-prototype-reset>Done</button>
         </div>
       </div>
     </section>
