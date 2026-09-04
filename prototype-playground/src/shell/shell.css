@@ -189,9 +189,8 @@ body {
   flex: 1;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
-  padding: 24px;
-  align-content: start;
+  gap: 16px;
+  padding: 16px;
   justify-items: center;
   overflow: hidden;
 }
