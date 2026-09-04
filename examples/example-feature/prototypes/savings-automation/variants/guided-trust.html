@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Savings automation — Guided trust</title>
+  <style>
+    /* Complete default@v001 token set, inlined for self-containment. */
+    :root,
+    [data-design-theme="light"] {
+      --background: #F2F3F0;
+      --popover: #FFFFFF;
+      --border: #CBCCC9;
+      --foreground: #111111;
+      --input: #CBCCC9;
+      --secondary: #E7E8E5;
+      --primary: #FF8400;
+      --muted-foreground: #666666;
+      --secondary-foreground: #111111;
+      --primary-foreground: #111111;
+      --destructive: #D93C15;
+      --card: #FFFFFF;
+      --sidebar: #E7E8E5;
+      --sidebar-border: #CBCCC9;
+      --sidebar-foreground: #666666;
+      --sidebar-accent: #CBCCC9;
+      --sidebar-accent-foreground: #18181b;
+      --color-success: #DFE6E1;
+      --color-success-foreground: #004D1A;
+      --color-info: #DFDFE6;
+      --color-info-foreground: #000066;
+      --color-warning: #E9E3D8;
+      --color-warning-foreground: #804200;
+      --color-error: #E5DCDA;
+      --color-error-foreground: #8C1C00;
+    }
+
+    [data-design-theme="dark"] {
+      --background: #111111;
+      --popover: #1A1A1A;
+      --border: #2E2E2E;
+      --foreground: #FFFFFF;
+      --input: #2E2E2E;
+      --secondary: #2E2E2E;
+      --primary: #FF8400;
+      --muted-foreground: #B8B9B6;
+      --secondary-foreground: #FFFFFF;
+      --primary-foreground: #111111;
+      --destructive: #FF5C33;
+      --card: #1A1A1A;
+      --sidebar: #18181b;
+      --sidebar-border: #ffffff1a;
+      --sidebar-foreground: #fafafa;
+      --sidebar-accent: #2a2a30;
+      --sidebar-accent-foreground: #fafafa;
+      --color-success: #222924;
+      --color-success-foreground: #B6FFCE;
+      --color-info: #222229;
+      --color-info-foreground: #B2B2FF;
+      --color-warning: #291C0F;
+      --color-warning-foreground: #FF8400;
+      --color-error: #24100B;
+      --color-error-foreground: #FF5C33;
+    }
+
+    :root {
+      --white: #FFFFFF;
+      --radius-pill: 999px;
+      --radius-m: 16px;
+      --radius-none: 0px;
+      --font-primary: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --font-secondary: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--foreground);
+      font-family: var(--font-secondary);
+      line-height: 1.5;
+      padding-top: calc(var(--prototype-safe-area-top, 0px) + 24px);
+      padding-bottom: calc(var(--prototype-safe-area-bottom, 0px) + 32px);
+      padding-left: calc(var(--prototype-safe-area-left, 0px) + 24px);
+      padding-right: calc(var(--prototype-safe-area-right, 0px) + 24px);
+    }
+
+    main { display: block; max-width: 720px; margin: 0 auto; }
+    section[data-prototype-screen] { outline: none; }
+
+    .stack { display: grid; gap: 20px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-m);
+      padding: 24px;
+    }
+    .eyebrow { color: var(--muted-foreground); font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 4px; }
+    h1 { font-size: 26px; margin: 0 0 8px; }
+    h2 { font-size: 19px; margin: 0 0 8px; }
+    .muted { color: var(--muted-foreground); }
+
+    .stepper { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; font-size: 13px; color: var(--muted-foreground); }
+    .stepper li { border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 4px 12px; }
+
+    .pot-row { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
+    .pot-icon { flex: none; }
+    .pot-meta { flex: 1 1 240px; }
+    .pot-figures { text-align: right; font-family: var(--font-primary); }
+    .pot-figures .balance { font-size: 26px; font-weight: 600; }
+    .progress-track { height: 10px; background: var(--secondary); border-radius: var(--radius-pill); overflow: hidden; }
+    .progress-fill { height: 100%; width: 24%; background: var(--primary); border-radius: var(--radius-pill); }
+    .progress-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted-foreground); margin-top: 6px; }
+
+    fieldset { border: 1px solid var(--border); border-radius: var(--radius-m); padding: 16px 20px 20px; margin: 0; }
+    legend { padding: 0 8px; font-weight: 600; font-size: 14px; }
+    .choices { display: flex; flex-wrap: wrap; gap: 12px; }
+    .choice { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 10px 18px; cursor: pointer; }
+    .choice:has(input:checked) { border-color: var(--primary); background: var(--secondary); }
+    .choice input { accent-color: var(--primary); margin: 0; }
+
+    .amount-row { display: flex; align-items: baseline; gap: 10px; }
+    .amount-row .currency { font-size: 20px; color: var(--muted-foreground); }
+    input[name="amount"] {
+      font-family: var(--font-primary);
+      font-size: 24px;
+      padding: 10px 14px;
+      width: 180px;
+      border: 1px solid var(--input);
+      border-radius: var(--radius-m);
+      background: var(--popover);
+      color: var(--foreground);
+    }
+    .field-message { color: var(--color-error-foreground); background: var(--color-error); border-radius: var(--radius-m); padding: 10px 14px; margin: 10px 0 0; font-size: 14px; }
+    .field-message:empty { display: none; }
+    .field-hint { color: var(--muted-foreground); font-size: 13px; margin: 8px 0 0; }
+
+    .explain { background: var(--color-info); color: var(--color-info-foreground); border-radius: var(--radius-m); padding: 14px 18px; }
+    .explain ul { margin: 8px 0 0; padding-left: 20px; }
+    .explain-warning { background: var(--color-warning); color: var(--color-warning-foreground); }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+    button {
+      font-family: var(--font-secondary);
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: var(--radius-pill);
+      padding: 12px 22px;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .button-primary { background: var(--primary); color: var(--primary-foreground); }
+    .button-secondary { background: var(--secondary); color: var(--secondary-foreground); border-color: var(--border); }
+    .button-destructive { background: transparent; color: var(--destructive); border-color: var(--destructive); }
+
+    .alert { border-radius: var(--radius-m); padding: 16px 20px; }
+    .alert-success { background: var(--color-success); color: var(--color-success-foreground); }
+    .alert-error { background: var(--color-error); color: var(--color-error-foreground); }
+    .alert-info { background: var(--color-info); color: var(--color-info-foreground); }
+    .alert h2 { margin: 0 0 6px; }
+
+    .summary { display: grid; gap: 0; }
+    .summary-row { display: flex; justify-content: space-between; gap: 24px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-value { font-family: var(--font-primary); font-weight: 600; }
+    [data-prototype-bind] { font-family: var(--font-primary); font-weight: 600; }
+  </style>
+</head>
+<body data-prototype-start="overview">
+  <main>
+    <section data-prototype-screen="overview" id="overview">
+      <div class="stack">
+        <div>
+          <p class="eyebrow">Savings pots</p>
+          <h1>Flat deposit</h1>
+          <p class="muted">Progress toward your £1,000 target for the flat deposit.</p>
+        </div>
+        <div class="card pot-row">
+          <svg class="pot-icon" width="56" height="56" viewBox="0 0 56 56" role="img" aria-label="Savings pot">
+            <circle cx="28" cy="28" r="26" fill="var(--secondary)"></circle>
+            <path d="M18 30a10 10 0 0 1 20 0v6a4 4 0 0 1-4 4h-12a4 4 0 0 1-4-4z" fill="var(--primary)"></path>
+            <rect x="23" y="16" width="10" height="4" rx="2" fill="var(--primary)"></rect>
+          </svg>
+          <div class="pot-meta">
+            <div aria-label="Progress toward target">
+              <div class="progress-track"><div class="progress-fill"></div></div>
+              <div class="progress-label"><span>£240 saved</span><span>24% of £1,000</span></div>
+            </div>
+            <p class="muted" style="font-size:13px; margin:10px 0 0;">Pot funds stay part of your overall balance. Your available current-account balance today is £1,214.50.</p>
+          </div>
+          <div class="pot-figures">
+            <div class="balance">£240.00</div>
+            <div class="muted" style="font-size:13px;">Last top-up £40 · 3 days ago</div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Save steadily, with the facts first</h2>
+          <p class="muted">A short guided setup explains each money movement before you confirm anything. Four steps, and you can go back at any point.</p>
+          <ol class="muted" style="margin:12px 0 0; padding-left:20px; font-size:14px;">
+            <li>Choose how often to save</li>
+            <li>Set the amount</li>
+            <li>Decide on card round-ups</li>
+            <li>Review and confirm</li>
+          </ol>
+          <div class="actions">
+            <button type="button" class="button-primary" data-prototype-go="step-cadence">Start guided setup</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section data-prototype-screen="step-cadence" id="step-cadence" hidden>
+      <div class="stack">
+        <div>
+          <p class="eyebrow">Step 1 of 4</p>
+          <h1>How often should saving happen?</h1>
+        </div>
+        <ul class="stepper" aria-hidden="true">
+          <li>1 · Cadence</li><li>2 · Amount</li><li>3 · Round-ups</li><li>4 · Review</li>
+        </ul>
+        <form id="cadence-form">
+          <fieldset>
+            <legend>Recurring contribution</legend>
+            <div class="choices" role="radiogroup" aria-label="Contribution cadence">
+              <label class="choice"><input type="radio" name="cadence" value="Weekly" checked> Weekly, every Friday</label>
+              <label class="choice"><input type="radio" name="cadence" value="Monthly"> Monthly, on the 1st</label>
+            </div>
+          </fieldset>
+        </form>
+        <div class="explain">
+          <strong>What this means</strong>
+          <ul>
+            <li>Contributions move from your current account to Flat deposit on the day shown.</li>
+            <li>Choosing weekly means 4–5 movements a month; each one appears in your transaction feed.</li>
+          </ul>
+        </div>
+        <div class="actions">
+          <button type="button" class="button-primary" data-prototype-go="step-amount">Continue</button>
+          <button type="button" class="button-secondary" data-prototype-reset>Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <section data-prototype-screen="step-amount" id="step-amount" hidden>
+      <div class="stack">
+        <div>
+          <p class="eyebrow">Step 2 of 4</p>
+          <h1>How much each time?</h1>
+        </div>
+        <ul class="stepper" aria-hidden="true">
+          <li>1 · Cadence</li><li>2 · Amount</li><li>3 · Round-ups</li><li>4 · Review</li>
+        </ul>
+        <form id="amount-form">
+          <fieldset>
+            <legend>Amount per contribution</legend>
+            <div class="amount-row">
+              <span class="currency">£</span>
+              <input type="number" id="amount" name="amount" value="25" min="1" max="500" required aria-describedby="amount-hint">
+            </div>
+            <p class="field-hint" id="amount-hint">Between £1 and £500, from your current account.</p>
+            <p class="field-message" data-prototype-validation-for="amount" id="amount-message" aria-live="polite"></p>
+            <p class="field-hint" data-prototype-scenario="validation-error">Try an amount outside the range, such as 750, then choose Continue.</p>
+          </fieldset>
+        </form>
+        <div class="explain">
+          <strong>Where the money comes from</strong>
+          <ul>
+            <li>Each contribution leaves your current account on the day you chose in step 1.</li>
+            <li>Pot funds remain part of your overall balance — this is not a separate account.</li>
+            <li>If a contribution cannot be taken, you are told why and nothing else changes.</li>
+          </ul>
+        </div>
+        <div class="actions">
+          <button type="button" class="button-primary" data-prototype-go="step-roundups" data-prototype-validate="amount-form" data-prototype-error="Enter an amount between £1 and £500">Continue</button>
+          <button type="button" class="button-secondary" data-prototype-back>Back</button>
+          <button type="button" class="button-secondary" data-prototype-reset>Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <section data-prototype-screen="step-roundups" id="step-roundups" hidden>
+      <div class="stack">
+        <div>
+          <p class="eyebrow">Step 3 of 4</p>
+          <h1>Add card round-ups?</h1>
+        </div>
+        <ul class="stepper" aria-hidden="true">
+          <li>1 · Cadence</li><li>2 · Amount</li><li>3 · Round-ups</li><li>4 · Review</li>
+        </ul>
+        <form id="roundups-form">
+          <fieldset>
+            <legend>Card round-ups</legend>
+            <div class="choices" role="radiogroup" aria-label="Round-ups">
+              <label class="choice"><input type="radio" name="round-ups" value="On" checked> Yes, round up card purchases</label>
+              <label class="choice"><input type="radio" name="round-ups" value="Off"> No, recurring saving only</label>
+            </div>
+          </fieldset>
+        </form>
+        <div class="explain">
+          <strong>Exactly how round-ups work</strong>
+          <ul>
+            <li>Spare change moves only from <strong>posted</strong> card purchases — pending authorisations never trigger a transfer.</li>
+            <li>Refunds reverse the round-up that was moved, so you never lose out on returned purchases.</li>
+            <li>Round-ups transfer once a day, whenever the day's total is at least 1p.</li>
+            <li>Everything stops immediately when you pause automation.</li>
+          </ul>
+        </div>
+        <div class="explain explain-warning">
+          <strong>Good to know</strong>
+          <ul>
+            <li>Round-ups work alongside your recurring contribution, not instead of it.</li>
+            <li>You keep earning nothing extra — pots hold your money, they do not invest it.</li>
+          </ul>
+        </div>
+        <div class="actions">
+          <button type="button" class="button-primary" data-prototype-go="review">Continue</button>
+          <button type="button" class="button-secondary" data-prototype-back>Back</button>
+          <button type="button" class="button-secondary" data-prototype-reset>Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <section data-prototype-screen="review" id="review" hidden>
+      <div class="stack">
+        <div>
+          <p class="eyebrow">Step 4 of 4</p>
+          <h1>Review and confirm</h1>
+          <p class="muted">This is everything that will happen once you confirm.</p>
+        </div>
+        <div class="card">
+          <div class="summary">
+            <div class="summary-row"><span>Recurring contribution</span><span class="summary-value">£<span data-prototype-bind="amount">25</span> <span data-prototype-bind="cadence">Weekly</span></span></div>
+            <div class="summary-row"><span>Card round-ups</span><span class="summary-value" data-prototype-bind="round-ups">On</span></div>
+            <div class="summary-row"><span>First contribution</span><span class="summary-value">Friday</span></div>
+            <div class="summary-row"><span>Pot funds</span><span>Stay part of your overall balance</span></div>
+          </div>
+        </div>
+        <div class="explain">
+          <strong>You stay in control</strong>
+          <ul>
+            <li>Pause or change automation at any time without closing Flat deposit.</li>
+            <li>Every movement is listed in your transaction feed with its reason.</li>
+            <li>If a contribution fails, you are notified with the reason and can retry or pause.</li>
+          </ul>
+        </div>
+        <div class="actions">
+          <button type="button" class="button-primary" data-prototype-go-by-scenario="happy-path:success,contribution-failure:failure,*:success">Confirm automation</button>
+          <button type="button" class="button-secondary" data-prototype-back>Back</button>
+          <button type="button" class="button-secondary" data-prototype-reset>Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <section data-prototype-screen="success" id="success" hidden>
+      <div class="stack">
+        <div class="alert alert-success" role="status">
+          <h2>Automation is set</h2>
+          <p>Flat deposit now receives £<span data-prototype-bind="amount">25</span> <span data-prototype-bind="cadence">Weekly</span> with round-ups <span data-prototype-bind="round-ups">On</span>. Your first contribution is on Friday, and every movement will be explained in your feed.</p>
+        </div>
+        <div class="card">
+          <div class="summary">
+            <div class="summary-row"><span>Projected in 6 months</span><span class="summary-value">£650 + round-ups</span></div>
+            <div class="summary-row"><span>Target reached</span><span>Around month 14 at this pace</span></div>
+            <div class="summary-row"><span>Pause or change</span><span>Any time, without closing the pot</span></div>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" class="button-secondary" data-prototype-go="step-cadence">Change details</button>
+          <button type="button" class="button-destructive" data-prototype-go="paused">Pause automation</button>
+          <button type="button" class="button-primary" data-prototype-reset>Done</button>
+        </div>
+      </div>
+    </section>
+
+    <section data-prototype-screen="failure" id="failure" hidden>
+      <div class="stack">
+        <div class="alert alert-error" role="alert">
+          <h2>Contribution failed</h2>
+          <p>Your current account had insufficient available funds when this week's £<span data-prototype-bind="amount">25</span> contribution was taken. Nothing has left your account and your pot is unchanged.</p>
+        </div>
+        <div class="explain">
+          <strong>What happens now</strong>
+          <ul>
+            <li>The automation stays active and retries on Friday.</li>
+            <li>You can retry today's contribution or pause until you are ready — the pot stays open either way.</li>
+          </ul>
+        </div>
+        <div class="actions">
+          <button type="button" class="button-primary" data-prototype-go="success">Try again</button>
+          <button type="button" class="button-destructive" data-prototype-go="paused">Pause automation</button>
+        </div>
+      </div>
+    </section>
+
+    <section data-prototype-screen="paused" id="paused" hidden>
+      <div class="stack">
+        <div class="alert alert-info" role="status">
+          <h2>Automation paused</h2>
+          <p>Recurring contributions and round-ups have stopped. Your £240 stays in Flat deposit and remains part of your overall balance.</p>
+        </div>
+        <div class="card">
+          <h2>Resume when ready</h2>
+          <p class="muted">Resuming restarts contributions on the next Friday. Your cadence, amount, and round-up choice are kept as you left them.</p>
+        </div>
+        <div class="actions">
+          <button type="button" class="button-primary" data-prototype-go="success">Resume automation</button>
+          <button type="button" class="button-secondary" data-prototype-reset>Start over</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

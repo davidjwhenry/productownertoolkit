@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://product-owner-toolkit.dev/prototype-playground/components.schema.json",
+  "title": "Component catalogue (design-system/profiles/vNNN/components.json)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "components"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "components": {
+      "type": "array",
+      "maxItems": 5000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "variants", "sourceIds"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 64
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "pattern": "^[^\\u0000-\\u001F\\u007F\\u2028\\u2029]*$"
+          },
+          "variants": {
+            "type": "array",
+            "maxItems": 64,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160,
+              "pattern": "^[^\\u0000-\\u001F\\u007F\\u2028\\u2029]*$"
+            }
+          },
+          "sourceIds": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "maxLength": 64
+            }
+          },
+          "usage": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8192,
+            "pattern": "^[^\\u0000-\\u001F\\u007F\\u2028\\u2029]*$"
+          }
+        }
+      }
+    }
+  }
+}

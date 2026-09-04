@@ -1,0 +1,470 @@
+{
+  "schemaVersion": 1,
+  "components": [
+    {
+      "id": "accordion",
+      "name": "Accordion",
+      "variants": [
+        "Closed",
+        "Open"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "alert",
+      "name": "Alert",
+      "variants": [
+        "Error",
+        "Info",
+        "Success",
+        "Warning"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "avatar",
+      "name": "Avatar",
+      "variants": [
+        "Image",
+        "Text"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "breadcrumb-item",
+      "name": "Breadcrumb Item",
+      "variants": [
+        "Active",
+        "Default",
+        "Ellipsis",
+        "Separator"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "button",
+      "name": "Button",
+      "variants": [
+        "Default",
+        "Destructive",
+        "Ghost",
+        "Large/Default",
+        "Large/Destructive",
+        "Large/Ghost",
+        "Large/Outline",
+        "Large/Secondary",
+        "Outline",
+        "Secondary"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "card",
+      "name": "Card",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "card-action",
+      "name": "Card Action",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "card-image",
+      "name": "Card Image",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "card-plain",
+      "name": "Card Plain",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "checkbox",
+      "name": "Checkbox",
+      "variants": [
+        "Checked",
+        "Default"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "checkbox-description",
+      "name": "Checkbox Description",
+      "variants": [
+        "Checked",
+        "Default"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "data-table",
+      "name": "Data Table",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "data-table-footer",
+      "name": "Data Table Footer",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "data-table-header",
+      "name": "Data Table Header",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "dialog",
+      "name": "Dialog",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "dropdown",
+      "name": "Dropdown",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "icon-button",
+      "name": "Icon Button",
+      "variants": [
+        "Default",
+        "Destructive",
+        "Large/Default",
+        "Large/Destructive",
+        "Large/Ghost",
+        "Large/Outline",
+        "Large/Secondary",
+        "Outline",
+        "Secondary"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "icon-label",
+      "name": "Icon Label",
+      "variants": [
+        "Orange",
+        "Secondary",
+        "Success",
+        "Violet"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "input",
+      "name": "Input",
+      "variants": [
+        "Default",
+        "Filled"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "input-group",
+      "name": "Input Group",
+      "variants": [
+        "Default",
+        "Filled"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "input-otp-group",
+      "name": "Input OTP Group",
+      "variants": [
+        "Default",
+        "Filled"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "label",
+      "name": "Label",
+      "variants": [
+        "Orange",
+        "Secondary",
+        "Success",
+        "Violet"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "list-divider",
+      "name": "List Divider",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "list-item",
+      "name": "List Item",
+      "variants": [
+        "Checked",
+        "Unchecked"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "list-item-title",
+      "name": "List Item Title",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "modal",
+      "name": "Modal",
+      "variants": [
+        "Center",
+        "Center Icon",
+        "Left"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "pagination",
+      "name": "Pagination",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "pagination-item",
+      "name": "Pagination Item",
+      "variants": [
+        "Active",
+        "Default",
+        "Ellipsis"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "progress",
+      "name": "Progress",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "radio",
+      "name": "Radio",
+      "variants": [
+        "Default",
+        "Selected"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "radio-description",
+      "name": "Radio Description",
+      "variants": [
+        "Default",
+        "Selected"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "search-box",
+      "name": "Search Box",
+      "variants": [
+        "Default",
+        "Filled"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "select-group",
+      "name": "Select Group",
+      "variants": [
+        "Default",
+        "Filled"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "sidebar",
+      "name": "Sidebar",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "sidebar-item",
+      "name": "Sidebar Item",
+      "variants": [
+        "Active",
+        "Default"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "sidebar-section-title",
+      "name": "Sidebar Section Title",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "switch",
+      "name": "Switch",
+      "variants": [
+        "Checked",
+        "Default"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "tab-item",
+      "name": "Tab Item",
+      "variants": [
+        "Active",
+        "Inactive"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "table-cell",
+      "name": "Table Cell",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "table-column-header",
+      "name": "Table Column Header",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "table-row",
+      "name": "Table Row",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "tabs",
+      "name": "Tabs",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "textarea",
+      "name": "Textarea",
+      "variants": [
+        "Default",
+        "Filled"
+      ],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "textarea-group",
+      "name": "Textarea Group",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    },
+    {
+      "id": "tooltip",
+      "name": "Tooltip",
+      "variants": [],
+      "sourceIds": [
+        "example-pen"
+      ]
+    }
+  ]
+}
