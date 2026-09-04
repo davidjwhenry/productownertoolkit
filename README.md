@@ -25,7 +25,7 @@ Every tool in this toolkit earns its place in one of three capability bands.
 - [GitHub MCP](./mcp-config/github.md) for shipping reality — PRs, commits, what actually went out
 - [Figma Dev Mode MCP](./mcp-config/figma.md) for design context inside your PRDs
 
-**Synthesise** — where Claude, or your LLM of choice turns inputs into artefacts. Skills are mirrored for Claude Code and Cursor under `.claude/skills/` and `.cursor/skills/`. The post-clone setup skill lives in `.cursor/skills/bootstrap-context/` and `.claude/skills/bootstrap-context/`.
+**Synthesise** — where Claude, or your LLM of choice turns inputs into artefacts. Skills are mirrored for Claude Code and Cursor under `.claude/skills/` and `.cursor/skills/`, and for Codex under `.agents/skills/`. The post-clone setup skill lives in `.cursor/skills/bootstrap-context/` and `.claude/skills/bootstrap-context/`.
 
 The intended flow is:
 
@@ -36,6 +36,7 @@ The intended flow is:
 
 *Setup skills:*
 - `bootstrap-context` — one-time post-clone setup for company defaults, placeholders, stack, and regulatory context
+- `design-system-setup` — compile local `.pen`, CSS, DTCG, or Markdown design sources into the next immutable design profile and promote it via `ACTIVE`
 
 *Shaping skills — before writing:*
 - `product-grill` — interrogate an idea, PRD, requirement, or backlog plan one question at a time before the artefact hardens
@@ -47,6 +48,7 @@ The intended flow is:
 - `uat-writer` — black-box UAT test cases as structured JSON, one file per feature area
 - `meeting-distillation` — extract decisions, actions, open questions from a transcript
 - `stakeholder-report` — render any markdown artefact as a polished, brand-themed HTML report
+- `prototype-builder` — turn a PRD into two hypothesis-led, declarative HTML prototype variants pinned to the active design profile, validated and exercised in the playground
 - `weekly-review` — structured weekly summary across personal notes and committed/local corporate work, written to `personal/reports/`
 
 *Review skills — after writing:*
@@ -61,8 +63,9 @@ The intended flow is:
 
 - Notion, if you use it, for PRDs, tickets, and stakeholder-facing pages
 - [pen.dev](./mcp-config/pen-dev.md) for in-IDE prototypes, because specs aren't always enough (formerly Pencil; also download the desktop app from their website - it's very fun to watch AI do its thing)
+- `prototype-playground/` for reviewing generated prototypes: a local, read-only web app that discovers, validates, previews, compares, and packages the repository's declarative prototypes (`cd prototype-playground && npm install && npm start`)
 - HTML reports for anything a senior leader will actually open
-- A `/design-system/` folder for brand tokens, voice, and components skills reference automatically
+- A `/design-system/` folder for brand tokens, voice, and components skills reference automatically, compiled into immutable design profiles under `design-system/profiles/`
 
 ## Quality loops: shape before you write, review before you ship
 
@@ -153,6 +156,8 @@ productowner/
 │   └── skills/
 ├── .cursor/
 │   └── skills/
+├── .agents/
+│   └── skills/
 ├── adapters/
 ├── context/
 │   ├── company-context.md
@@ -164,7 +169,9 @@ productowner/
 ├── conventions/
 │   └── front-matter.md
 ├── design-system/
+│   └── profiles/
 ├── examples/
+├── prototype-playground/
 ├── personal/
 ├── requirements/
 │   └── decisions/
@@ -184,7 +191,10 @@ productowner/
 6. Use `product-grill` on a messy idea or stakeholder request before drafting the first serious PRD.
 7. Run the relevant writing skill once the shape is clear enough: `prd-writer`, `backlog-writing`, `meeting-distillation`, or `stakeholder-report`.
 8. Run the paired review skill before treating a PRD or backlog as ready.
-9. Drop your brand tokens into [`design-system/`](./design-system/).
+9. Drop your brand tokens into [`design-system/`](./design-system/) and run `design-system-setup` to compile the first design profile.
+10. Launch the prototype playground with `cd prototype-playground && npm install && npm start`; review generated prototypes at `http://127.0.0.1:5173`.
+
+Claude Code and Cursor invoke skills with a normal prompt naming the skill (for example, "use `prototype-builder` on `examples/example-feature/prd/savings-example-prd.md`"); Codex uses the `$` prefix, such as `$prototype-builder`.
 
 ## v1: human execution first
 
