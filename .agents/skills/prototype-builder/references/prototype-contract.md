@@ -9,7 +9,8 @@ requirements/<classification>/<feature>/prototypes/<prototype-id>/
   prototype.json
   variants/
     <variant-id>.html
-  companions/                           # optional `.pen` or other source artefacts
+  companions/                           # design-notes.json + optional `.pen` artefacts
+  amendments.json                       # writeable review state (playground-owned)
   handoff/                              # generated only after review
 ```
 
@@ -22,8 +23,8 @@ Requires:
 - `schemaVersion: 1`, kebab-case `id`, `title`, `summary`, and positive integer `revision`
 - `source.prd` (repository-root-relative Markdown path) and non-empty `source.requirementIds[]` traced to the PRD
 - `designSystem: {id, version, fingerprint}` pinning the profile used to build; the fingerprint is `sha256:` plus 64 lowercase hex and must match the immutable version
-- `brief: {primaryUser, job, journey, decision}` — who the experience serves, the progress they seek, the journey prototyped, and what the variants must learn
-- `variants[]` with unique kebab-case `id`, `label`, non-empty `hypothesis`, non-empty `tradeOffs[]`, and one declarative HTML `entry`
+- `brief: {primaryUser, job, journey, decision}` — who the experience serves, the progress they seek, the journey prototyped, and the decision statement the variants argue about (capture it from `product-grill` when it crystallised there)
+- `variants[]` with unique kebab-case `id`, `label`, non-empty `hypothesis`, non-empty `tradeOffs[]`, one declarative HTML `entry`, and optional `screens[]`
 - `surfaces[]` containing one or both of `desktop` and `ios`
 - `scenarios[]` with unique kebab-case `id`, `label`, `description`, and `requirementIds[]`
 - `defaults: {variant, surface, scenario, theme}` where every value resolves to a declared variant, surface, scenario, or pinned-profile theme
@@ -32,9 +33,32 @@ Requires:
 
 The two-variant default is skill policy, not a schema restriction: manifests may contain one or more variants.
 
+## Screens
+
+When a variant declares `screens`, the set must mirror the entry's `data-prototype-screen` ids exactly (every declared screen exists in the HTML; every HTML screen is declared). Each entry:
+
+- `id` — the HTML screen id; declare the same id in sibling variants wherever the screens are equivalent so variant switches retain position
+- `label`, `order` (unique per scenario), `scenarioId` — a declared scenario; a screen used by several scenarios is declared once per scenario (the pair `scenarioId` + `id` is unique)
+- `prdRefs: [{ section, requirementIds }]` — dotted PRD section numbers that must resolve to the PRD's numbered headings; requirement IDs must be declared by `source.requirementIds` or a scenario
+- `branch: true` — marks unhappy-path screens in the sub-menu
+- `fixture: { values?, checked?, validation? }` — the state a direct jump hydrates: control `values` by `name` (radio groups take the option value), checkbox/radio `checked`, and `validation` messages by `data-prototype-validation-for` target. Every referenced control and validation target must exist in the entry HTML
+
+## Companions
+
+- `kind: "design-notes"` → `companions/design-notes.json` — `{ schemaVersion, notes: [{ id, section, label, quote, requirementIds }] }`. Quotes are verbatim PRD passages (job, trust, rules, scope); sections must resolve against the PRD. 3–5 notes, at most 12.
+- Other kinds (`.pen` exploration artefacts) remain allowed; only `design-notes` is interpreted.
+
+## Amendments
+
+`amendments.json` beside the manifest is playground-owned write state: `{ schemaVersion, amendments: [{ id, screenId, requirementId, title, note, selection: { variantId, surfaceId, scenarioId, themeId, screenId }, author, date, status: open|resolved|dismissed }] }`. Screen and requirement references are validated; invalid entries are dropped with warnings, never fatal. The dev server writes it via the shell's amendment panel; skills and humans may edit it directly with the same validation applying.
+
+## PRD Requirements
+
+The feature PRD must use numbered headings (`## 5.1. Automated Funding`) for every section the prototype references; § refs, the Open-PRD link, and the design notes resolve against them. A PRD frontmatter `notion_url` enables the hosted Open PRD link.
+
 ## Bounds
 
-IDs kebab-case, at most 64 characters. Labels and titles at most 160 characters. Requirement IDs at most 128. Free text at most 8 KiB and never ASCII control characters, U+2028, or U+2029. At most 8 variants, 32 scenarios, 256 requirement IDs, 64 limitations, and 32 companions. Variant HTML at most 10 MiB.
+IDs kebab-case, at most 64 characters. Labels and titles at most 160 characters. Requirement IDs at most 128. Free text at most 8 KiB and never ASCII control characters, U+2028, or U+2029. At most 8 variants, 256 screen declarations per variant, 32 scenarios, 256 requirement IDs, 64 limitations, and 32 companions; at most 12 design notes and 128 amendments. Variant HTML at most 10 MiB.
 
 ## Self-Contained HTML
 
@@ -49,7 +73,13 @@ Every entry is a full document — doctype, `<html lang>`, exactly one non-empty
 - `SOURCE_NOT_FOUND` — missing PRD, entry, or companion
 - `PATH_NOT_AUTHORISED` — path escape, symlink, cross-feature PRD, or entry outside its `variants/`
 - `ENTRY_NOT_SELF_CONTAINED` — forbidden element, URL, or declarative-graph violation
+- `SCREEN_NOT_IN_ENTRY` / `SCREEN_UNDECLARED` — declared screens and the entry's screen set disagree
+- `PRD_SECTION_UNRESOLVED` — a § reference matching no numbered PRD heading
+- `SCREEN_REF_UNKNOWN` / `NOTE_REF_UNKNOWN` / `AMENDMENT_REF_UNKNOWN` — requirement IDs the manifest does not declare
+- `FIXTURE_CONTROL_UNKNOWN` / `FIXTURE_VALIDATION_TARGET_UNKNOWN` — fixtures referencing controls or validation targets absent from the entry
 - `PROFILE_FINGERPRINT_MISMATCH` / `PROFILE_SCHEMA_INVALID` — pinning disagreements
 - `FILE_TOO_LARGE` — variant HTML over 10 MiB
+
+Warnings (never fatal): `DESIGN_NOTES_INVALID`, `NOTE_SECTION_UNRESOLVED`, `AMENDMENTS_INVALID`, `AMENDMENT_SCREEN_UNKNOWN`, `PRD_SECTION_MAP_EMPTY`.
 
 Opening a raw variant without the host presents its first screen statically; the generated hand-off is the supported standalone interactive artefact.

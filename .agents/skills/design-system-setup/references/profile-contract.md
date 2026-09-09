@@ -27,12 +27,16 @@ design-system/
 
 Requires `schemaVersion: 1`, `id` (stable kebab-case; the shipped profile uses `default`), `version` matching the containing `vNNN` directory, `name`, `sources`, `themes`, `defaultTheme`, and version-relative `runtimeCss`, `componentCatalogue`, and `assetCatalogue` paths. Optional `guidance` lists version-relative paths.
 
+Two optional blocks pin the playground chrome:
+
+- `deviceChrome` — the device frame geometry for both surfaces (`desktop: {titleBarHeight, outerRadius}`, `ios: {bezel, outerRadius, island, homeIndicator, safeArea}`), in pixels. When present, the shell's preview frames and safe areas render from these values; when absent, the contract presets apply (desktop 1440 × 900 behind a 42 px title bar; iOS 393 × 852 in a 12 px bezel, 54 px outer radius, 59/34 px safe areas). Record it whenever the profile's device targets differ from the presets.
+- `layout` — the shell column rhythm (`railWidth`, `flowWidth`, `notesWidth`, `stageMaxWidth`). The active profile's values drive the playground's column widths; the shipped values are `228`, `260`, `292`, and `660` (Gallery direction). Record it whenever the shell layout is deliberately re-tuned.
+
 Each source has a unique kebab-case `id`, a `kind` of `pen`, `css`, `dtcg`, `markdown`, or `figma`, `roles` drawn from `tokens`, `components`, `assets`, and `guidance`, and a `required` flag. Local sources carry a repository-root-relative `path` plus the SHA-256 of their raw bytes. Figma sources carry an HTTPS `uri` and a recorded source/version key instead — never both forms.
 
 Sources are ordered from lowest to highest precedence. The merge order used by this skill: example fallback, optional Figma extraction, existing canonical local sources, explicitly supplied current sources.
 
 `themes` lists one or more unique `{id, label}` pairs; `defaultTheme` must name one of them.
-
 ## `tokens.css`
 
 Default values live under `:root, [data-design-theme="<default>"]` and each other theme under `[data-design-theme="<theme-id>"]`. Preserve semantic CSS names such as `--background`, `--foreground`, `--primary`, `--border`, and the status colours. Convert numeric radii to pixel values. Expand font families to local/system fallback stacks — no `@import`, no `url()`, no remote fonts.

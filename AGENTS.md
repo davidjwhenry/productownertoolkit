@@ -44,7 +44,7 @@ Rules for proposing preference updates:
 | `examples/` | Worked examples |
 | `personal/` | Personal notes, to-dos, reports |
 | `design-system/` | Brand tokens, voice/tone, UI patterns; immutable design profiles under `design-system/profiles/` with the `ACTIVE` pointer |
-| `prototype-playground/` | Local, read-only web app that discovers, validates, previews, compares, and packages declarative repository prototypes; run `npm run validate` from here after generating prototypes |
+| `prototype-playground/` | Local web app that discovers, validates, previews, compares, and packages declarative repository prototypes; screen-addressable navigation with PRD § references and design notes, plus a dev-server amendments write path; run `npm run validate` from here after generating prototypes |
 | `.agents/skills/` | Codex-discoverable copies of the repo skills (`design-system-setup`, `prototype-builder`, `product-grill`) |
 
 ## Writing Standards
