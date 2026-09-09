@@ -8,15 +8,20 @@
  */
 import { glob } from 'tinyglobby'
 import type {
+  AmendmentsManifest,
+  Amendment,
   CatalogueResult,
+  DesignNotesManifest,
   Diagnostic,
+  PrdMap,
   PrototypeManifest,
   PrototypeRecord,
   PrototypeSummary,
   ResolvedDesignProfile,
   SurfaceId,
 } from '../contracts'
-import { MAX_JSON_BYTES, MAX_SURFACED_DIAGNOSTICS, MAX_VARIANT_HTML_BYTES } from '../validation/limits'
+import { MAX_JSON_BYTES, MAX_PRD_BYTES, MAX_SURFACED_DIAGNOSTICS, MAX_VARIANT_HTML_BYTES } from '../validation/limits'
+import { parsePrdMap } from '../validation/prd-map'
 import { PathError, PathResolver } from '../validation/paths'
 import { validateManifest } from '../validation/schemas'
 import { loadActiveDesignProfile, loadDesignProfileVersion } from '../validation/profile'
@@ -85,6 +90,10 @@ export function classifyManifestPath(relPath: string): DiscoveredManifest | null
 
 function error(path: string, code: string, message: string): Diagnostic {
   return { severity: 'error', code, path, message }
+}
+
+function warning(path: string, code: string, message: string): Diagnostic {
+  return { severity: 'warning', code, path, message }
 }
 
 /**
@@ -267,6 +276,8 @@ async function loadOneManifest(
 
   // Variants: authorised entry paths and declarative HTML validation.
   const entryBytes = new Map<string, Promise<string>>()
+  type EntrySurfaces = { screens: Set<string>; controlNames: Set<string>; validationTargets: Set<string> }
+  const entrySurfaces = new Map<string, EntrySurfaces>()
   for (const variant of manifest.variants) {
     const basename = variant.entry.split('/').pop()
     if (basename !== `${variant.id}.html`) {
@@ -280,6 +291,11 @@ async function loadOneManifest(
       for (const check of report.checks) {
         diagnostics.push(error(variant.entry, 'ENTRY_NOT_SELF_CONTAINED', `${check.where}: ${check.message}`))
       }
+      entrySurfaces.set(variant.id, {
+        screens: new Set(report.screens),
+        controlNames: new Set(report.controlNames),
+        validationTargets: new Set(report.validationTargets),
+      })
       entryBytes.set(variant.id, Promise.resolve(html))
     } catch (e) {
       diagnostics.push(error(variant.entry, (e as PathError).code, (e as PathError).message))
@@ -292,6 +308,147 @@ async function loadOneManifest(
       await resolver.checkFile({ kind: 'prototype-companions', prototypeDir: derived.prototypeDir }, companion.path)
     } catch (e) {
       diagnostics.push(error(companion.path, (e as PathError).code, (e as PathError).message))
+    }
+  }
+
+  // PRD section map: anchors and per-section requirement IDs.
+  let prdMap: PrdMap = { url: null, sections: [] }
+  try {
+    const prdFile = await resolver.resolveFile({ kind: 'feature-prd', featureDir: derived.featureDir }, manifest.source.prd, MAX_PRD_BYTES)
+    prdMap = parsePrdMap(prdFile.bytes.toString('utf8'))
+  } catch (e) {
+    diagnostics.push(error(manifest.source.prd, (e as PathError).code, (e as PathError).message))
+  }
+  const prdSections = new Map(prdMap.sections.map((section) => [section.section, section]))
+  if (prdSections.size === 0) {
+    diagnostics.push(warning(manifest.source.prd, 'PRD_SECTION_MAP_EMPTY', 'PRD declares no numbered headings; § references are not resolved'))
+  }
+
+  const knownRequirementIds = new Set([
+    ...manifest.source.requirementIds,
+    ...manifest.scenarios.flatMap((scenario) => scenario.requirementIds),
+  ])
+
+  // Screen declarations must mirror each entry's screen graph exactly.
+  for (const variant of manifest.variants) {
+    const surfaces = entrySurfaces.get(variant.id)
+    if (!variant.screens || !surfaces) continue
+    const declared = new Set<string>()
+    const seenKeys = new Set<string>()
+    const seenOrders = new Set<string>()
+    for (const screen of variant.screens) {
+      const where = `${variant.entry}#screens/${screen.id}`
+      if (!declaredScenarioIds.includes(screen.scenarioId)) {
+        diagnostics.push(error(where, 'PROTOTYPE_SCHEMA_INVALID', `Screen "${screen.id}" references undeclared scenario "${screen.scenarioId}"`))
+      }
+      const key = `${screen.scenarioId}/${screen.id}`
+      if (seenKeys.has(key)) {
+        diagnostics.push(error(where, 'PROTOTYPE_SCHEMA_INVALID', `Screen "${screen.id}" is declared more than once for scenario "${screen.scenarioId}"`))
+      }
+      seenKeys.add(key)
+      const orderKey = `${screen.scenarioId}/${screen.order}`
+      if (seenOrders.has(orderKey)) {
+        diagnostics.push(error(where, 'PROTOTYPE_SCHEMA_INVALID', `Order ${screen.order} is used more than once in scenario "${screen.scenarioId}"`))
+      }
+      seenOrders.add(orderKey)
+      for (const ref of screen.prdRefs) {
+        if (prdSections.size > 0 && !prdSections.has(ref.section)) {
+          diagnostics.push(error(where, 'PRD_SECTION_UNRESOLVED', `PRD section "§${ref.section}" does not match any numbered heading in ${manifest.source.prd}`))
+        }
+        for (const requirementId of ref.requirementIds) {
+          if (!knownRequirementIds.has(requirementId)) {
+            diagnostics.push(error(where, 'SCREEN_REF_UNKNOWN', `Requirement "${requirementId}" is not declared by the manifest or its scenarios`))
+          }
+        }
+      }
+      if (screen.fixture) {
+        const fixtureControls = [...Object.keys(screen.fixture.values ?? {}), ...Object.keys(screen.fixture.checked ?? {})]
+        for (const name of fixtureControls) {
+          if (!surfaces.controlNames.has(name)) {
+            diagnostics.push(error(where, 'FIXTURE_CONTROL_UNKNOWN', `Fixture references control "${name}", which is not a control name in ${variant.entry}`))
+          }
+        }
+        for (const name of Object.keys(screen.fixture.validation ?? {})) {
+          if (!surfaces.validationTargets.has(name)) {
+            diagnostics.push(error(where, 'FIXTURE_VALIDATION_TARGET_UNKNOWN', `Fixture references validation target "${name}", which has no data-prototype-validation-for element in ${variant.entry}`))
+          }
+        }
+      }
+      declared.add(screen.id)
+    }
+    for (const screenId of surfaces.screens) {
+      if (!declared.has(screenId)) {
+        diagnostics.push(error(variant.entry, 'SCREEN_UNDECLARED', `Entry screen "${screenId}" is not declared in the manifest screens of variant "${variant.id}"`))
+      }
+    }
+    for (const screenId of declared) {
+      if (!surfaces.screens.has(screenId)) {
+        diagnostics.push(error(`${variant.entry}#screens/${screenId}`, 'SCREEN_NOT_IN_ENTRY', `Declared screen "${screenId}" does not exist in ${variant.entry}`))
+      }
+    }
+  }
+
+  // Design notes companion: verbatim anchored PRD passages.
+  const designNotes: PrototypeSummary['designNotes'] = []
+  const notesCompanions = (manifest.companions ?? []).filter((companion) => companion.kind === 'design-notes')
+  if (notesCompanions.length > 1) {
+    diagnostics.push(warning(notesCompanions[1]?.path ?? relPath, 'DESIGN_NOTES_DUPLICATE', 'Multiple design-notes companions declared; the first wins'))
+  }
+  const notesCompanion = notesCompanions[0]
+  if (notesCompanion) {
+    try {
+      const file = await resolver.resolveFile({ kind: 'prototype-companions', prototypeDir: derived.prototypeDir }, notesCompanion.path, MAX_JSON_BYTES)
+      const parsed: unknown = JSON.parse(file.bytes.toString('utf8'))
+      const schemaError = validateManifest('design-notes', parsed)
+      if (schemaError) {
+        diagnostics.push(warning(notesCompanion.path, 'DESIGN_NOTES_INVALID', schemaError))
+      } else {
+        for (const note of (parsed as DesignNotesManifest).notes) {
+          if (prdSections.size > 0 && !prdSections.has(note.section)) {
+            diagnostics.push(warning(notesCompanion.path, 'NOTE_SECTION_UNRESOLVED', `Design note "${note.id}" references §${note.section}, which is not a numbered heading in the PRD`))
+            continue
+          }
+          const unknown = note.requirementIds.filter((requirementId) => !knownRequirementIds.has(requirementId))
+          if (unknown.length > 0) {
+            diagnostics.push(warning(notesCompanion.path, 'NOTE_REF_UNKNOWN', `Design note "${note.id}" references undeclared requirements: ${unknown.join(', ')}`))
+          }
+          designNotes.push(note)
+        }
+      }
+    } catch (e) {
+      diagnostics.push(warning(notesCompanion.path, 'DESIGN_NOTES_INVALID', (e as Error).message))
+    }
+  }
+
+  // Amendments: writeable review state beside the manifest. Absence is normal.
+  const amendments: Amendment[] = []
+  const amendmentsPath = `${derived.prototypeDir}/amendments.json`
+  const allScreenIds = new Set<string>()
+  for (const variant of manifest.variants) {
+    for (const screen of variant.screens ?? []) allScreenIds.add(screen.id)
+  }
+  try {
+    const file = await resolver.resolveFile({ kind: 'prototype-amendments', prototypeDir: derived.prototypeDir }, amendmentsPath, MAX_JSON_BYTES)
+    const parsed: unknown = JSON.parse(file.bytes.toString('utf8'))
+    const schemaError = validateManifest('amendments', parsed)
+    if (schemaError) {
+      diagnostics.push(warning(amendmentsPath, 'AMENDMENTS_INVALID', schemaError))
+    } else {
+      for (const amendment of (parsed as AmendmentsManifest).amendments) {
+        if (!allScreenIds.has(amendment.screenId)) {
+          diagnostics.push(warning(amendmentsPath, 'AMENDMENT_SCREEN_UNKNOWN', `Amendment "${amendment.id}" references screen "${amendment.screenId}", which no variant declares`))
+          continue
+        }
+        if (amendment.requirementId !== null && !knownRequirementIds.has(amendment.requirementId)) {
+          diagnostics.push(warning(amendmentsPath, 'AMENDMENT_REF_UNKNOWN', `Amendment "${amendment.id}" references undeclared requirement "${amendment.requirementId}"`))
+          continue
+        }
+        amendments.push(amendment)
+      }
+    }
+  } catch (e) {
+    if ((e as PathError).code !== 'SOURCE_NOT_FOUND') {
+      diagnostics.push(warning(amendmentsPath, 'AMENDMENTS_INVALID', (e as Error).message))
     }
   }
 
@@ -322,6 +479,9 @@ async function loadOneManifest(
     },
     companions: manifest.companions ?? [],
     prototypeOnly: manifest.prototypeOnly,
+    prdMap,
+    designNotes,
+    amendments,
   }
 
   const record: PrototypeRecord = {

@@ -16,6 +16,9 @@ export const MAX_VARIANT_HTML_BYTES = 10 * 1024 * 1024
 /** Maximum size of an individual guidance file inside a profile version. */
 export const MAX_GUIDANCE_FILE_BYTES = 5 * 1024 * 1024
 
+/** Maximum size of a feature PRD parsed for the section map. */
+export const MAX_PRD_BYTES = 4 * 1024 * 1024
+
 /** Maximum size of an individual generated asset inside a profile version. */
 export const MAX_ASSET_BYTES = 25 * 1024 * 1024
 

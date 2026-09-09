@@ -170,3 +170,141 @@ describe('loadRepositoryCatalogue', () => {
     })
   })
 })
+
+function manifestWithScreens(fingerprint: string, screens: unknown[], extra: Record<string, unknown> = {}): Record<string, unknown> {
+  const manifest = validManifest(fingerprint) as Record<string, unknown>
+  const variants = manifest.variants as Array<Record<string, unknown>>
+  variants[0]!.screens = screens
+  return { ...manifest, ...extra }
+}
+
+const FIXTURE_SCREENS = [
+  {
+    id: 'home',
+    label: 'Home',
+    order: 1,
+    scenarioId: 'happy-path',
+    prdRefs: [{ section: '5.1', requirementIds: ['AF.1'] }],
+    fixture: { values: { amount: '750' }, validation: { amount: 'Enter an amount' } },
+  },
+  { id: 'done', label: 'Done', order: 2, scenarioId: 'happy-path', prdRefs: [{ section: '5.1', requirementIds: [] }] },
+]
+
+describe('screen declarations and companions', () => {
+  it('loads screens, prdMap, design notes, and amendments onto the record', async () => {
+    await withRepo(async (repo) => {
+      await repo.write('examples/demo-feature/prototypes/demo/prototype.json', JSON.stringify(manifestWithScreens(repo.profileFingerprint, FIXTURE_SCREENS, {
+        companions: [{ kind: 'design-notes', path: 'examples/demo-feature/prototypes/demo/companions/design-notes.json' }],
+      })))
+      await repo.write('examples/demo-feature/prototypes/demo/companions/design-notes.json', JSON.stringify({
+        schemaVersion: 1,
+        notes: [{ id: 'job', section: '5.1', label: 'Funding', quote: 'AF.1 The app shall demo.', requirementIds: ['AF.1'] }],
+      }))
+      await repo.write('examples/demo-feature/prototypes/demo/amendments.json', JSON.stringify({
+        schemaVersion: 1,
+        amendments: [{
+          id: 'am-001',
+          screenId: 'home',
+          requirementId: 'AF.1',
+          title: 'Cap the amount',
+          note: 'Cap it',
+          selection: { variantId: 'focused', surfaceId: 'desktop', scenarioId: 'happy-path', themeId: 'light', screenId: 'home' },
+          author: 'Dana',
+          date: '2026-09-08',
+          status: 'open',
+        }],
+      }))
+      const catalogue = await loadRepositoryCatalogue(repo.root)
+      expect(catalogue.totals).toEqual({ errors: 0, warnings: 0 })
+      const record = catalogue.records[0]
+      if (!record) throw new Error('expected one record')
+      expect(record.variants[0]?.screens?.map((screen) => screen.id)).toEqual(['home', 'done'])
+      expect(record.prdMap.sections.map((section) => section.section)).toEqual(['5.1'])
+      expect(record.prdMap.sections[0]?.requirementIds).toEqual(['AF.1'])
+      expect(record.designNotes).toHaveLength(1)
+      expect(record.amendments).toHaveLength(1)
+    })
+  })
+
+  it('rejects screens that do not mirror the entry screen set exactly', async () => {
+    await withRepo(async (repo) => {
+      const screens = [{ id: 'home', label: 'Home', order: 1, scenarioId: 'happy-path', prdRefs: [{ section: '5.1', requirementIds: [] }] }]
+      await repo.write('examples/demo-feature/prototypes/demo/prototype.json', JSON.stringify(manifestWithScreens(repo.profileFingerprint, screens)))
+      const catalogue = await loadRepositoryCatalogue(repo.root)
+      expect(catalogue.records).toHaveLength(0)
+      expect(catalogue.diagnostics.some((d) => d.code === 'SCREEN_UNDECLARED' && d.message.includes('"done"'))).toBe(true)
+    })
+  })
+
+  it('rejects declared screens missing from the entry', async () => {
+    await withRepo(async (repo) => {
+      const screens = [...FIXTURE_SCREENS, { id: 'ghost', label: 'Ghost', order: 3, scenarioId: 'happy-path', prdRefs: [{ section: '5.1', requirementIds: [] }] }]
+      await repo.write('examples/demo-feature/prototypes/demo/prototype.json', JSON.stringify(manifestWithScreens(repo.profileFingerprint, screens)))
+      const catalogue = await loadRepositoryCatalogue(repo.root)
+      expect(catalogue.diagnostics.some((d) => d.code === 'SCREEN_NOT_IN_ENTRY' && d.message.includes('"ghost"'))).toBe(true)
+    })
+  })
+
+  it('rejects prdRefs to unnumbered sections and unknown requirements', async () => {
+    await withRepo(async (repo) => {
+      const screens = [
+        { id: 'home', label: 'Home', order: 1, scenarioId: 'happy-path', prdRefs: [{ section: '9.9', requirementIds: ['AF.1'] }] },
+        { id: 'done', label: 'Done', order: 2, scenarioId: 'happy-path', prdRefs: [{ section: '5.1', requirementIds: ['ZZ.9'] }] },
+      ]
+      await repo.write('examples/demo-feature/prototypes/demo/prototype.json', JSON.stringify(manifestWithScreens(repo.profileFingerprint, screens)))
+      const catalogue = await loadRepositoryCatalogue(repo.root)
+      expect(catalogue.diagnostics.some((d) => d.code === 'PRD_SECTION_UNRESOLVED' && d.message.includes('§9.9'))).toBe(true)
+      expect(catalogue.diagnostics.some((d) => d.code === 'SCREEN_REF_UNKNOWN' && d.message.includes('ZZ.9'))).toBe(true)
+    })
+  })
+
+  it('rejects fixtures referencing unknown controls or validation targets', async () => {
+    await withRepo(async (repo) => {
+      const screens = [
+        { id: 'home', label: 'Home', order: 1, scenarioId: 'happy-path', prdRefs: [{ section: '5.1', requirementIds: [] }], fixture: { values: { ghost: '1' } } },
+        { id: 'done', label: 'Done', order: 2, scenarioId: 'happy-path', prdRefs: [{ section: '5.1', requirementIds: [] }], fixture: { validation: { ghost: 'nope' } } },
+      ]
+      await repo.write('examples/demo-feature/prototypes/demo/prototype.json', JSON.stringify(manifestWithScreens(repo.profileFingerprint, screens)))
+      const catalogue = await loadRepositoryCatalogue(repo.root)
+      expect(catalogue.diagnostics.some((d) => d.code === 'FIXTURE_CONTROL_UNKNOWN' && d.message.includes('"ghost"'))).toBe(true)
+      expect(catalogue.diagnostics.some((d) => d.code === 'FIXTURE_VALIDATION_TARGET_UNKNOWN' && d.message.includes('"ghost"'))).toBe(true)
+    })
+  })
+
+  it('degrades invalid amendments and unresolvable design notes to warnings', async () => {
+    await withRepo(async (repo) => {
+      await repo.write('examples/demo-feature/prototypes/demo/prototype.json', JSON.stringify(manifestWithScreens(repo.profileFingerprint, FIXTURE_SCREENS, {
+        companions: [{ kind: 'design-notes', path: 'examples/demo-feature/prototypes/demo/companions/design-notes.json' }],
+      })))
+      await repo.write('examples/demo-feature/prototypes/demo/companions/design-notes.json', JSON.stringify({
+        schemaVersion: 1,
+        notes: [
+          { id: 'ok', section: '5.1', label: 'Funding', quote: 'AF.1 quote', requirementIds: [] },
+          { id: 'bad', section: '9.9', label: 'Nowhere', quote: 'unresolvable', requirementIds: [] },
+        ],
+      }))
+      await repo.write('examples/demo-feature/prototypes/demo/amendments.json', JSON.stringify({
+        schemaVersion: 1,
+        amendments: [{
+          id: 'am-001',
+          screenId: 'ghost',
+          requirementId: null,
+          title: 'Bad ref',
+          note: 'n/a',
+          selection: { variantId: 'focused', surfaceId: 'desktop', scenarioId: 'happy-path', themeId: 'light', screenId: 'ghost' },
+          author: 'Dana',
+          date: '2026-09-08',
+          status: 'open',
+        }],
+      }))
+      const catalogue = await loadRepositoryCatalogue(repo.root)
+      expect(catalogue.totals.errors).toBe(0)
+      expect(catalogue.totals.warnings).toBeGreaterThanOrEqual(2)
+      expect(catalogue.diagnostics.some((d) => d.code === 'NOTE_SECTION_UNRESOLVED')).toBe(true)
+      expect(catalogue.diagnostics.some((d) => d.code === 'AMENDMENT_SCREEN_UNKNOWN')).toBe(true)
+      const record = catalogue.records[0]
+      expect(record?.designNotes.map((note) => note.id)).toEqual(['ok'])
+      expect(record?.amendments).toEqual([])
+    })
+  })
+})

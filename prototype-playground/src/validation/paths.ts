@@ -42,6 +42,7 @@ export type FileAuthority =
   | { kind: 'feature-prd'; featureDir: string }
   | { kind: 'prototype-variants'; prototypeDir: string }
   | { kind: 'prototype-companions'; prototypeDir: string }
+  | { kind: 'prototype-amendments'; prototypeDir: string }
 
 /** Identity of one read file, used for caching and hand-off snapshot re-checks. */
 export type FileSnapshot = {
@@ -115,16 +116,21 @@ function authorityPrefix(authority: FileAuthority): string {
       return `${authority.prototypeDir}/variants/`
     case 'prototype-companions':
       return `${authority.prototypeDir}/companions/`
+    case 'prototype-amendments':
+      return `${authority.prototypeDir}/amendments.json`
   }
 }
 
 function assertAuthority(authority: FileAuthority, relPath: string): void {
-  const prefix = authorityPrefix(authority)
-  if (authority.kind === 'profile-active') {
-    if (relPath !== prefix) {
-      throw new PathError('PATH_NOT_AUTHORISED', relPath, `Expected exactly "${prefix}"`)
+  if (authority.kind === 'profile-active' || authority.kind === 'prototype-amendments') {
+    const expected = authorityPrefix(authority)
+    if (relPath !== expected) {
+      throw new PathError('PATH_NOT_AUTHORISED', relPath, `Expected exactly "${expected}"`)
     }
-  } else if (!relPath.startsWith(prefix) || relPath.length <= prefix.length) {
+    return
+  }
+  const prefix = authorityPrefix(authority)
+  if (!relPath.startsWith(prefix) || relPath.length <= prefix.length) {
     throw new PathError(
       'PATH_NOT_AUTHORISED',
       relPath,

@@ -256,6 +256,8 @@ export async function loadDesignProfileVersion(
       runtimeCssPath: runtimeCssRel,
       componentCataloguePath: componentCatalogueRel,
       assetCataloguePath: assetCatalogueRel,
+      ...(profile.deviceChrome ? { deviceChrome: profile.deviceChrome } : {}),
+      ...(profile.layout ? { layout: profile.layout } : {}),
     },
     diagnostics,
   }

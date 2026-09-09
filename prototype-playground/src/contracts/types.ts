@@ -7,20 +7,28 @@
  * truth; field names here must match them exactly.
  */
 
+import type { Amendment, DeviceChrome, ProfileLayout, ScreenDeclaration, ScreenFixture } from './manifests'
+
 export type SurfaceId = 'desktop' | 'ios'
 
 export type DiagnosticSeverity = 'warning' | 'error'
 
 export type ProfileCurrentness = 'active' | 'older'
 
+export type ScreenRuntimeDeclaration = {
+  id: string
+  fixture?: ScreenFixture
+}
 export type PrototypeContext = {
-  protocolVersion: 1
+  protocolVersion: 2
   channelId: string
   prototypeId: string
   variantId: string
   surfaceId: SurfaceId
   scenarioId: string
   themeId: string
+  /** Addressable screens of this variant/scenario, with optional jump fixtures. */
+  screens: ScreenRuntimeDeclaration[]
 }
 
 export type Diagnostic = {
@@ -40,6 +48,25 @@ export type ResolvedDesignProfile = {
   runtimeCssPath: string
   componentCataloguePath: string
   assetCataloguePath: string
+  /** Frame geometry override for both surfaces; absent = contract presets. */
+  deviceChrome?: DeviceChrome
+  /** Shell column rhythm the profile records as canonical. */
+  layout?: ProfileLayout
+}
+
+/** One resolvable numbered heading of the source PRD. */
+export type PrdSectionRef = {
+  section: string
+  heading: string
+  /** Heading anchor valid against the hosted copy when `url` is present. */
+  anchor: string
+  requirementIds: string[]
+}
+
+export type PrdMap = {
+  /** Hosted copy URL from the PRD frontmatter, when present. */
+  url: string | null
+  sections: PrdSectionRef[]
 }
 
 export type PrototypeSummary = {
@@ -53,13 +80,26 @@ export type PrototypeSummary = {
   revision: number
   source: { prd: string; requirementIds: string[] }
   brief: { primaryUser: string; job: string; journey: string; decision: string }
-  variants: Array<{ id: string; label: string; hypothesis: string; tradeOffs: string[]; entry: string }>
+  variants: Array<{
+    id: string
+    label: string
+    hypothesis: string
+    tradeOffs: string[]
+    entry: string
+    screens?: ScreenDeclaration[]
+  }>
   surfaces: SurfaceId[]
   scenarios: Array<{ id: string; label: string; description: string; requirementIds: string[] }>
   defaults: { variant: string; surface: SurfaceId; scenario: string; theme: string }
   designSystem: { id: string; version: string; fingerprint: `sha256:${string}`; currentness: ProfileCurrentness }
   companions: Array<{ kind: string; path: string }>
   prototypeOnly: string[]
+  /** Section map of the source PRD; `sections` is empty when it has no numbered headings. */
+  prdMap: PrdMap
+  /** Verbatim PRD passages from the `design-notes` companion; empty when absent or invalid. */
+  designNotes: Array<{ id: string; section: string; label: string; quote: string; requirementIds: string[] }>
+  /** Review amendments from `amendments.json`; empty when absent or invalid. */
+  amendments: Amendment[]
 }
 
 export type PrototypeRecord = PrototypeSummary & {
@@ -74,24 +114,43 @@ export type CatalogueResult = {
   totals: { errors: number; warnings: number }
 }
 
-export const PROTOTYPE_BRIDGE_PROTOCOL_VERSION = 1
+export const PROTOTYPE_BRIDGE_PROTOCOL_VERSION = 2
 
 export type PrototypeBridgeReadyMessage = {
   type: 'prototype:ready'
-  protocolVersion: 1
+  protocolVersion: 2
   channelId: string
+}
+
+export type PrototypeBridgeScreenMessage = {
+  type: 'prototype:screen'
+  protocolVersion: 2
+  channelId: string
+  screenId: string
 }
 
 export type PrototypeBridgeErrorCode =
   | 'RUNTIME_INITIALISATION_FAILED'
   | 'INVALID_DECLARATIVE_TARGET'
   | 'UNEXPECTED_NAVIGATION'
+  | 'UNRESOLVED_SCREEN_TARGET'
 
 export type PrototypeBridgeErrorMessage = {
   type: 'prototype:error'
-  protocolVersion: 1
+  protocolVersion: 2
   channelId: string
   code: PrototypeBridgeErrorCode
 }
 
-export type PrototypeBridgeMessage = PrototypeBridgeReadyMessage | PrototypeBridgeErrorMessage
+/** Parent-to-child navigation command; the child re-validates screen existence. */
+export type PrototypeBridgeGotoMessage = {
+  type: 'prototype:goto'
+  protocolVersion: 2
+  channelId: string
+  screenId: string
+}
+
+export type PrototypeBridgeMessage =
+  | PrototypeBridgeReadyMessage
+  | PrototypeBridgeScreenMessage
+  | PrototypeBridgeErrorMessage

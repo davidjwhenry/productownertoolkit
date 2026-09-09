@@ -28,10 +28,29 @@ test('labelled savings example is discoverable with PRD, profile, and requiremen
   await expect(page.getByRole('button', { name: /Savings pots and round-ups automation/ })).toBeVisible()
   await expect(page.locator('.catalogue-badge', { hasText: 'Example' })).toBeVisible()
   await page.getByRole('button', { name: /Savings pots and round-ups automation/ }).click()
-  await expect(page.locator('.shell-inspector')).toContainText('examples/example-feature/prd/savings-example-prd.md')
-  await expect(page.locator('.shell-inspector')).toContainText('AF.1')
-  await expect(page.locator('.shell-inspector')).toContainText('default@v001')
-  await expect(page.locator('.shell-inspector', { hasText: 'Older design profile' })).toHaveCount(0)
+  await expect(page.locator('.notes-column')).toContainText('savings-example-prd.md')
+  await expect(page.locator('.notes-column')).toContainText('AF.3, AF.4, CT.1')
+  await expect(page.locator('.notes-column')).toContainText('default@v002')
+  await expect(page.locator('.flow-column')).toContainText('AF.1 · AF.2 · CT.1')
+  await expect(page.locator('.prd-open')).toBeVisible()
+})
+
+test('show examples defaults on with no live prototypes, and the checkbox actually filters', async ({ page }) => {
+  await expect(page.getByLabel('Show examples')).toBeChecked()
+  await expect(page.getByRole('button', { name: /Savings pots and round-ups automation/ })).toBeVisible()
+  await expect(page).toHaveURL(/examples=1/)
+
+  await page.getByLabel('Show examples').uncheck()
+  await expect(page).not.toHaveURL(/examples=1/)
+  await expect(page.getByRole('button', { name: /Savings pots and round-ups automation/ })).toBeHidden()
+  await expect(page.locator('.catalogue-empty')).toContainText('No prototypes found')
+  await expect(page.locator('.empty-state')).toContainText('No prototypes to preview')
+  await expect(page.locator('iframe.preview-iframe')).toBeHidden()
+  await expect(page.locator('.notes-column')).toContainText('Select a prototype')
+
+  await page.getByLabel('Show examples').check()
+  await expect(page).toHaveURL(/examples=1/)
+  await expect(page.getByRole('button', { name: /Savings pots and round-ups automation/ })).toBeVisible()
 })
 
 test('variant, surface, scenario, and theme controls drive the URL and the preview', async ({ page }) => {
@@ -43,13 +62,12 @@ test('variant, surface, scenario, and theme controls drive the URL and the previ
   await page.getByRole('button', { name: 'Guided trust' }).click()
   await expect(page).toHaveURL(/variant=guided-trust/)
   await readyWithOverview(page)
-  await expect(page.locator('.shell-inspector', { hasText: 'Older design profile' })).toHaveCount(0)
   await page.getByLabel('Surface').selectOption('ios')
   await expect(page).toHaveURL(/surface=ios/)
   await expect(page.locator('iframe.preview-iframe').first()).toHaveAttribute('sandbox', 'allow-scripts')
   await readyWithOverview(page)
 
-  await page.getByLabel('Scenario').selectOption('validation-error')
+  await page.locator('.scenario-card', { hasText: 'Validation error' }).click()
   await expect(page).toHaveURL(/scenario=validation-error/)
   await readyWithOverview(page)
   await frame(page).getByRole('button', { name: 'Start guided setup' }).click()
@@ -57,10 +75,17 @@ test('variant, surface, scenario, and theme controls drive the URL and the previ
   await frame(page).getByRole('button', { name: 'Continue', exact: true }).click()
   await expect(frame(page).getByRole('heading', { name: 'How much each time?' })).toBeVisible()
   await expect(frame(page).getByText('Try an amount outside the range')).toBeVisible()
-
+  // Let the in-phone navigation reach the URL before a remounting switch:
+  // the message crossing is asynchronous and the URL is the source of truth.
+  await expect(page).toHaveURL(/screen=step-amount/)
+  // A theme switch keeps the reviewer's position: the mount rehydrates
+  // the walked-to screen rather than booting back to the overview, and
+  // the scenario fixture lands with it.
   await page.getByLabel('Theme').selectOption('dark')
   await expect(page).toHaveURL(/theme=dark/)
-  await readyWithOverview(page)
+  await expect(frame(page).getByRole('heading', { name: 'How much each time?' })).toBeVisible()
+  await expect(frame(page).locator('input[name="amount"]')).toHaveValue('750')
+  await expect(frame(page).getByText('Enter an amount between £1 and £500')).toBeVisible()
 })
 
 test('focused happy path reaches Automation is set through review', async ({ page }) => {
@@ -68,7 +93,7 @@ test('focused happy path reaches Automation is set through review', async ({ pag
   await readyWithOverview(page)
   await frame(page).getByRole('button', { name: 'Set up automation' }).click()
   await expect(frame(page).getByRole('heading', { name: 'Set up saving' })).toBeVisible()
-  await frame(page).getByLabel('Amount per contribution').fill('25')
+  await frame(page).locator('input[name="amount"]').fill('25')
   await frame(page).getByLabel('Weekly', { exact: true }).check()
   await frame(page).getByLabel('Round-ups on').check()
   await frame(page).getByRole('button', { name: 'Review automation' }).click()
@@ -101,17 +126,17 @@ test('validation error preserves entered choices and shows the bounded copy', as
   await frame(page).getByRole('button', { name: 'Set up automation' }).click()
   await expect(frame(page).getByRole('heading', { name: 'Set up saving' })).toBeVisible()
   await frame(page).getByLabel('Monthly').check()
-  await frame(page).getByLabel('Amount per contribution').fill('750')
+  await frame(page).locator('input[name="amount"]').fill('750')
   await frame(page).getByRole('button', { name: 'Review automation' }).click()
   await expect(frame(page).getByText('Enter an amount between £1 and £500')).toBeVisible()
-  await expect(frame(page).getByLabel('Amount per contribution')).toHaveValue('750')
+  await expect(frame(page).locator('input[name="amount"]')).toHaveValue('750')
   await expect(frame(page).getByLabel('Monthly')).toBeChecked()
 })
 
 test('contribution failure shows the specified copy with working recovery actions', async ({ page }) => {
   await page.getByRole('button', { name: /Savings pots and round-ups automation/ }).click()
   await readyWithOverview(page)
-  await page.getByLabel('Scenario').selectOption('contribution-failure')
+  await page.locator('.scenario-card', { hasText: 'Contribution failure' }).click()
   await readyWithOverview(page)
   await frame(page).getByRole('button', { name: 'Set up automation' }).click()
   await expect(frame(page).getByRole('heading', { name: 'Set up saving' })).toBeVisible()
@@ -122,6 +147,44 @@ test('contribution failure shows the specified copy with working recovery action
   await expect(frame(page).getByRole('heading', { name: 'Automation paused' })).toBeVisible()
 })
 
+test('the scenario sub-menu jumps to any screen without walking the flow', async ({ page }) => {
+  await page.getByRole('button', { name: /Savings pots and round-ups automation/ }).click()
+  await readyWithOverview(page)
+  await expect(page.locator('.screens-list')).toContainText('Pot overview')
+
+  await page.locator('.screen-row', { hasText: 'Review your automation' }).click()
+  await expect(page).toHaveURL(/screen=review/)
+  await expect(frame(page).getByText('Review your automation')).toBeVisible()
+  await expect(page.locator('.screen-row[aria-current="true"]')).toContainText('Review your automation')
+  await expect(page.locator('.stage-title')).toHaveText('Review your automation')
+  await expect(page.locator('.prd-chip').first()).toContainText('§5.1')
+})
+
+test('a deep link restores the exact screen with its scenario fixture', async ({ page }) => {
+  await page.goto('/?prototype=savings-automation&variant=focused-control&surface=desktop&scenario=validation-error&screen=configure&theme=light')
+  await expect(frame(page).getByRole('heading', { name: 'Set up saving' })).toBeVisible()
+  await expect(frame(page).locator('input[name="amount"]')).toHaveValue('750')
+  await expect(frame(page).getByText('Enter an amount between £1 and £500')).toBeVisible()
+  await expect(page.locator('.stage-eyebrow')).toContainText('Scenario 02')
+})
+
+test('in-prototype navigation keeps the sub-menu and URL in step', async ({ page }) => {
+  await page.getByRole('button', { name: /Savings pots and round-ups automation/ }).click()
+  await readyWithOverview(page)
+  await frame(page).getByRole('button', { name: 'Set up automation' }).click()
+  await expect(page).toHaveURL(/screen=configure/)
+  await expect(page.locator('.screen-row[aria-current="true"]')).toContainText('Set up saving')
+})
+
+test('switching variants retains the equivalent screen', async ({ page }) => {
+  await page.getByRole('button', { name: /Savings pots and round-ups automation/ }).click()
+  await readyWithOverview(page)
+  await page.locator('.screen-row', { hasText: 'Review your automation' }).click()
+  await expect(page).toHaveURL(/screen=review/)
+  await page.getByRole('button', { name: 'Guided trust' }).click()
+  await expect(page).toHaveURL(/variant=guided-trust&.*screen=review/)
+  await expect(frame(page).getByRole('heading', { name: 'Review and confirm' })).toBeVisible()
+})
 test('compare renders both variants against shared settings with no third iframe', async ({ page }) => {
   await page.getByRole('button', { name: /Savings pots and round-ups automation/ }).click()
   await readyWithOverview(page)
@@ -159,20 +222,24 @@ test('copy revision brief carries the current safe IDs and manifest path', async
 test('invalid query parameters recover to manifest defaults and warn in diagnostics', async ({ page }) => {
   await page.goto('/?prototype=ghost&variant=zzz&surface=tv&scenario=zzz&theme=zzz')
   await expect(page).not.toHaveURL(/prototype=ghost/)
+  await page.locator('.diagnostics-toggle').click()
   await expect(page.locator('.diagnostics-list')).toContainText('Unknown prototype "ghost"')
   await readyWithOverview(page)
 })
 
 test('an invalid manifest in the fixture appears in diagnostics without breaking valid previews', async ({ page }) => {
-  const brokenDir = path.join(fixtureRoot, 'requirements', 'platform-requirements', 'broken-feature', 'prototypes', 'broken', )
+  const brokenDir = path.join(fixtureRoot, 'requirements', 'platform-requirements', 'broken-feature', 'prototypes', 'broken')
   await mkdir(brokenDir, { recursive: true })
   await writeFile(path.join(brokenDir, 'prototype.json'), '{ "schemaVersion": 1 }')
   await page.reload()
+  // The registry watcher pushes its own full reload for the new manifest;
+  // let it land before interacting so the diagnostics click is not reset.
+  await page.waitForTimeout(1500)
+  await page.locator('.diagnostics-toggle').click()
   await expect(page.locator('.diagnostics-list')).toContainText('PROTOTYPE_SCHEMA_INVALID')
   await page.getByRole('button', { name: /Savings pots and round-ups automation/ }).click()
   await readyWithOverview(page)
 })
-
 test('the canvas never scrolls behind the device frame at Fit', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 })
   await page.getByRole('button', { name: /Savings pots and round-ups automation/ }).click()
@@ -225,6 +292,36 @@ test('the sandboxed child cannot gain host privileges', async ({ page }) => {
   expect(title).toContain('savings-automation')
   // The host DOM is untouched by child rendering.
   await expect(page.locator('#root .app-shell')).toBeVisible()
-  const hostHeading = await page.locator('.shell-toolbar h1').textContent()
+  const hostHeading = await page.locator('.rail-brand h1').textContent()
   expect(hostHeading).toBe('Prototype Playground')
+})
+
+test('amendments round-trip through the dev-server write path', async ({ page }) => {
+  await page.getByRole('button', { name: /Savings pots and round-ups automation/ }).click()
+  await readyWithOverview(page)
+  await expect(page.locator('.amendments-panel')).toContainText('2 open')
+  await expect(page.locator('.amendment-title', { hasText: 'Round-up daily cap' })).toBeVisible()
+
+  // Jump through an amendment pin.
+  await page.locator('.amendment-title', { hasText: 'Round-up daily cap' }).click()
+  await expect(page).toHaveURL(/variant=guided-trust/)
+  await expect(page).toHaveURL(/screen=step-amount/)
+  await expect(frame(page).getByRole('heading', { name: 'How much each time?' })).toBeVisible()
+
+  // Propose a new amendment through the form.
+  await page.getByRole('button', { name: 'Propose amendment' }).click()
+  await page.getByLabel('Title', { exact: true }).fill('Show the pot balance on the amount step')
+  await page.getByLabel('Note', { exact: true }).fill('Reviewers asked for the pot balance beside the amount field for reassurance.')
+  await page.getByLabel('Author', { exact: true }).fill('Playwright')
+  await page.getByLabel('Screen', { exact: true }).selectOption('step-amount')
+  await page.getByRole('button', { name: 'Save amendment' }).click()
+  await expect(page.locator('.amendment-title', { hasText: 'Show the pot balance on the amount step' })).toBeVisible()
+  await expect(page.locator('.amendments-panel')).toContainText('3 open')
+
+  // Resolve one and verify persistence across a reload.
+  await page.locator('.amendment-card', { hasText: 'Say "pause", not "stop"' }).getByRole('button', { name: 'Resolve' }).click()
+  await expect(page.locator('.amendments-panel')).toContainText('2 open')
+  await page.reload()
+  await expect(page.locator('.amendments-panel')).toContainText('2 open')
+  await expect(page.locator('.amendment-card', { hasText: 'Say "pause", not "stop"' }).locator('.amendment-status')).toHaveText('Resolved')
 })

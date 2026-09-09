@@ -169,7 +169,7 @@ export async function makeFixtureRepo(): Promise<FixtureRepo> {
   const fingerprint = await refreshActive()
 
   // One valid example prototype.
-  await write('examples/demo-feature/prd/demo-feature-prd.md', '# Demo PRD\n\nAF.1 The app shall demo.\n')
+  await write('examples/demo-feature/prd/demo-feature-prd.md', '# Demo PRD\n\n## 5.1. Demo Requirement\n\nAF.1 The app shall demo.\n')
   await write('examples/demo-feature/prototypes/demo/variants/focused.html', validEntryHtml())
   await write('examples/demo-feature/prototypes/demo/prototype.json', JSON.stringify(validManifest(fingerprint), null, 2))
 

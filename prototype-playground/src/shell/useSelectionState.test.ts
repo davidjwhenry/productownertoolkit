@@ -4,7 +4,7 @@ import type { CatalogueResult, PrototypeRecord, ResolvedDesignProfile } from '..
 
 function makeRecord(): PrototypeRecord {
   return {
-    origin: 'example',
+    origin: 'requirement',
     classification: null,
     feature: 'demo-feature',
     manifestPath: 'examples/demo-feature/prototypes/demo/prototype.json',
@@ -15,15 +15,40 @@ function makeRecord(): PrototypeRecord {
     source: { prd: 'examples/demo-feature/prd/demo-feature-prd.md', requirementIds: ['AF.1'] },
     brief: { primaryUser: 'Customer', job: 'Save', journey: 'Setup', decision: 'Speed vs trust' },
     variants: [
-      { id: 'focused', label: 'Focused', hypothesis: 'Controls up front', tradeOffs: ['Less context'], entry: 'examples/demo-feature/prototypes/demo/variants/focused.html' },
-      { id: 'guided', label: 'Guided', hypothesis: 'Steps build trust', tradeOffs: ['Slower'], entry: 'examples/demo-feature/prototypes/demo/variants/guided.html' },
+      {
+        id: 'focused',
+        label: 'Focused',
+        hypothesis: 'Controls up front',
+        tradeOffs: ['Less context'],
+        entry: 'examples/demo-feature/prototypes/demo/variants/focused.html',
+        screens: [
+          { id: 'overview', label: 'Overview', order: 1, scenarioId: 'happy-path', prdRefs: [{ section: '3.1', requirementIds: [] }] },
+          { id: 'review', label: 'Review', order: 2, scenarioId: 'happy-path', prdRefs: [{ section: '3.1', requirementIds: ['AF.1'] }] },
+        ],
+      },
+      {
+        id: 'guided',
+        label: 'Guided',
+        hypothesis: 'Steps build trust',
+        tradeOffs: ['Slower'],
+        entry: 'examples/demo-feature/prototypes/demo/variants/guided.html',
+        screens: [
+          { id: 'overview', label: 'Overview', order: 1, scenarioId: 'happy-path', prdRefs: [{ section: '3.1', requirementIds: [] }] },
+        ],
+      },
     ],
     surfaces: ['desktop', 'ios'],
-    scenarios: [{ id: 'happy-path', label: 'Happy', description: 'Works', requirementIds: ['AF.1'] }],
+    scenarios: [
+      { id: 'happy-path', label: 'Happy', description: 'Works', requirementIds: ['AF.1'] },
+      { id: 'validation-error', label: 'Validation', description: 'Fails', requirementIds: ['AF.1'] },
+    ],
     defaults: { variant: 'focused', surface: 'desktop', scenario: 'happy-path', theme: 'light' },
     designSystem: { id: 'default', version: 'v001', fingerprint: 'sha256:0000000000000000000000000000000000000000000000000000000000000000', currentness: 'active' },
     companions: [],
     prototypeOnly: ['Fixture data only'],
+    prdMap: { url: null, sections: [] },
+    designNotes: [],
+    amendments: [],
     loadVariant: () => Promise.reject(new Error('unused')),
   }
 }
@@ -61,6 +86,7 @@ describe('resolveSelection', () => {
       surfaceId: 'desktop',
       scenarioId: 'happy-path',
       themeId: 'light',
+      screenId: null,
       compareVariantId: null,
       showExamples: false,
     })
@@ -83,6 +109,15 @@ describe('resolveSelection', () => {
     const compared = resolveSelection('?prototype=demo&variant=focused&compare=guided', makeCatalogue())
     expect(compared.selection.compareVariantId).toBe('guided')
   })
+
+  it('resolves no record when examples are hidden and no requirement prototypes exist', () => {
+    const exampleOnlyCatalogue: CatalogueResult = { ...makeCatalogue(), records: [{ ...makeRecord(), origin: 'example' }] }
+    const hidden = resolveSelection('?prototype=demo', exampleOnlyCatalogue)
+    expect(hidden.record).toBeNull()
+    expect(hidden.selection.prototypeId).toBe('')
+    const shown = resolveSelection('?prototype=demo&examples=1', exampleOnlyCatalogue)
+    expect(shown.record?.id).toBe('demo')
+  })
 })
 
 describe('buildRevisionBrief', () => {
@@ -93,12 +128,13 @@ describe('buildRevisionBrief', () => {
       surfaceId: 'ios',
       scenarioId: 'validation-error',
       themeId: 'dark',
+      screenId: 'configure',
       compareVariantId: null,
       showExamples: true,
     }
     expect(buildRevisionBrief(selection, 'examples/example-feature/prototypes/savings-automation/prototype.json')).toBe(
       `Revise prototype \`savings-automation\` at \`examples/example-feature/prototypes/savings-automation/prototype.json\`.
-Current view: variant \`focused-control\`, surface \`ios\`, scenario \`validation-error\`, theme \`dark\`.
+Current view: variant \`focused-control\`, surface \`ios\`, scenario \`validation-error\`, screen \`configure\`, theme \`dark\`.
 Feedback: [describe the requested change]
 Preserve the other declared variants and scenarios, keep the pinned design profile unless explicitly changing it, and run \`npm run validate\` from \`prototype-playground/\`.`,
     )
@@ -113,14 +149,35 @@ describe('selectionToQuery', () => {
       surfaceId: 'ios',
       scenarioId: 'happy-path',
       themeId: 'dark',
+      screenId: 'overview',
       compareVariantId: 'focused',
       showExamples: true,
     }
     const query = selectionToQuery(selection)
     expect(query).toContain('compare=focused')
     expect(query).toContain('examples=1')
+    expect(query).toContain('screen=overview')
     const resolution = resolveSelection(query, makeCatalogue())
     expect(resolution.warnings).toEqual([])
     expect(resolution.selection).toEqual(selection)
+  })
+
+  it('drops a screen declared only by another variant with a warning', () => {
+    const resolution = resolveSelection('?prototype=demo&variant=guided&screen=review', makeCatalogue())
+    expect(resolution.selection.screenId).toBeNull()
+    expect(resolution.warnings.map((w) => w.message)).toEqual([expect.stringContaining('Unknown screen "review"')])
+  })
+
+  it('omits the screen parameter when the selection has none', () => {
+    expect(selectionToQuery({
+      prototypeId: 'demo',
+      variantId: 'focused',
+      surfaceId: 'desktop',
+      scenarioId: 'happy-path',
+      themeId: 'light',
+      screenId: null,
+      compareVariantId: null,
+      showExamples: false,
+    })).not.toContain('screen=')
   })
 })

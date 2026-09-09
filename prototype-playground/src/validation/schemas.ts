@@ -13,7 +13,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-export type SchemaName = 'design-profile' | 'components' | 'assets' | 'prototype'
+export type SchemaName = 'design-profile' | 'components' | 'assets' | 'prototype' | 'design-notes' | 'amendments'
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 

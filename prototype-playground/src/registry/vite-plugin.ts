@@ -15,6 +15,7 @@ import path from 'node:path'
 import type { Plugin, ViteDevServer } from 'vite'
 import type { CatalogueResult, PrototypeRecord } from '../contracts'
 import { loadRepositoryCatalogue } from './catalogue'
+import { handleAmendmentsRequest } from './amendments-api'
 
 const REGISTRY_ID = 'virtual:prototype-registry'
 const RESOLVED_REGISTRY_ID = '\0virtual:prototype-registry'
@@ -111,6 +112,9 @@ export default function prototypeRegistryPlugin(options: PrototypeRegistryPlugin
     if (posix === 'design-system/profiles/ACTIVE') return true
     if (posix.startsWith('design-system/profiles/')) return /\.(json|css)$/.test(posix)
     if (posix.startsWith('design-system/')) return false
+    // Playground-owned write state: refresh the catalogue lazily instead
+    // of reloading every open page on each amendment save.
+    if (posix.endsWith('/amendments.json')) return false
     if (/^(requirements|examples)\//.test(posix)) return /\.(json|html|md|pen)$/.test(posix)
     return false
   }
@@ -229,9 +233,58 @@ export default function prototypeRegistryPlugin(options: PrototypeRegistryPlugin
 
     configureServer(server) {
       state.strict = false
+      server.middlewares.use('/__playground__/amendments', (req, res, next) => {
+        void (async () => {
+          const suffix = (req.url ?? '').split('?')[0] ?? ''
+          const method = (req.method ?? '').toUpperCase()
+          if (method !== 'GET' && method !== 'PUT') {
+            next()
+            return
+          }
+          const response = await handleAmendmentsRequest({
+            method,
+            suffix,
+            body: method === 'PUT' ? await readRequestBody(req) : Buffer.alloc(0),
+            repoRoot: state.repoRoot,
+            loadCatalogue: () => loadCatalogue(server),
+          })
+          // A successful write invalidates the cached catalogue silently:
+          // the writing tab keeps its local state; fresh loads re-read disk.
+          if (method === 'PUT' && response.status === 200) {
+            state.cataloguePromise = null
+            const mod = server.moduleGraph.getModuleById(RESOLVED_REGISTRY_ID)
+            if (mod) server.moduleGraph.invalidateModule(mod)
+          }
+          res.statusCode = response.status
+          res.setHeader('content-type', 'application/json; charset=utf-8')
+          res.end(response.body)
+        })().catch(() => {
+          res.statusCode = 500
+          res.end('{"error":"internal"}\n')
+        })
+      })
       loadCatalogue(server).catch((e: unknown) => {
         server.config.logger.error(`prototype-registry: ${(e as Error).message}`)
       })
     },
   }
+}
+
+type MiddlewareRequest = {
+  method?: string
+  url?: string
+  on?: (event: string, listener: (chunk?: Buffer) => void) => void
+}
+
+function readRequestBody(req: MiddlewareRequest): Promise<Buffer> {
+  // Executor form: the frozen tsconfig pins lib ES2023, which has no
+  // `Promise.withResolvers` typing.
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = []
+    req.on?.('data', (chunk?: Buffer) => {
+      if (chunk) chunks.push(chunk)
+    })
+    req.on?.('end', () => resolve(Buffer.concat(chunks)))
+    req.on?.('error', (error) => reject(error))
+  })
 }
