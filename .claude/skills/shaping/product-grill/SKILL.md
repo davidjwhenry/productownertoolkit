@@ -75,6 +75,8 @@ Offer a product decision record in `requirements/decisions/` only when the decis
 
 Do not create decision records silently. Most answers should stay in the current PRD, backlog, note, or chat summary instead.
 
+When a grilled trade-off resolves into the decision a prototype must argue about (for example "compact controls versus guided explanation — setup speed against trust"), capture the decision statement verbatim in the summary so `prototype-builder` can drop it straight into the manifest's `brief.decision`. The statement names both sides and the tension between them; it is what the variant deck and design notes argue about.
+
 ## Stop Conditions
 
 When the user is ready to stop, summarize:

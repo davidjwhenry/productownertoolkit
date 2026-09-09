@@ -45,7 +45,7 @@ Present a 3–5 bullet proposal covering: sources (with precedence order), theme
 After approval:
 
 1. Copy approved external local inputs into `design-system/sources/<source-id>/`; preserve existing sources in place.
-2. Generate the next `vNNN` directory (`profile.json`, `tokens.css`, `components.json`, `assets.json`, plus `assets/` and `guidance/` only when files exist). Convert every source token to CSS custom properties, expand font stacks to local/system fallbacks, and convert numeric radii to pixels. Record each local source's SHA-256.
+2. Generate the next `vNNN` directory (`profile.json`, `tokens.css`, `components.json`, `assets.json`, plus `assets/` and `guidance/` only when files exist). Convert every source token to CSS custom properties, expand font stacks to local/system fallbacks, and convert numeric radii to pixels. Record each local source's SHA-256. Carry forward the previous version's `deviceChrome` and `layout` blocks unchanged unless the user is deliberately re-tuning device frames or the shell column rhythm — those values keep prototypes and the shell rendering consistent frames.
 3. Refuse to overwrite an existing version directory; choose the next number instead.
 4. Run `cd prototype-playground && npm run validate` and fix findings until the profile validates with zero errors.
 5. Only after validation succeeds, write `design-system/profiles/ACTIVE` as exactly two LF-terminated lines: the `vNNN` directory name, then `sha256:<64 lowercase hex>` of the fingerprint defined in the reference.

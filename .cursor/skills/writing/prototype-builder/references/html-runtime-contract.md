@@ -40,6 +40,15 @@ Controls retain state by `name`; names and element IDs must be kebab-case and ID
 
 No runtime attribute contains code, regular expressions, CSS selectors, HTML, or arbitrary expressions. Any unknown `data-prototype-*` attribute is an error.
 
+## Screen Addressability (Bridge Protocol v2)
+
+The host serialises the scenario's declared screens (with their jump fixtures) and an optional `startScreen` into the frozen per-load context. On top of `prototype:ready` and `prototype:error`:
+
+- the parent may send `prototype:goto { screenId }`; the runtime re-validates the target, restores initial declarative state, applies the screen's fixture (`values`, `checked`, `validation`), clears the back stack, and shows the screen. Unresolvable targets fail with `UNRESOLVED_SCREEN_TARGET`
+- the runtime emits `prototype:screen { screenId }` after `ready` and on every subsequent shown screen, so the host keeps the sub-menu highlight, § strip, and the `screen` query parameter in step with in-prototype navigation
+
+Deep links carry the screen in the URL (`&screen=<screen-id>`); variant switches keep the screen when the target variant declares the same id.
+
 ## Host Behaviour
 
 The host renders each variant inside a sandboxed iframe with a per-load CSP nonce, injects the frozen context (variant, surface, scenario, theme) and the runtime, and recreates the iframe whenever the selection changes so each review starts from deterministic state. Desktop content viewport is 1440 × 900 with zero safe areas; iOS is 393 × 852 with 59 px top and 34 px bottom safe areas available as `--prototype-safe-area-top` and `--prototype-safe-area-bottom` custom properties (plus left/right variants). On the iOS surface the host hides document scrollbars while keeping the frame scrollable by touch, drag, or wheel. The active theme is exposed as `data-design-theme` on the document element.
