@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "default",
+  "version": "v001",
+  "name": "Default",
+  "sources": [
+    {
+      "id": "example-pen",
+      "kind": "pen",
+      "roles": ["tokens", "components"],
+      "required": true,
+      "path": "design-system/example-design-system.pen",
+      "sha256": "dbd7e1a0c801706238b26a5a248e65973ff0942105b0e1e19f250515bd06eb05"
+    }
+  ],
+  "themes": [
+    { "id": "light", "label": "Light" },
+    { "id": "dark", "label": "Dark" }
+  ],
+  "defaultTheme": "light",
+  "runtimeCss": "tokens.css",
+  "componentCatalogue": "components.json",
+  "assetCatalogue": "assets.json"
+}

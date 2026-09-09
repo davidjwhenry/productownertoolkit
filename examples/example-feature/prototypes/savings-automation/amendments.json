@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "amendments": [
+    {
+      "id": "am-001",
+      "screenId": "step-amount",
+      "requirementId": "AF.2",
+      "title": "Round-up daily cap",
+      "note": "The amount screen should surface the daily round-up transfer threshold before confirmation, so customers can predict the worst-case daily movement.",
+      "selection": {
+        "variantId": "guided-trust",
+        "surfaceId": "ios",
+        "scenarioId": "happy-path",
+        "themeId": "light",
+        "screenId": "step-amount"
+      },
+      "author": "David",
+      "date": "2026-09-02",
+      "status": "open"
+    },
+    {
+      "id": "am-002",
+      "screenId": "success",
+      "requirementId": "AF.3",
+      "title": "Say \"pause\", not \"stop\"",
+      "note": "The confirmation screen should say pause rather than stop everywhere — the pot must outlive its automation.",
+      "selection": {
+        "variantId": "guided-trust",
+        "surfaceId": "ios",
+        "scenarioId": "happy-path",
+        "themeId": "light",
+        "screenId": "success"
+      },
+      "author": "Priya",
+      "date": "2026-09-04",
+      "status": "resolved"
+    }
+  ]
+}

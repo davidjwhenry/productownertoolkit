@@ -1,0 +1,152 @@
+{
+  "feature_area": "Prototype Playground",
+  "description": "Screen-addressable navigation, review deep links, and the amendments write path in the prototype playground shell.",
+  "notes": "Covers the playground app itself, not generated prototypes. Companion coverage for prototype content lives in future feature areas. Run against `cd prototype-playground && npm run dev` with the savings example visible (Show examples checked).",
+  "test_cases": [
+    {
+      "id": "TC-001",
+      "description": "A reviewer jumps from the scenario sub-menu straight to any declared screen without walking the flow.",
+      "feature_area": "Prototype Playground",
+      "priority": "P0",
+      "test_type": "Happy path",
+      "active": true,
+      "pre_conditions": [
+        "The dev server is running and the catalogue shows the savings automation example",
+        "The Focused control variant and the Happy path scenario are selected"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open the prototype and wait for the preview to show the pot overview screen.",
+          "expected_result": "The sub-menu lists the Happy path screens in order, each with its § reference and a chevron."
+        },
+        {
+          "step": 2,
+          "action": "Click the Review your automation screen row.",
+          "expected_result": "The preview shows the review screen immediately, the row is marked current, the stage title reads Review your automation, and the PRD strip shows the §5.1 chip."
+        },
+        {
+          "step": 3,
+          "action": "Click the numbered screen row 1 again.",
+          "expected_result": "The preview returns to the overview screen and the address bar ends with screen=overview."
+        }
+      ]
+    },
+    {
+      "id": "TC-002",
+      "description": "A copied review link restores the exact variant, scenario, screen, and fixture state.",
+      "feature_area": "Prototype Playground",
+      "priority": "P0",
+      "test_type": "Happy path",
+      "active": true,
+      "pre_conditions": [
+        "The savings automation example is open",
+        "The Validation error scenario declares a screen whose fixture holds amount 750 and the bounded error copy"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Select the Validation error scenario and jump to its amount screen from the sub-menu.",
+          "expected_result": "The preview hydrates with the amount field showing 750 and the message Enter an amount between £1 and £500 already visible."
+        },
+        {
+          "step": 2,
+          "action": "Copy the address bar URL, open a new browser tab, and paste the URL.",
+          "expected_result": "The new tab shows the same variant, scenario, and screen with the same fixture state, without any manual clicks."
+        },
+        {
+          "step": 3,
+          "action": "Press the browser back button in the original tab.",
+          "expected_result": "The previous screen selection is restored from history, including the sub-menu highlight."
+        }
+      ]
+    },
+    {
+      "id": "TC-003",
+      "description": "An amendment proposed in the shell is saved to the prototype directory, changes status, and survives a reload.",
+      "feature_area": "Prototype Playground",
+      "priority": "P0",
+      "test_type": "Happy path",
+      "active": true,
+      "pre_conditions": [
+        "The dev server is running with write access to the repository",
+        "The savings automation example is open and declares at least one screen"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open Propose amendment, fill title, note, author, and pick the current screen and a requirement, then save.",
+          "expected_result": "A new amendment card appears with status Open and the open count increases; no error is shown."
+        },
+        {
+          "step": 2,
+          "action": "Reload the page.",
+          "expected_result": "The amendment is still listed with the same title, screen, requirement, author, and date."
+        },
+        {
+          "step": 3,
+          "action": "Choose Resolve on the new amendment, then reload again.",
+          "expected_result": "The card shows Resolved, the open count decreases by one, and the status persists after reload."
+        },
+        {
+          "step": 4,
+          "action": "Open amendments.json in the prototype directory.",
+          "expected_result": "The file contains the amendment exactly as shown in the shell, as valid JSON."
+        }
+      ]
+    },
+    {
+      "id": "TC-004",
+      "description": "Switching variants keeps the reviewer on the equivalent screen when the target variant declares it.",
+      "feature_area": "Prototype Playground",
+      "priority": "P1",
+      "test_type": "Edge case",
+      "active": true,
+      "pre_conditions": [
+        "The savings automation example is open on the Focused control variant",
+        "Both variants declare a screen with the id review"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Jump to the review screen from the sub-menu.",
+          "expected_result": "The address bar ends with screen=review and the review screen is visible."
+        },
+        {
+          "step": 2,
+          "action": "Switch to the Guided trust variant.",
+          "expected_result": "The guided review screen is visible immediately and the address bar keeps screen=review."
+        },
+        {
+          "step": 3,
+          "action": "Switch back to Focused control.",
+          "expected_result": "The focused review screen is visible; no step of the flow had to be walked."
+        }
+      ]
+    },
+    {
+      "id": "TC-005",
+      "description": "The static hand-off bundle shows amendments and notes read-only without the write path.",
+      "feature_area": "Prototype Playground",
+      "priority": "P1",
+      "test_type": "Edge case",
+      "active": true,
+      "pre_conditions": [
+        "A hand-off bundle has been generated with npm run handoff for a prototype that has amendments",
+        "The bundle's index.html is opened directly from disk"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Inspect the notes column of the hand-off bundle.",
+          "expected_result": "Design notes and amendments are listed, and Copy amendments JSON is offered instead of Propose amendment."
+        },
+        {
+          "step": 2,
+          "action": "Jump between screens from the sub-menu.",
+          "expected_result": "Screen navigation works offline; no network request is made and no save action is offered."
+        }
+      ]
+    }
+  ]
+}

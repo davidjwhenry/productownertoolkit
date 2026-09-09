@@ -73,6 +73,9 @@ Use the 8-section structure from the reference guide:
 
 Structure rules:
 
+- Number every heading that a downstream artefact can reference (`## 5.1. Automated Funding`); § references from prototypes, design notes, and the playground resolve against these numbers, so keep numbering stable across revisions — insert sections, never renumber
+- Include a `notion_url` in the frontmatter when a hosted copy exists; the playground's Open-PRD link builds on it
+- Emit `prd/<feature>.map.json` alongside the document when prototype work will follow: `{ schemaVersion: 1, sections: [{ section, heading, anchor, requirementIds }] }` — the machine-readable mirror the playground can consume instead of re-parsing
 - Keep `Assumptions To Test` inside `Product Shape`, not as a standalone section
 - Keep market, competitive, and substitute analysis inside one optional subsection of `Strategic Context`
 - Do not add `Epics Breakdown`; backlog creation should flow from `Functional Requirements`
