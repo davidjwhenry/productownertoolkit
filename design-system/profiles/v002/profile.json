@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "id": "default",
+  "version": "v002",
+  "name": "Default",
+  "sources": [
+    {
+      "id": "example-pen",
+      "kind": "pen",
+      "roles": [
+        "tokens",
+        "components"
+      ],
+      "required": true,
+      "path": "design-system/example-design-system.pen",
+      "sha256": "dbd7e1a0c801706238b26a5a248e65973ff0942105b0e1e19f250515bd06eb05"
+    }
+  ],
+  "themes": [
+    {
+      "id": "light",
+      "label": "Light"
+    },
+    {
+      "id": "dark",
+      "label": "Dark"
+    }
+  ],
+  "defaultTheme": "light",
+  "runtimeCss": "tokens.css",
+  "componentCatalogue": "components.json",
+  "assetCatalogue": "assets.json",
+  "deviceChrome": {
+    "desktop": {
+      "titleBarHeight": 42,
+      "outerRadius": 12
+    },
+    "ios": {
+      "bezel": 12,
+      "outerRadius": 54,
+      "island": {
+        "width": 126,
+        "height": 37
+      },
+      "homeIndicator": {
+        "width": 134,
+        "height": 5
+      },
+      "safeArea": {
+        "top": 59,
+        "right": 0,
+        "bottom": 34,
+        "left": 0
+      }
+    }
+  },
+  "layout": {
+    "railWidth": 228,
+    "flowWidth": 260,
+    "notesWidth": 292,
+    "stageMaxWidth": 660
+  }
+}
