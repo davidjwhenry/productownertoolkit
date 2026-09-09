@@ -1,10 +1,14 @@
 /**
  * Shareable selection state encoded solely in query parameters:
  * `prototype`, `variant`, `surface`, `scenario`, `theme`, optional
- * `compare`, and optional `examples=1`. Browser back/forward restores
- * valid selections; unknown values fall back to manifest defaults via
- * `history.replaceState` and surface a warning diagnostic instead of
- * constructing paths from URL input.
+ * `screen`, optional `compare`, and optional `examples=1`. Browser
+ * back/forward restores valid selections; unknown values fall back to
+ * manifest defaults via `history.replaceState` and surface a warning
+ * diagnostic instead of constructing paths from URL input.
+ *
+ * Variant switches keep the equivalent screen when the target variant
+ * declares it (screen retention); scenario switches keep it only when
+ * the screen is also declared for the new scenario.
  */
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react'
 import type { CatalogueResult, Diagnostic, PrototypeRecord, SurfaceId } from '../contracts'
@@ -15,6 +19,8 @@ export type Selection = {
   surfaceId: SurfaceId
   scenarioId: string
   themeId: string
+  /** Addressable screen within the variant; `null` is the entry screen. */
+  screenId: string | null
   compareVariantId: string | null
   showExamples: boolean
 }
@@ -38,7 +44,7 @@ function subscribe(callback: () => void): () => void {
 function queryToRecord(query: string): Record<string, string> {
   const params = new URLSearchParams(query)
   const out: Record<string, string> = {}
-  for (const key of ['prototype', 'variant', 'surface', 'scenario', 'theme', 'compare', 'examples']) {
+  for (const key of ['prototype', 'variant', 'surface', 'scenario', 'theme', 'screen', 'compare', 'examples']) {
     const value = params.get(key)
     if (value !== null) out[key] = value
   }
@@ -55,11 +61,10 @@ export function resolveSelection(query: string, catalogue: CatalogueResult): Sel
 
   const showExamples = params.examples === '1'
   const pool = catalogue.records.filter((record) => showExamples || record.origin === 'requirement')
-  const candidates = pool.length > 0 ? pool : catalogue.records
   const requested = params.prototype
   const record =
-    (requested !== undefined ? candidates.find((candidate) => candidate.id === requested) : undefined) ??
-    candidates[0] ??
+    (requested !== undefined ? pool.find((candidate) => candidate.id === requested) : undefined) ??
+    pool[0] ??
     null
   if (requested !== undefined && record !== null && record.id !== requested) {
     warn(`Unknown prototype "${requested}"; fell back to "${record.id}"`)
@@ -73,6 +78,7 @@ export function resolveSelection(query: string, catalogue: CatalogueResult): Sel
         surfaceId: 'desktop',
         scenarioId: '',
         themeId: catalogue.activeProfile?.defaultTheme ?? 'light',
+        screenId: null,
         compareVariantId: null,
         showExamples,
       },
@@ -101,6 +107,11 @@ export function resolveSelection(query: string, catalogue: CatalogueResult): Sel
     warn(`Unknown compare variant "${compareRequested}"; comparison disabled`)
   }
 
+  const declaredScreen = variant?.screens?.find((screen) => screen.id === params.screen)?.id ?? null
+  if (params.screen !== undefined && !declaredScreen) {
+    warn(`Unknown screen "${params.screen}"; fell back to the variant's entry screen`)
+  }
+
   return {
     selection: {
       prototypeId: record.id,
@@ -108,6 +119,7 @@ export function resolveSelection(query: string, catalogue: CatalogueResult): Sel
       surfaceId: surface ?? record.defaults.surface,
       scenarioId: scenario?.id ?? record.defaults.scenario,
       themeId: theme ?? record.defaults.theme,
+      screenId: declaredScreen,
       compareVariantId: compare,
       showExamples,
     },
@@ -123,27 +135,54 @@ export function selectionToQuery(selection: Selection): string {
   params.set('surface', selection.surfaceId)
   params.set('scenario', selection.scenarioId)
   params.set('theme', selection.themeId)
+  if (selection.screenId) params.set('screen', selection.screenId)
   if (selection.compareVariantId) params.set('compare', selection.compareVariantId)
   if (selection.showExamples) params.set('examples', '1')
   return `?${params.toString()}`
 }
 
+/** Keep the screen only when the target context still declares it. */
+function retainedScreenId(record: PrototypeRecord | null, selection: Selection, next: Partial<Selection>): string | null {
+  const screenId = next.screenId !== undefined ? next.screenId : selection.screenId
+  if (screenId === null || !record) return screenId ?? null
+  const variantId = next.variantId ?? selection.variantId
+  const scenarioId = next.scenarioId ?? selection.scenarioId
+  const variantSwitched = next.variantId !== undefined && next.variantId !== selection.variantId
+  const scenarioSwitched = next.scenarioId !== undefined && next.scenarioId !== selection.scenarioId
+  if (!variantSwitched && !scenarioSwitched) return screenId
+  const target = record.variants.find((variant) => variant.id === variantId)
+  const declarations = target?.screens?.filter((screen) => screen.id === screenId) ?? []
+  if (declarations.length === 0) return null
+  if (scenarioSwitched && !declarations.some((screen) => screen.scenarioId === scenarioId)) return null
+  return screenId
+}
+
+export type SelectionUpdateOptions = {
+  /** `push` adds a history entry (default); `replace` keeps the current one. */
+  history?: 'push' | 'replace'
+}
+
 /** Query-parameter selection state with back/forward support. */
 export function useSelectionState(catalogue: CatalogueResult): {
   resolution: SelectionResolution
-  update: (next: Partial<Selection>) => void
+  update: (next: Partial<Selection>, options?: SelectionUpdateOptions) => void
 } {
   const query = useSyncExternalStore(subscribe, readSnapshot, () => '')
   const resolution = useMemo(() => resolveSelection(query, catalogue), [query, catalogue])
   const [stickyWarnings, setStickyWarnings] = useState<Diagnostic[]>([])
 
   const update = useCallback(
-    (next: Partial<Selection>) => {
-      setStickyWarnings([])
+    (next: Partial<Selection>, options: SelectionUpdateOptions = {}) => {
+      if (options.history !== 'replace') setStickyWarnings([])
       const merged: Selection = { ...resolution.selection, ...next }
+      merged.screenId = retainedScreenId(resolution.record, resolution.selection, next)
       const target = selectionToQuery(merged)
       if (target !== window.location.search) {
-        window.history.pushState({}, '', target)
+        if (options.history === 'replace') {
+          window.history.replaceState({}, '', target)
+        } else {
+          window.history.pushState({}, '', target)
+        }
         window.dispatchEvent(new PopStateEvent('popstate'))
       }
     },
@@ -172,8 +211,9 @@ export function useSelectionState(catalogue: CatalogueResult): {
 
 /** The exact revision-brief template with the current selection substituted. */
 export function buildRevisionBrief(selection: Selection, manifestPath: string): string {
+  const screen = selection.screenId ? `, screen \`${selection.screenId}\`` : ''
   return `Revise prototype \`${selection.prototypeId}\` at \`${manifestPath}\`.
-Current view: variant \`${selection.variantId}\`, surface \`${selection.surfaceId}\`, scenario \`${selection.scenarioId}\`, theme \`${selection.themeId}\`.
+Current view: variant \`${selection.variantId}\`, surface \`${selection.surfaceId}\`, scenario \`${selection.scenarioId}\`${screen}, theme \`${selection.themeId}\`.
 Feedback: [describe the requested change]
 Preserve the other declared variants and scenarios, keep the pinned design profile unless explicitly changing it, and run \`npm run validate\` from \`prototype-playground/\`.`
 }

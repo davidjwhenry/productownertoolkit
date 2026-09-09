@@ -31,6 +31,10 @@ export type HtmlEntryReport = {
   checks: HtmlEntryCheck[]
   screens: string[]
   startScreen: string | null
+  /** Declared `name` attributes of input/textarea/select/button/form/output controls. */
+  controlNames: string[]
+  /** Declared `data-prototype-validation-for` control names. */
+  validationTargets: string[]
 }
 
 type Element = DefaultTreeAdapterMap['element']
@@ -159,6 +163,7 @@ export function validateHtmlEntry(
     }
   }
   const screenSet = new Set(screens)
+  const validationTargets: string[] = []
 
   const bodyElement = elements.find((element) => element.tagName === 'body')
   const startScreen = bodyElement ? (attr(bodyElement, RUNTIME_ATTRIBUTES.start) ?? null) : null
@@ -375,6 +380,7 @@ export function validateHtmlEntry(
         }
         case RUNTIME_ATTRIBUTES.validationFor:
         case RUNTIME_ATTRIBUTES.bind: {
+          if (name === RUNTIME_ATTRIBUTES.validationFor && !validationTargets.includes(value)) validationTargets.push(value)
           if (!nameSet.has(value)) {
             checks.push({ where: attrWhere, message: `${name} target "${value}" is not a control name in this document` })
           }
@@ -400,5 +406,5 @@ export function validateHtmlEntry(
     checks.push({ where: RUNTIME_ATTRIBUTES.start, message: `Start screen "${startScreen}" is not a declared screen` })
   }
 
-  return { checks, screens, startScreen }
+  return { checks, screens, startScreen, controlNames, validationTargets }
 }

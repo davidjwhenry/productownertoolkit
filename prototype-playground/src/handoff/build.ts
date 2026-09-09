@@ -15,7 +15,7 @@ import { viteSingleFile } from 'vite-plugin-singlefile'
 import type { HandoffMarkerManifest } from '../contracts'
 import { loadRepositoryCatalogue } from '../registry/catalogue'
 import prototypeRegistryPlugin from '../registry/vite-plugin'
-import { PathResolver } from '../validation/paths'
+import { PathError, PathResolver } from '../validation/paths'
 
 export const HANDOFF_MARKER_NAME = '.prototype-playground-handoff.json'
 
@@ -167,7 +167,25 @@ export async function buildHandoff(options: BuildHandoffOptions): Promise<string
       const entry = await resolver.resolveFile({ kind: 'prototype-variants', prototypeDir }, variant.entry, 10 * 1024 * 1024)
       await writeFile(path.join(staging, 'source', 'variants', path.basename(variant.entry)), entry.bytes)
     }
-
+    // Review companions: verbatim design notes and the amendments log.
+    const extraChecks: Array<[string, string]> = []
+    const notesCompanion = record.companions.find((companion) => companion.kind === 'design-notes')
+    if (notesCompanion) {
+      const notesFile = await resolver.resolveFile({ kind: 'prototype-companions', prototypeDir }, notesCompanion.path, 10 * 1024 * 1024)
+      await writeFile(path.join(staging, 'source', 'design-notes.json'), notesFile.bytes)
+      extraChecks.push([notesCompanion.path, path.join('source', 'design-notes.json')])
+    }
+    const amendmentsRel = `${prototypeDir.replaceAll(path.sep, '/')}/amendments.json`
+    const amendmentsFile = await resolver
+      .resolveFile({ kind: 'prototype-amendments', prototypeDir }, amendmentsRel, 10 * 1024 * 1024)
+      .catch((error: unknown) => {
+        if ((error as PathError).code === 'SOURCE_NOT_FOUND') return null
+        throw error
+      })
+    if (amendmentsFile) {
+      await writeFile(path.join(staging, 'source', 'amendments.json'), amendmentsFile.bytes)
+      extraChecks.push([amendmentsRel, path.join('source', 'amendments.json')])
+    }
     // 5. Marker: every generated file except the marker itself, sorted.
     const generated = await listFiles(staging)
     const marker: HandoffMarkerManifest = {
@@ -182,7 +200,7 @@ export async function buildHandoff(options: BuildHandoffOptions): Promise<string
     await writeFile(path.join(staging, HANDOFF_MARKER_NAME), `${JSON.stringify(marker, null, 2)}\n`)
 
     // 6. Snapshot re-check: staged bytes still match the repository sources.
-    await recheckSources(resolver, record, staging)
+    await recheckSources(resolver, record, staging, extraChecks)
 
     // 7. Verified replacement, re-checked immediately before commit.
     const destinationStats = await lstat(destination).catch(() => null)
@@ -198,10 +216,16 @@ export async function buildHandoff(options: BuildHandoffOptions): Promise<string
   }
 }
 
-async function recheckSources(resolver: PathResolver, record: { manifestPath: string; source: { prd: string }; variants: Array<{ entry: string }> }, staging: string): Promise<void> {
+async function recheckSources(
+  resolver: PathResolver,
+  record: { manifestPath: string; source: { prd: string }; variants: Array<{ entry: string }> },
+  staging: string,
+  extraChecks: Array<[string, string]> = [],
+): Promise<void> {
   const checks: Array<[string, string]> = [
     [record.source.prd, path.join('source', 'prd', path.basename(record.source.prd))],
     ...record.variants.map((variant) => [variant.entry, path.join('source', 'variants', path.basename(variant.entry))] as [string, string]),
+    ...extraChecks,
   ]
   for (const [sourceRel, stagedRel] of checks) {
     const source = await resolver.digestFile(sourceRel)

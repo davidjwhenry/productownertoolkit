@@ -6,6 +6,12 @@
  * never evaluates strings, constructs URLs, accesses storage, or performs
  * navigation or network calls.
  *
+ * Bridge protocol v2 additions: the context may carry an ordered screen
+ * registry with jump fixtures and a `startScreen` override; the runtime
+ * accepts `prototype:goto` from the parent (re-validating the target),
+ * hydrates the screen's fixture state, and emits `prototype:screen` on
+ * every screen shown after `ready`.
+ *
  * The string is frozen source: `buildSandboxDocument()` prepends the
  * serialised per-load context initialiser and inserts the complete bytes
  * as the document's single nonce'd `<script>`.
@@ -16,15 +22,27 @@ export const RUNTIME_SOURCE = String.raw`
 ;(function () {
   'use strict'
   var CONTEXT = globalThis.__PROTOTYPE_PLAYGROUND_CONTEXT__
-  if (!CONTEXT || CONTEXT.protocolVersion !== 1) return
+  if (!CONTEXT || CONTEXT.protocolVersion !== 2) return
   var CHANNEL = String(CONTEXT.channelId)
   var PREFIX = 'data-prototype-'
+  var readyEmitted = false
 
   function fail(code) {
-    try { parent.postMessage({ type: 'prototype:error', protocolVersion: 1, channelId: CHANNEL, code: code }, '*') } catch (e) {}
+    try { parent.postMessage({ type: 'prototype:error', protocolVersion: 2, channelId: CHANNEL, code: code }, '*') } catch (e) {}
   }
   function ready() {
-    try { parent.postMessage({ type: 'prototype:ready', protocolVersion: 1, channelId: CHANNEL }, '*') } catch (e) {}
+    try { parent.postMessage({ type: 'prototype:ready', protocolVersion: 2, channelId: CHANNEL }, '*') } catch (e) {}
+  }
+  function notifyScreen(screenId) {
+    try { parent.postMessage({ type: 'prototype:screen', protocolVersion: 2, channelId: CHANNEL, screenId: screenId }, '*') } catch (e) {}
+  }
+
+  // Jump fixtures for the screens this variant/scenario declares.
+  var FIXTURES = {}
+  if (CONTEXT.screens) {
+    CONTEXT.screens.forEach(function (entry) {
+      FIXTURES[entry.id] = entry.fixture || null
+    })
   }
 
   var doc = document
@@ -67,6 +85,7 @@ export const RUNTIME_SOURCE = String.raw`
     next.removeAttribute('hidden')
     next.setAttribute('aria-current', 'true')
     current = screenId
+    if (readyEmitted) notifyScreen(screenId)
     var heading = next.querySelector('h1, h2, h3')
     if (heading) {
       heading.setAttribute('tabindex', '-1')
@@ -75,6 +94,64 @@ export const RUNTIME_SOURCE = String.raw`
     return true
   }
 
+  function go(screenId) {
+    if (current !== null) backStack.push(current)
+    return show(screenId)
+  }
+
+  function back() {
+    var previous = backStack.pop()
+    if (previous === undefined) return
+    show(previous)
+  }
+
+  // ---- Fixture hydration (direct jumps) ----
+  function setControlValue(name, value) {
+    var controls = controlsByName(name)
+    if (controls.length === 0) return
+    var radios = controls.filter(function (control) { return control.type === 'radio' })
+    if (radios.length > 0) {
+      radios.forEach(function (radio) { radio.checked = radio.value === value })
+      return
+    }
+    controls[0].value = value
+  }
+  function setControlChecked(name, checked) {
+    controlsByName(name).forEach(function (control) {
+      if (control.type === 'checkbox' || control.type === 'radio') control.checked = !!checked
+    })
+  }
+  function applyFixture(fixture) {
+    if (!fixture) return
+    if (fixture.values) {
+      Object.keys(fixture.values).forEach(function (name) { setControlValue(name, String(fixture.values[name])) })
+    }
+    if (fixture.checked) {
+      Object.keys(fixture.checked).forEach(function (name) { setControlChecked(name, fixture.checked[name]) })
+    }
+    refreshBindings()
+    clearValidation()
+    if (fixture.validation) {
+      Object.keys(fixture.validation).forEach(function (name) {
+        var target = messageTargetFor(name)
+        if (target) {
+          target.textContent = String(fixture.validation[name])
+          target.setAttribute('role', 'alert')
+        }
+      })
+    }
+  }
+  /** Jump to any declared screen: initial state, jump fixture, fresh history. */
+  function hydrate(screenId) {
+    if (!Object.prototype.hasOwnProperty.call(screens, screenId)) {
+      fail('UNRESOLVED_SCREEN_TARGET')
+      return false
+    }
+    restoreInitial()
+    backStack = []
+    applyFixture(FIXTURES[screenId] || null)
+    return show(screenId)
+  }
   function go(screenId) {
     if (current !== null) backStack.push(current)
     return show(screenId)
@@ -98,7 +175,8 @@ export const RUNTIME_SOURCE = String.raw`
       initialValues.push([control, control.value, control.checked])
     })
   }
-  function reset() {
+  /** Restore the captured declarative state without changing screens. */
+  function restoreInitial() {
     initialHidden.forEach(function (entry) {
       if (entry[1]) entry[0].setAttribute('hidden', ''); else entry[0].removeAttribute('hidden')
     })
@@ -108,6 +186,9 @@ export const RUNTIME_SOURCE = String.raw`
     })
     clearValidation()
     refreshBindings()
+  }
+  function reset() {
+    restoreInitial()
     backStack = []
     show(START)
   }
@@ -229,14 +310,28 @@ export const RUNTIME_SOURCE = String.raw`
   })
 
   // ---- Bridge ----
-  // The runtime emits ready exactly once after successful initialisation.
-  // Unexpected navigation is detected by the parent (iframe load count).
-  var emitted = false
+  // The runtime emits ready exactly once after successful initialisation,
+  // then one prototype:screen per shown screen so the host can track
+  // position. Unexpected navigation is detected by the parent (iframe
+  // load count). Parent-to-child commands are validated like any hostile
+  // input: exact keys, protocol version 2, channel match, parent source.
   function emitReady() {
-    if (emitted) return
-    emitted = true
+    if (readyEmitted) return
+    readyEmitted = true
     ready()
+    if (current !== null) notifyScreen(current)
   }
+
+  window.addEventListener('message', function (event) {
+    if (!event.source || event.source !== parent) return
+    var data = event.data
+    if (typeof data !== 'object' || data === null) return
+    var keys = Object.keys(data).sort().join(',')
+    if (keys !== 'channelId,protocolVersion,screenId,type') return
+    if (data.type !== 'prototype:goto' || data.protocolVersion !== 2) return
+    if (data.channelId !== CHANNEL || typeof data.screenId !== 'string') return
+    if (readyEmitted) hydrate(data.screenId)
+  })
 
   try {
     if (!START || !Object.prototype.hasOwnProperty.call(screens, START)) throw new Error('start screen')

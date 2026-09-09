@@ -31,6 +31,25 @@ export type FigmaDesignSource = {
 }
 
 export type DesignSource = LocalDesignSource | FigmaDesignSource
+/** Device frame geometry a profile may pin so shell and prototypes render consistent frames. */
+export type DeviceChrome = {
+  desktop: { titleBarHeight: number; outerRadius: number }
+  ios: {
+    bezel: number
+    outerRadius: number
+    island: { width: number; height: number }
+    homeIndicator: { width: number; height: number }
+    safeArea: { top: number; right: number; bottom: number; left: number }
+  }
+}
+
+/** Playground shell column rhythm the profile records as canonical. */
+export type ProfileLayout = {
+  railWidth: number
+  flowWidth: number
+  notesWidth: number
+  stageMaxWidth: number
+}
 
 export type DesignProfileManifest = {
   schemaVersion: 1
@@ -44,6 +63,8 @@ export type DesignProfileManifest = {
   runtimeCss: string
   componentCatalogue: string
   assetCatalogue: string
+  deviceChrome?: DeviceChrome
+  layout?: ProfileLayout
   guidance?: string[]
 }
 
@@ -74,6 +95,24 @@ export type AssetsManifest = {
   }>
 }
 
+/** State applied when jumping directly to a screen: control values, checkbox/radio state, and validation messages. */
+export type ScreenFixture = {
+  values?: Record<string, string>
+  checked?: Record<string, boolean>
+  validation?: Record<string, string>
+}
+
+/** One addressable screen inside a variant, as declared by the manifest. */
+export type ScreenDeclaration = {
+  id: string
+  label: string
+  order: number
+  scenarioId: string
+  prdRefs: Array<{ section: string; requirementIds: string[] }>
+  branch?: boolean
+  fixture?: ScreenFixture
+}
+
 export type PrototypeManifestVariant = {
   id: string
   label: string
@@ -81,6 +120,8 @@ export type PrototypeManifestVariant = {
   tradeOffs: string[]
   /** Repository-root-relative POSIX path to the declarative HTML entry. */
   entry: string
+  /** Addressable screens; when declared, must match the entry's `data-prototype-screen` set exactly. */
+  screens?: ScreenDeclaration[]
 }
 
 export type PrototypeManifest = {
@@ -133,4 +174,40 @@ export type HandoffMarkerManifest = {
   prototypeId: string
   /** Sorted repository-relative generated file paths with their SHA-256 digests. */
   files: Array<{ path: string; sha256: string }>
+}
+
+export type DesignNotesManifest = {
+  schemaVersion: 1
+  notes: Array<{
+    id: string
+    section: string
+    label: string
+    quote: string
+    requirementIds: string[]
+  }>
+}
+
+export type AmendmentStatus = 'open' | 'resolved' | 'dismissed'
+
+export type Amendment = {
+  id: string
+  screenId: string
+  requirementId: string | null
+  title: string
+  note: string
+  selection: {
+    variantId: string
+    surfaceId: 'desktop' | 'ios'
+    scenarioId: string
+    themeId: string
+    screenId: string
+  }
+  author: string
+  date: string
+  status: AmendmentStatus
+}
+
+export type AmendmentsManifest = {
+  schemaVersion: 1
+  amendments: Amendment[]
 }

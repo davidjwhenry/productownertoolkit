@@ -7,13 +7,14 @@ import type { DefaultTreeAdapterMap } from 'parse5'
 
 function makeContext(overrides: Partial<PrototypeContext> = {}): PrototypeContext {
   return {
-    protocolVersion: 1,
+    protocolVersion: 2,
     channelId: '0123456789abcdef0123456789abcdef',
     prototypeId: 'demo',
     variantId: 'focused',
     surfaceId: 'desktop',
     scenarioId: 'happy-path',
     themeId: 'light',
+    screens: [],
     ...overrides,
   }
 }
