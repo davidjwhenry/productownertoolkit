@@ -10,7 +10,7 @@
 :root {
   --shell-background: #ffffff;
   --shell-panel: #ffffff;
-  --shell-canvas: #ffffff;
+  --shell-canvas: #eeeeee;
   --shell-ink: #111111;
   --shell-muted: #757575;
   --shell-faint: #9a9a9a;
@@ -291,6 +291,7 @@ body {
   padding: 28px 28px 24px;
   gap: 14px;
   overflow: hidden;
+  background: var(--shell-canvas);
 }
 
 .stage-header { text-align: center; max-width: var(--shell-stage-max, 660px); }
