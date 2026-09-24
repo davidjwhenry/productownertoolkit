@@ -8,4 +8,4 @@ Report them privately through GitHub's [private vulnerability reporting](https:/
 
 ## Credentials
 
-This toolkit connects to services such as Notion, Figma, GitHub and Firecrawl through MCP. Never commit API keys or tokens to this repo, including in forks. Keep them in your local MCP client configuration or environment variables.
+This toolkit connects to services such as Notion, Figma, GitHub, and Firecrawl through MCP. Never commit API keys or tokens to this repo, including in forks. Keep them in your local MCP client configuration or environment variables.
