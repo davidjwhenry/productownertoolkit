@@ -207,6 +207,13 @@ export async function buildHandoff(options: BuildHandoffOptions): Promise<string
     if (destinationStats && (destinationStats.isSymbolicLink() || !destinationStats.isDirectory())) {
       throw new Error(`Destination is not a plain directory: ${destination}`)
     }
+    // The Vite build is slow; anything written to the destination meanwhile must still pass the marker check.
+    if (destinationStats && (await readdir(destination)).length > 0) {
+      if (!force) {
+        throw new Error(`Destination exists and is not empty: ${destination}. Pass --force only to replace a verified tool-owned hand-off.`)
+      }
+      await verifyExistingHandoff(destination, prototypeId)
+    }
     await rm(destination, { recursive: true, force: true })
     await rename(staging, destination)
     return destination

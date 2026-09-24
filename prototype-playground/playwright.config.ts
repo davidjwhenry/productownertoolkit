@@ -30,7 +30,9 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 120_000,
     env: {
-      ...process.env,
+      ...Object.fromEntries(
+        Object.entries(process.env).filter((entry): entry is [string, string] => entry[1] !== undefined),
+      ),
       PROTOTYPE_PLAYGROUND_ROOT: fixtureRoot,
     },
     stdout: 'ignore',

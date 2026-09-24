@@ -245,6 +245,7 @@ export default function prototypeRegistryPlugin(options: PrototypeRegistryPlugin
             method,
             suffix,
             body: method === 'PUT' ? await readRequestBody(req) : Buffer.alloc(0),
+            ifMatch: typeof req.headers['if-match'] === 'string' ? req.headers['if-match'] : undefined,
             repoRoot: state.repoRoot,
             loadCatalogue: () => loadCatalogue(server),
           })
@@ -257,6 +258,8 @@ export default function prototypeRegistryPlugin(options: PrototypeRegistryPlugin
           }
           res.statusCode = response.status
           res.setHeader('content-type', 'application/json; charset=utf-8')
+          if (response.etag) res.setHeader('etag', response.etag)
+          res.setHeader('cache-control', 'no-store')
           res.end(response.body)
         })().catch(() => {
           res.statusCode = 500

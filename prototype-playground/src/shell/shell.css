@@ -41,7 +41,7 @@ body {
 }
 
 .app-shell-handoff {
-  grid-template-columns: 0 minmax(0, 1fr) var(--shell-notes-w, 292px);
+  grid-template-columns: minmax(0, 1fr) var(--shell-notes-w, 292px);
   grid-template-rows: auto minmax(0, 1fr);
 }
 

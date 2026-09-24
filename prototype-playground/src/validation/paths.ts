@@ -17,6 +17,9 @@ import path from 'node:path'
 /** Diagnostic codes raised by the resolver itself. */
 export type PathErrorCode = 'SOURCE_NOT_FOUND' | 'PATH_NOT_AUTHORISED' | 'FILE_TOO_LARGE'
 
+/** Immutable profile version directory names: `v001`, `v002`, … */
+const PROFILE_VERSION = /^v[0-9]{3}$/
+
 export class PathError extends Error {
   constructor(
     readonly code: PathErrorCode,
@@ -177,6 +180,19 @@ export class PathResolver {
 
   /** Stat one repository file, enforcing regular-file and root containment. */
   private async statChecked(relPath: string): Promise<FileSnapshot> {
+    const { realPath, stats } = await this.regularFile(relPath)
+    return {
+      absPath: realPath,
+      relPath,
+      size: stats.size,
+      dev: stats.dev,
+      ino: stats.ino,
+      sha256: await digestStream(realPath),
+    }
+  }
+
+  /** Authorise one path as a regular, non-symlink file contained under the root. */
+  private async regularFile(relPath: string): Promise<{ realPath: string; stats: Stats }> {
     assertSafeRelativePath(relPath)
     const absPath = this.join(relPath)
     let stats: Stats
@@ -201,14 +217,7 @@ export class PathResolver {
     if (realPath !== canonicalRoot && !realPath.startsWith(canonicalRoot + path.sep)) {
       throw new PathError('PATH_NOT_AUTHORISED', relPath, 'Path resolves outside the repository root')
     }
-    return {
-      absPath: realPath,
-      relPath,
-      size: stats.size,
-      dev: stats.dev,
-      ino: stats.ino,
-      sha256: await digestStream(realPath),
-    }
+    return { realPath, stats }
   }
 
   /**
@@ -294,8 +303,14 @@ export class PathResolver {
   async listProfileVersionFiles(
     version: string,
   ): Promise<Array<FileSnapshot & { realPath: string }>> {
+    if (!PROFILE_VERSION.test(version)) {
+      throw new PathError('PATH_NOT_AUTHORISED', version, `Invalid profile version: ${version}`)
+    }
     const dirRel = `design-system/profiles/${version}`
-    const canonicalDir = await realpath(this.join(dirRel))
+    const notFound = (rel: string) => (): never => {
+      throw new PathError('SOURCE_NOT_FOUND', rel, `File not found: ${rel}`)
+    }
+    const canonicalDir = await realpath(this.join(dirRel)).catch(notFound(dirRel))
     const out: Array<FileSnapshot & { realPath: string }> = []
     const walk = async (rel: string): Promise<void> => {
       let entries: Dirent[]
@@ -307,14 +322,14 @@ export class PathResolver {
       for (const entry of entries.sort((a, b) => a.name.localeCompare(b.name, 'en'))) {
         const childRel = `${rel}/${entry.name}`
         const childAbs = this.join(childRel)
-        const stats = await lstat(childAbs)
+        const stats = await lstat(childAbs).catch(notFound(childRel))
         if (stats.isSymbolicLink()) {
           throw new PathError('PATH_NOT_AUTHORISED', childRel, 'Symbolic links are rejected inside immutable profiles')
         }
         if (stats.isDirectory()) {
           await walk(childRel)
         } else if (stats.isFile()) {
-          const realPath = await realpath(childAbs)
+          const realPath = await realpath(childAbs).catch(notFound(childRel))
           if (!realPath.startsWith(canonicalDir + path.sep)) {
             throw new PathError('PATH_NOT_AUTHORISED', childRel, 'Profile member resolves outside its version directory')
           }
@@ -358,6 +373,7 @@ export class PathResolver {
 
   /** Stream one authorised file's raw bytes into an external hash without buffering. */
   async hashFileInto(relPath: string, hash: Hash): Promise<void> {
-    await finished(createReadStream(this.join(relPath)).on('data', (chunk) => hash.update(chunk as Buffer)))
+    const { realPath } = await this.regularFile(relPath)
+    await finished(createReadStream(realPath).on('data', (chunk) => hash.update(chunk as Buffer)))
   }
 }

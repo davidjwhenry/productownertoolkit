@@ -3,10 +3,12 @@
  * requirement. Proposing, resolving, dismissing, reopening, and deleting
  * all round-trip through the dev-server endpoint (`PUT
  * /__playground__/amendments/:prototypeId`), which re-validates the whole
- * document before an atomic replace. The static hand-off build has no
+ * document before an atomic replace. Each write carries the revision the
+ * panel last loaded (`If-Match`), so a stale tab gets a conflict and
+ * reloads instead of overwriting. The static hand-off build has no
  * server: the panel turns read-only with a copy-export.
  */
-import { useEffect, useMemo, useState, type JSX } from 'react'
+import { useCallback, useEffect, useMemo, useState, type JSX } from 'react'
 import type { Amendment, AmendmentStatus, PrototypeRecord } from '../contracts'
 import type { Selection, SelectionUpdateOptions } from './useSelectionState'
 import { CopyAction } from './CopyAction'
@@ -46,12 +48,30 @@ export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
   const [requirementId, setRequirementId] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [revision, setRevision] = useState<string | null>(null)
+
+  /** Load the on-disk document and its revision; returns the revision, or null when unavailable. */
+  const refresh = useCallback(async (): Promise<string | null> => {
+    try {
+      const response = await fetch(`/__playground__/amendments/${record.id}`, { cache: 'no-store' })
+      const etag = response.headers.get('etag')
+      if (!response.ok || !etag) return null
+      const doc = (await response.json()) as { amendments: Amendment[] }
+      setAmendments(doc.amendments)
+      setRevision(etag)
+      return etag
+    } catch {
+      return null
+    }
+  }, [record.id])
 
   useEffect(() => {
     setAmendments(record.amendments)
+    setRevision(null)
     setProposing(false)
     setError(null)
-  }, [record.id, record.amendments])
+    if (writable) void refresh()
+  }, [record.id, record.amendments, writable, refresh])
 
   const variant = record.variants.find((candidate) => candidate.id === selection.variantId) ?? record.variants[0]
   const screens = useMemo(() => {
@@ -73,18 +93,25 @@ export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
     setBusy(true)
     setError(null)
     try {
+      const base = revision ?? (await refresh())
+      if (!base) {
+        setError('Save failed — is the dev server running?')
+        return false
+      }
       const response = await fetch(`/__playground__/amendments/${record.id}`, {
         method: 'PUT',
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', 'if-match': base },
         body: JSON.stringify({ schemaVersion: 1, amendments: next }),
       })
       if (!response.ok) {
         const detail = (await response.json().catch(() => null)) as { error?: string } | null
+        if (response.status === 409) await refresh()
         setError(detail?.error ?? `Save failed (${response.status})`)
         return false
       }
       const doc = (await response.json()) as { amendments: Amendment[] }
       setAmendments(doc.amendments)
+      setRevision(response.headers.get('etag'))
       return true
     } catch {
       setError('Save failed — is the dev server running?')
