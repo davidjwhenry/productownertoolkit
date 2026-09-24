@@ -10,7 +10,7 @@
  */
 import { useCallback, useEffect, useMemo, useState, type JSX } from 'react'
 import type { Amendment, AmendmentStatus, PrototypeRecord } from '../contracts'
-import type { Selection, SelectionUpdateOptions } from './useSelectionState'
+import { selectionToQuery, type Selection, type SelectionUpdateOptions } from './useSelectionState'
 import { CopyAction } from './CopyAction'
 
 type AmendmentsPanelProps = {
@@ -256,14 +256,11 @@ export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
           {writable ? (
             <button type="button" className="button-primary" onClick={() => setProposing(true)}>Propose amendment</button>
           ) : null}
-          <CopyAction label="Copy review link" text={`${window.location.origin}${window.location.pathname}?${new URLSearchParams({
-            prototype: selection.prototypeId,
-            variant: selection.variantId,
-            surface: selection.surfaceId,
-            scenario: selection.scenarioId,
-            theme: selection.themeId,
-            ...(selection.screenId ? { screen: selection.screenId } : {}),
-          }).toString()}`} className="button-secondary" />
+          <CopyAction
+            label="Copy review link"
+            text={`${window.location.origin}${window.location.pathname}${selectionToQuery(selection)}`}
+            className="button-secondary"
+          />
           <CopyAction
             label="Copy amendments JSON"
             text={JSON.stringify({ schemaVersion: 1, amendments }, null, 2)}

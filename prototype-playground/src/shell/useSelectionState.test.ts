@@ -110,13 +110,19 @@ describe('resolveSelection', () => {
     expect(compared.selection.compareVariantId).toBe('guided')
   })
 
-  it('resolves no record when examples are hidden and no requirement prototypes exist', () => {
+  it('shows examples by default only when no requirement prototypes exist', () => {
     const exampleOnlyCatalogue: CatalogueResult = { ...makeCatalogue(), records: [{ ...makeRecord(), origin: 'example' }] }
-    const hidden = resolveSelection('?prototype=demo', exampleOnlyCatalogue)
+    // A shared link without `examples` still opens the example.
+    const linked = resolveSelection('?prototype=demo', exampleOnlyCatalogue)
+    expect(linked.record?.id).toBe('demo')
+    expect(linked.selection.showExamples).toBe(true)
+    const hidden = resolveSelection('?prototype=demo&examples=0', exampleOnlyCatalogue)
     expect(hidden.record).toBeNull()
     expect(hidden.selection.prototypeId).toBe('')
-    const shown = resolveSelection('?prototype=demo&examples=1', exampleOnlyCatalogue)
-    expect(shown.record?.id).toBe('demo')
+    expect(selectionToQuery(hidden.selection, hidden.examplesDefault)).toContain('examples=0')
+    const withLive = resolveSelection('?prototype=demo', makeCatalogue())
+    expect(withLive.selection.showExamples).toBe(false)
+    expect(selectionToQuery(withLive.selection, withLive.examplesDefault)).not.toContain('examples')
   })
 })
 

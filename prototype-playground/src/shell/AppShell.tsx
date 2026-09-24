@@ -7,7 +7,7 @@
  * prototype-only banner and makes amendments read-only. Below 1,240 px
  * the columns collapse into labelled drawers.
  */
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type JSX } from 'react'
+import { useMemo, useRef, useState, type CSSProperties, type JSX } from 'react'
 import type { CatalogueResult, PrototypeRecord, SurfaceId } from '../contracts'
 import { PrototypePreview, type PreviewHandle } from '../preview/PrototypePreview'
 import { SURFACE_PRESETS, ZOOM_MODES, type ZoomMode } from '../preview/surfaces'
@@ -49,15 +49,6 @@ export function AppShell(props: AppShellProps): JSX.Element {
   const [notesOpen, setNotesOpen] = useState(false)
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false)
   const previewRef = useRef<PreviewHandle | null>(null)
-  const hasLive = catalogue.records.some((r) => r.origin === 'requirement')
-  // Default to showing examples once, on mount, only when no requirement
-  // prototypes exist yet; the checkbox is the sole source of truth after that.
-  const defaultedExamplesRef = useRef(false)
-  useEffect(() => {
-    if (defaultedExamplesRef.current) return
-    defaultedExamplesRef.current = true
-    if (!hasLive && !selection.showExamples) update({ showExamples: true }, { history: 'replace' })
-  }, [hasLive, selection.showExamples, update])
   const visibleRecords = useMemo(() => {
     const needle = query.trim().toLowerCase()
     const pool = selection.showExamples ? catalogue.records : catalogue.records.filter((r) => r.origin === 'requirement')

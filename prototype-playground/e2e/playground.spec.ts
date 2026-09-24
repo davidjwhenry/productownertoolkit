@@ -296,17 +296,21 @@ test('the sandboxed child cannot gain host privileges', async ({ page }) => {
   expect(hostHeading).toBe('Prototype Playground')
 })
 
-test('amendments round-trip through the dev-server write path', async ({ page }) => {
+test('amendments round-trip through the dev-server write path', async ({ page, context }) => {
   await page.getByRole('button', { name: /Savings pots and round-ups automation/ }).click()
   await readyWithOverview(page)
-  await expect(page.locator('.amendments-panel')).toContainText('2 open')
-  await expect(page.locator('.amendment-title', { hasText: 'Round-up daily cap' })).toBeVisible()
+  await expect(page.locator('.amendments-panel')).toContainText('1 open')
 
   // Jump through an amendment pin.
   await page.locator('.amendment-title', { hasText: 'Round-up daily cap' }).click()
   await expect(page).toHaveURL(/variant=guided-trust/)
   await expect(page).toHaveURL(/screen=step-amount/)
   await expect(frame(page).getByRole('heading', { name: 'How much each time?' })).toBeVisible()
+
+  // A second tab loads the same revision before the first tab writes.
+  const stale = await context.newPage()
+  await stale.goto(page.url())
+  await expect(stale.locator('.amendments-panel')).toContainText('1 open')
 
   // Propose a new amendment through the form.
   await page.getByRole('button', { name: 'Propose amendment' }).click()
@@ -316,12 +320,19 @@ test('amendments round-trip through the dev-server write path', async ({ page })
   await page.getByLabel('Screen', { exact: true }).selectOption('step-amount')
   await page.getByRole('button', { name: 'Save amendment' }).click()
   await expect(page.locator('.amendment-title', { hasText: 'Show the pot balance on the amount step' })).toBeVisible()
-  await expect(page.locator('.amendments-panel')).toContainText('3 open')
+  await expect(page.locator('.amendments-panel')).toContainText('2 open')
 
-  // Resolve one and verify persistence across a reload.
-  await page.locator('.amendment-card', { hasText: 'Say "pause", not "stop"' }).getByRole('button', { name: 'Resolve' }).click()
-  await expect(page.locator('.amendments-panel')).toContainText('2 open')
+  // The stale tab is refused, reloads the latest document, and can then write.
+  const resolveCap = (target: Page) =>
+    target.locator('.amendment-card', { hasText: 'Round-up daily cap' }).getByRole('button', { name: 'Resolve' }).click()
+  await resolveCap(stale)
+  await expect(stale.locator('.amendment-error')).toContainText('changed since this view loaded')
+  await expect(stale.locator('.amendments-panel')).toContainText('2 open')
+  await resolveCap(stale)
+  await expect(stale.locator('.amendments-panel')).toContainText('1 open')
+
+  // Persistence across a reload.
   await page.reload()
-  await expect(page.locator('.amendments-panel')).toContainText('2 open')
-  await expect(page.locator('.amendment-card', { hasText: 'Say "pause", not "stop"' }).locator('.amendment-status')).toHaveText('Resolved')
+  await expect(page.locator('.amendments-panel')).toContainText('1 open')
+  await expect(page.locator('.amendment-card', { hasText: 'Round-up daily cap' }).locator('.amendment-status')).toHaveText('Resolved')
 })

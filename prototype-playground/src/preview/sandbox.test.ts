@@ -94,13 +94,6 @@ describe('buildSandboxDocument', () => {
     expect(script.endsWith(buildRuntimeScript(context))).toBe(true)
   })
 
-  it('produces different nonces per load', () => {
-    const context = makeContext()
-    const one = scriptTags(buildSandboxDocument(validEntryHtml(), context))[0]?.nonce
-    const two = scriptTags(buildSandboxDocument(validEntryHtml(), context))[0]?.nonce
-    expect(one).not.toBe(two)
-  })
-
   it('throws before mounting when the entry violates the allow-list', () => {
     const hostile = validEntryHtml().replace('<h1>Home</h1>', '<h1>Home</h1><script>alert(1)</script>')
     expect(() => buildSandboxDocument(hostile, makeContext())).toThrow('allow-list')

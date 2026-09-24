@@ -137,7 +137,7 @@ describe('PathResolver', () => {
     }
   })
 
-  it('walks nested profile members with the same digest as raw bytes', async () => {
+  it('rejects symlinked directories inside profile versions', async () => {
     const repo = await makeFixtureRepo()
     try {
       const resolver = new PathResolver(repo.root)
@@ -145,6 +145,19 @@ describe('PathResolver', () => {
       await writeFile(path.join(repo.root, 'design-system/assets/logo.svg'), '<svg/>')
       await repo.link('design-system/profiles/v001/assets', path.join(repo.root, 'design-system/assets'))
       await expect(resolver.listProfileVersionFiles('v001')).rejects.toMatchObject({ code: 'PATH_NOT_AUTHORISED' })
+    } finally {
+      await repo.cleanup()
+    }
+  })
+
+  it('rejects profile versions that are not vNNN before touching the filesystem', async () => {
+    const repo = await makeFixtureRepo()
+    try {
+      const resolver = new PathResolver(repo.root)
+      for (const version of ['../../outside', 'v1', 'v001/..', 'V001']) {
+        await expect(resolver.listProfileVersionFiles(version)).rejects.toMatchObject({ code: 'PATH_NOT_AUTHORISED' })
+      }
+      await expect(resolver.listProfileVersionFiles('v999')).rejects.toMatchObject({ code: 'SOURCE_NOT_FOUND' })
     } finally {
       await repo.cleanup()
     }

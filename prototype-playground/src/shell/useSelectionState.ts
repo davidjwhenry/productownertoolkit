@@ -1,7 +1,8 @@
 /**
  * Shareable selection state encoded solely in query parameters:
  * `prototype`, `variant`, `surface`, `scenario`, `theme`, optional
- * `screen`, optional `compare`, and optional `examples=1`. Browser
+ * `screen`, optional `compare`, and optional `examples` (`1` or `0`;
+ * absent means shown only when no requirement prototypes exist). Browser
  * back/forward restores valid selections; unknown values fall back to
  * manifest defaults via `history.replaceState` and surface a warning
  * diagnostic instead of constructing paths from URL input.
@@ -30,6 +31,8 @@ export type SelectionResolution = {
   record: PrototypeRecord | null
   /** Warnings for unknown query values that fell back to defaults. */
   warnings: Diagnostic[]
+  /** Whether examples show when the query omits `examples`: true when no requirement prototypes exist. */
+  examplesDefault: boolean
 }
 
 function readSnapshot(): string {
@@ -59,7 +62,8 @@ export function resolveSelection(query: string, catalogue: CatalogueResult): Sel
     warnings.push({ severity: 'warning', code: 'SELECTION_FALLBACK', path: '(query parameters)', message })
   }
 
-  const showExamples = params.examples === '1'
+  const examplesDefault = !catalogue.records.some((record) => record.origin === 'requirement')
+  const showExamples = params.examples === '1' ? true : params.examples === '0' ? false : examplesDefault
   const pool = catalogue.records.filter((record) => showExamples || record.origin === 'requirement')
   const requested = params.prototype
   const record =
@@ -84,6 +88,7 @@ export function resolveSelection(query: string, catalogue: CatalogueResult): Sel
       },
       record: null,
       warnings,
+      examplesDefault,
     }
   }
 
@@ -125,10 +130,12 @@ export function resolveSelection(query: string, catalogue: CatalogueResult): Sel
     },
     record,
     warnings,
+    examplesDefault,
   }
 }
 
-export function selectionToQuery(selection: Selection): string {
+/** Encode a selection; `examples=0` is written only when it differs from the default. */
+export function selectionToQuery(selection: Selection, examplesDefault = false): string {
   const params = new URLSearchParams()
   params.set('prototype', selection.prototypeId)
   params.set('variant', selection.variantId)
@@ -138,6 +145,7 @@ export function selectionToQuery(selection: Selection): string {
   if (selection.screenId) params.set('screen', selection.screenId)
   if (selection.compareVariantId) params.set('compare', selection.compareVariantId)
   if (selection.showExamples) params.set('examples', '1')
+  else if (examplesDefault) params.set('examples', '0')
   return `?${params.toString()}`
 }
 
@@ -176,7 +184,7 @@ export function useSelectionState(catalogue: CatalogueResult): {
       if (options.history !== 'replace') setStickyWarnings([])
       const merged: Selection = { ...resolution.selection, ...next }
       merged.screenId = retainedScreenId(resolution.record, resolution.selection, next)
-      const target = selectionToQuery(merged)
+      const target = selectionToQuery(merged, resolution.examplesDefault)
       if (target !== window.location.search) {
         if (options.history === 'replace') {
           window.history.replaceState({}, '', target)
@@ -192,9 +200,13 @@ export function useSelectionState(catalogue: CatalogueResult): {
   // Normalise unknown values in the address bar without extra history
   // entries, keeping the fallback warnings visible until the next
   // explicit selection change.
-  const normalisedQuery = useMemo(() => selectionToQuery(resolution.selection), [resolution.selection])
+  const normalisedQuery = useMemo(
+    () => selectionToQuery(resolution.selection, resolution.examplesDefault),
+    [resolution.selection, resolution.examplesDefault],
+  )
   useEffect(() => {
-    if (query !== normalisedQuery && query !== '') {
+    // A bare URL is normalised too once a record resolves, so the address bar is always shareable.
+    if (query !== normalisedQuery && (query !== '' || resolution.record !== null)) {
       setStickyWarnings(resolution.warnings)
       window.history.replaceState({}, '', normalisedQuery)
       window.dispatchEvent(new PopStateEvent('popstate'))

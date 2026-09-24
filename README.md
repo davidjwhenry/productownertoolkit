@@ -63,7 +63,7 @@ The intended flow is:
 
 - Notion, if you use it, for PRDs, tickets, and stakeholder-facing pages
 - [pen.dev](./mcp-config/pen-dev.md) for in-IDE prototypes, because specs aren't always enough (formerly Pencil; also download the desktop app from their website - it's very fun to watch AI do its thing)
-- `prototype-playground/` for reviewing generated prototypes: a local, read-only web app that discovers, validates, previews, compares, and packages the repository's declarative prototypes (`cd prototype-playground && npm install && npm start`)
+- `prototype-playground/` for reviewing generated prototypes: a local web app that discovers, validates, previews, compares, and packages the repository's declarative prototypes (`cd prototype-playground && npm install && npm start`). Amendments proposed, resolved, or deleted in the running playground are written straight to the prototype's checked-in `amendments.json`, including the `examples/` prototypes, so review `git diff` before committing
 - HTML reports for anything a senior leader will actually open
 - A `/design-system/` folder for brand tokens, voice, and components skills reference automatically, compiled into immutable design profiles under `design-system/profiles/`
 
