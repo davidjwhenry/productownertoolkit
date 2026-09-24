@@ -43,8 +43,9 @@ Rules for proposing preference updates:
 | `testing/` | UAT test-case library — one JSON file per feature area under `testing/uat/test_cases/` |
 | `examples/` | Worked examples |
 | `personal/` | Personal notes, to-dos, reports |
-| `design-system/` | Brand tokens, voice/tone, UI patterns |
-| `conventions/` | Formatting and front-matter conventions |
+| `design-system/` | Brand tokens, voice/tone, UI patterns; immutable design profiles under `design-system/profiles/` with the `ACTIVE` pointer |
+| `prototype-playground/` | Local web app that discovers, validates, previews, compares, and packages declarative repository prototypes; screen-addressable navigation with PRD § references and design notes, plus a dev-server amendments write path; run `npm run validate` from here after generating prototypes |
+| `.agents/skills/` | Codex-discoverable copies of the repo skills (`design-system-setup`, `prototype-builder`, `product-grill`) |
 
 ## Writing Standards
 

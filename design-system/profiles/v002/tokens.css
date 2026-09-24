@@ -1,0 +1,74 @@
+/*
+ * Design profile tokens — default@v001
+ * Generated from design-system/example-design-system.pen (source id: example-pen).
+ * Self-contained: no @import, no url(), no remote fonts. Radii are px values.
+ * Theme switching: [data-design-theme="light"] (default via :root) and
+ * [data-design-theme="dark"].
+ */
+
+:root,
+[data-design-theme="light"] {
+  --background: #F2F3F0;
+  --popover: #FFFFFF;
+  --border: #CBCCC9;
+  --foreground: #111111;
+  --input: #CBCCC9;
+  --secondary: #E7E8E5;
+  --primary: #FF8400;
+  --muted-foreground: #666666;
+  --secondary-foreground: #111111;
+  --primary-foreground: #111111;
+  --destructive: #D93C15;
+  --card: #FFFFFF;
+  --sidebar: #E7E8E5;
+  --sidebar-border: #CBCCC9;
+  --sidebar-foreground: #666666;
+  --sidebar-accent: #CBCCC9;
+  --sidebar-accent-foreground: #18181b;
+  --color-success: #DFE6E1;
+  --color-success-foreground: #004D1A;
+  --color-info: #DFDFE6;
+  --color-info-foreground: #000066;
+  --color-warning: #E9E3D8;
+  --color-warning-foreground: #804200;
+  --color-error: #E5DCDA;
+  --color-error-foreground: #8C1C00;
+}
+
+[data-design-theme="dark"] {
+  --background: #111111;
+  --popover: #1A1A1A;
+  --border: #2E2E2E;
+  --foreground: #FFFFFF;
+  --input: #2E2E2E;
+  --secondary: #2E2E2E;
+  --primary: #FF8400;
+  --muted-foreground: #B8B9B6;
+  --secondary-foreground: #FFFFFF;
+  --primary-foreground: #111111;
+  --destructive: #FF5C33;
+  --card: #1A1A1A;
+  --sidebar: #18181b;
+  --sidebar-border: #ffffff1a;
+  --sidebar-foreground: #fafafa;
+  --sidebar-accent: #2a2a30;
+  --sidebar-accent-foreground: #fafafa;
+  --color-success: #222924;
+  --color-success-foreground: #B6FFCE;
+  --color-info: #222229;
+  --color-info-foreground: #B2B2FF;
+  --color-warning: #291C0F;
+  --color-warning-foreground: #FF8400;
+  --color-error: #24100B;
+  --color-error-foreground: #FF5C33;
+}
+
+/* Theme-invariant scalars. */
+:root {
+  --white: #FFFFFF;
+  --radius-pill: 999px;
+  --radius-m: 16px;
+  --radius-none: 0px;
+  --font-primary: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-secondary: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+}

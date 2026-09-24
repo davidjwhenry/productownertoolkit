@@ -1,0 +1,40 @@
+{
+  "name": "prototype-playground",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Local, read-only catalogue and device preview for declarative repository prototypes.",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "start": "vite --open",
+    "dev": "vite",
+    "validate": "tsx scripts/validate.ts",
+    "build": "tsx scripts/validate.ts --strict && tsc --noEmit && vite build",
+    "handoff": "tsx scripts/build-handoff.ts",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "parse5": "8.0.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "tinyglobby": "0.2.17"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1",
+    "@types/node": "26.4.1",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "@vitejs/plugin-react": "6.1.1",
+    "tsx": "4.23.13",
+    "typescript": "7.0.2",
+    "vite": "8.2.2",
+    "vite-plugin-singlefile": "2.3.3",
+    "vitest": "5.0.0"
+  }
+}

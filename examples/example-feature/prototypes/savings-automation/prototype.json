@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "id": "savings-automation",
+  "title": "Savings pots and round-ups automation",
+  "summary": "Two hypothesis-led setups for enabling weekly recurring saving and card round-ups on an existing savings pot, drawn from the savings example PRD.",
+  "revision": 3,
+  "source": {
+    "prd": "examples/example-feature/prd/savings-example-prd.md",
+    "requirementIds": ["AF.1", "AF.2", "AF.3", "AF.4", "CT.1", "CT.2", "PM.1"]
+  },
+  "designSystem": {
+    "id": "default",
+    "version": "v002",
+    "fingerprint": "sha256:26c1be4d7ad2cc7eba9afb3b234014c9af2eb219c8a3b266b509ba035929dcf0"
+  },
+  "brief": {
+    "primaryUser": "A retail current-account customer who already uses savings pots",
+    "job": "Put money aside steadily for a future life event without turning saving into another chore",
+    "journey": "Open an existing pot, enable weekly recurring saving and card round-ups, review the money movement, and confirm",
+    "decision": "Whether compact direct controls or a guided explanation better balance setup speed and trust"
+  },
+  "variants": [
+    {
+      "id": "focused-control",
+      "label": "Focused control",
+      "hypothesis": "Experienced pot users set up automation faster when every control is visible on one compact screen with immediate review",
+      "tradeOffs": ["Less progressive explanation before money moves", "Round-up rules must be sought via the details control"],
+      "entry": "examples/example-feature/prototypes/savings-automation/variants/focused-control.html",
+      "screens": [
+        {
+          "id": "overview",
+          "label": "Pot overview",
+          "order": 1,
+          "scenarioId": "happy-path",
+          "prdRefs": [{ "section": "5.2", "requirementIds": ["PM.1"] }]
+        },
+        {
+          "id": "configure",
+          "label": "Set up saving",
+          "order": 2,
+          "scenarioId": "happy-path",
+          "prdRefs": [
+            { "section": "5.1", "requirementIds": ["AF.1", "AF.2"] },
+            { "section": "5.3", "requirementIds": ["CT.1"] }
+          ]
+        },
+        {
+          "id": "review",
+          "label": "Review your automation",
+          "order": 3,
+          "scenarioId": "happy-path",
+          "prdRefs": [
+            { "section": "5.1", "requirementIds": ["AF.1", "AF.2"] },
+            { "section": "6.2", "requirementIds": [] }
+          ]
+        },
+        {
+          "id": "success",
+          "label": "Automation is set",
+          "order": 4,
+          "scenarioId": "happy-path",
+          "prdRefs": [
+            { "section": "6.2", "requirementIds": [] },
+            { "section": "5.3", "requirementIds": ["CT.2"] }
+          ]
+        },
+        {
+          "id": "paused",
+          "label": "Automation paused",
+          "order": 5,
+          "scenarioId": "happy-path",
+          "branch": true,
+          "prdRefs": [{ "section": "5.1", "requirementIds": ["AF.3"] }]
+        },
+        {
+          "id": "configure",
+          "label": "Validation error",
+          "order": 1,
+          "scenarioId": "validation-error",
+          "prdRefs": [{ "section": "5.1", "requirementIds": ["AF.1"] }],
+          "fixture": {
+            "values": { "amount": "750" },
+            "validation": { "amount": "Enter an amount between £1 and £500" }
+          }
+        },
+        {
+          "id": "review",
+          "label": "Review your automation",
+          "order": 1,
+          "scenarioId": "contribution-failure",
+          "prdRefs": [{ "section": "6.2", "requirementIds": [] }],
+          "fixture": { "values": { "amount": "25", "cadence": "Weekly", "round-ups": "On" } }
+        },
+        {
+          "id": "failure",
+          "label": "Contribution failed",
+          "order": 2,
+          "scenarioId": "contribution-failure",
+          "branch": true,
+          "prdRefs": [{ "section": "5.1", "requirementIds": ["AF.3", "AF.4"] }],
+          "fixture": { "values": { "amount": "25", "cadence": "Weekly", "round-ups": "On" } }
+        }
+      ]
+    },
+    {
+      "id": "guided-trust",
+      "label": "Guided trust",
+      "hypothesis": "Sequencing cadence, amount, and round-up explanations before confirmation improves trust in automated money movement",
+      "tradeOffs": ["More steps and navigation to reach a confirmed state", "Experienced users may feel slowed down"],
+      "entry": "examples/example-feature/prototypes/savings-automation/variants/guided-trust.html",
+      "screens": [
+        {
+          "id": "overview",
+          "label": "Pot overview",
+          "order": 1,
+          "scenarioId": "happy-path",
+          "prdRefs": [{ "section": "5.2", "requirementIds": ["PM.1"] }]
+        },
+        {
+          "id": "step-cadence",
+          "label": "Cadence",
+          "order": 2,
+          "scenarioId": "happy-path",
+          "prdRefs": [{ "section": "5.1", "requirementIds": ["AF.1"] }]
+        },
+        {
+          "id": "step-amount",
+          "label": "Amount",
+          "order": 3,
+          "scenarioId": "happy-path",
+          "prdRefs": [{ "section": "5.1", "requirementIds": ["AF.1"] }]
+        },
+        {
+          "id": "step-roundups",
+          "label": "Round-ups",
+          "order": 4,
+          "scenarioId": "happy-path",
+          "prdRefs": [
+            { "section": "5.1", "requirementIds": ["AF.2"] },
+            { "section": "5.3", "requirementIds": ["CT.1"] }
+          ]
+        },
+        {
+          "id": "review",
+          "label": "Review & confirm",
+          "order": 5,
+          "scenarioId": "happy-path",
+          "prdRefs": [
+            { "section": "5.1", "requirementIds": ["AF.1", "AF.2"] },
+            { "section": "6.2", "requirementIds": [] }
+          ]
+        },
+        {
+          "id": "success",
+          "label": "Automation is set",
+          "order": 6,
+          "scenarioId": "happy-path",
+          "prdRefs": [
+            { "section": "6.2", "requirementIds": [] },
+            { "section": "5.3", "requirementIds": ["CT.2"] }
+          ]
+        },
+        {
+          "id": "paused",
+          "label": "Automation paused",
+          "order": 7,
+          "scenarioId": "happy-path",
+          "branch": true,
+          "prdRefs": [{ "section": "5.1", "requirementIds": ["AF.3"] }]
+        },
+        {
+          "id": "step-amount",
+          "label": "Validation error",
+          "order": 1,
+          "scenarioId": "validation-error",
+          "prdRefs": [{ "section": "5.1", "requirementIds": ["AF.1"] }],
+          "fixture": {
+            "values": { "amount": "750" },
+            "validation": { "amount": "Enter an amount between £1 and £500" }
+          }
+        },
+        {
+          "id": "review",
+          "label": "Review & confirm",
+          "order": 1,
+          "scenarioId": "contribution-failure",
+          "prdRefs": [{ "section": "6.2", "requirementIds": [] }],
+          "fixture": { "values": { "amount": "25", "cadence": "Weekly", "round-ups": "On" } }
+        },
+        {
+          "id": "failure",
+          "label": "Contribution failed",
+          "order": 2,
+          "scenarioId": "contribution-failure",
+          "branch": true,
+          "prdRefs": [{ "section": "5.1", "requirementIds": ["AF.3", "AF.4"] }],
+          "fixture": { "values": { "amount": "25", "cadence": "Weekly", "round-ups": "On" } }
+        }
+      ]
+    }
+  ],
+  "surfaces": ["ios", "desktop"],
+  "scenarios": [
+    {
+      "id": "happy-path",
+      "label": "Happy path",
+      "description": "Choose weekly saving, enter £25, enable round-ups, review, confirm, and observe Automation is set",
+      "requirementIds": ["AF.1", "AF.2", "CT.1"]
+    },
+    {
+      "id": "validation-error",
+      "label": "Validation error",
+      "description": "An invalid amount produces Enter an amount between £1 and £500 while preserving entered choices",
+      "requirementIds": ["AF.1"]
+    },
+    {
+      "id": "contribution-failure",
+      "label": "Contribution failure",
+      "description": "Confirming the automation shows Contribution failed with working Try again and Pause automation actions",
+      "requirementIds": ["AF.3", "AF.4"]
+    }
+  ],
+  "defaults": {
+    "variant": "focused-control",
+    "surface": "ios",
+    "scenario": "happy-path",
+    "theme": "light"
+  },
+  "companions": [
+    {
+      "kind": "design-notes",
+      "path": "examples/example-feature/prototypes/savings-automation/companions/design-notes.json"
+    }
+  ],
+  "prototypeOnly": [
+    "Balances, pots, and contribution dates are fixture data, not live accounts",
+    "Confirming automation records nothing; there is no ledger or transfer",
+    "Notifications, salary moments, and card-settings entry points are outside this prototype",
+    "Only the declarative runtime's screens, validation, and bindings are interactive"
+  ]
+}

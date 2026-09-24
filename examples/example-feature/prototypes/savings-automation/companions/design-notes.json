@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "notes": [
+    {
+      "id": "job",
+      "section": "3.1",
+      "label": "Job",
+      "quote": "Put money aside steadily for a future life event or planned purchase without turning saving into another chore.",
+      "requirementIds": []
+    },
+    {
+      "id": "trust",
+      "section": "4.1",
+      "label": "Trust",
+      "quote": "Automation only works if customers always understand why money moved, when it moved, and how to stop it.",
+      "requirementIds": ["AF.3", "AF.4", "CT.1"]
+    },
+    {
+      "id": "rules",
+      "section": "5.3",
+      "label": "Rules",
+      "quote": "Explain clearly how round-ups work, including transaction timing, refund handling, and when transfers happen.",
+      "requirementIds": ["CT.1", "CT.2"]
+    },
+    {
+      "id": "scope",
+      "section": "4.2",
+      "label": "Scope",
+      "quote": "Shared ownership introduces permissions, social UX, and disclosures that do not help prove the core habit loop.",
+      "requirementIds": []
+    }
+  ]
+}
