@@ -194,6 +194,8 @@ productowner/
 9. Drop your brand tokens into [`design-system/`](./design-system/) and run `design-system-setup` to compile the first design profile.
 10. Launch the prototype playground with `cd prototype-playground && npm install && npm start`; review generated prototypes at `http://127.0.0.1:5173`.
 
+Repository instructions live in the root [`AGENTS.md`](./AGENTS.md), which Codex, Cursor, and Claude Code (v2.1.277 or later) all read directly. Don't add a `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md`: by default Claude Code reads those instead of `AGENTS.md`. If you need Claude-specific instructions, or your Claude Code session can't load `AGENTS.md`, create a `CLAUDE.md` whose first line is `@AGENTS.md` and add your instructions below it.
+
 Claude Code and Cursor invoke skills with a normal prompt naming the skill (for example, "use `prototype-builder` on `examples/example-feature/prd/savings-example-prd.md`"); Codex uses the `$` prefix, such as `$prototype-builder`.
 
 ## v1: human execution first

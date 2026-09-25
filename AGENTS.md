@@ -1,5 +1,7 @@
 # Product Owner Toolkit
 
+This file is the single instruction surface for Codex, Cursor, and Claude Code. Keep repository-wide agent instructions here rather than in a `CLAUDE.md`.
+
 This is a markdown-first, local-first toolkit for Product Owners and PMs. It uses AI-assisted skills for PRD writing, backlog generation, review, research, meeting distillation, and stakeholder reporting.
 
 ## Context Files
