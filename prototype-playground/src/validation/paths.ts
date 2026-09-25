@@ -155,7 +155,7 @@ function digestStream(absPath: string): Promise<string> {
 }
 
 export class PathResolver {
-  /** Canonicalised absolute repository root. */
+  /** Canonicalised absolute content root (see `resolveWorkspace`); the repository root when standalone. */
   readonly root: string
   private readonly cache = new Map<string, { dev: number; ino: number; size: number; mtimeMs: number; bytes: Buffer; sha256: string }>()
 

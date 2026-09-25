@@ -23,7 +23,10 @@ export const HOST_CSP =
   "default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; object-src 'none'; frame-src 'self'; worker-src 'none'; base-uri 'none'; form-action 'none'"
 
 export type BuildHandoffOptions = {
+  /** The content root (see `resolveWorkspace`). */
   repoRoot: string
+  /** The true repository root, when it differs from the content root; always protected. */
+  workspaceRoot?: string
   prototypeId: string
   outputDir?: string
   force?: boolean
@@ -51,8 +54,8 @@ async function listFiles(dir: string, prefix = ''): Promise<string[]> {
 }
 
 /** Destinations that must never be written to or replaced. */
-function protectedPaths(repoRoot: string, featureDir: string, prototypeDir: string): string[] {
-  return [path.parse(repoRoot).root, (process.env.HOME ?? ''), repoRoot, appRoot, path.resolve(repoRoot, featureDir), path.resolve(repoRoot, prototypeDir)].filter((p) => p !== '')
+function protectedPaths(repoRoot: string, workspaceRoot: string, featureDir: string, prototypeDir: string): string[] {
+  return [path.parse(repoRoot).root, (process.env.HOME ?? ''), workspaceRoot, repoRoot, appRoot, path.resolve(repoRoot, featureDir), path.resolve(repoRoot, prototypeDir)].filter((p) => p !== '')
 }
 
 function assertSafeDestination(destination: string, protectedList: string[]): void {
@@ -114,6 +117,7 @@ async function verifyExistingHandoff(destination: string, prototypeId: string): 
 export async function buildHandoff(options: BuildHandoffOptions): Promise<string> {
   const { repoRoot, prototypeId, outputDir, force = false } = options
   const canonicalRepo = await realpath(repoRoot)
+  const canonicalWorkspace = options.workspaceRoot ? await realpath(options.workspaceRoot) : canonicalRepo
 
   // 1. Strict validation for exactly this prototype.
   const catalogue = await loadRepositoryCatalogue(canonicalRepo, { includeExamples: true, selectedPrototypeId: prototypeId })
@@ -132,7 +136,7 @@ export async function buildHandoff(options: BuildHandoffOptions): Promise<string
   const prototypeDir = path.dirname(record.manifestPath)
   const featureDir = path.dirname(path.dirname(prototypeDir))
   const destination = path.resolve(canonicalRepo, outputDir ?? path.join(prototypeDir, 'handoff'))
-  assertSafeDestination(destination, protectedPaths(canonicalRepo, featureDir, prototypeDir))
+  assertSafeDestination(destination, protectedPaths(canonicalRepo, canonicalWorkspace, featureDir, prototypeDir))
   const destinationParent = path.dirname(destination)
   await mkdir(destinationParent, { recursive: true })
 

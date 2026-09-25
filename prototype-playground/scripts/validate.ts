@@ -5,22 +5,25 @@
  * errors. `--strict` additionally requires an active profile (used by
  * `npm run build`).
  */
-import { realpathSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { loadRepositoryCatalogue } from '../src/registry/catalogue'
+import { describeWorkspace, resolveWorkspace, type Workspace } from '../src/workspace'
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
-function resolveRepoRoot(): string {
-  const override = process.env.PROTOTYPE_PLAYGROUND_ROOT
-  if (override) return path.resolve(override)
-  return realpathSync(path.resolve(appRoot, '..'))
-}
-
 const strict = process.argv.includes('--strict')
 
-const catalogue = await loadRepositoryCatalogue(resolveRepoRoot(), { includeExamples: true })
+let workspace: Workspace
+try {
+  workspace = resolveWorkspace(appRoot)
+} catch (error) {
+  console.error((error as Error).message)
+  process.exit(1)
+}
+console.log(describeWorkspace(workspace))
+
+const catalogue = await loadRepositoryCatalogue(workspace.contentRoot, { includeExamples: true })
 
 const profile = catalogue.activeProfile
 if (profile) {
