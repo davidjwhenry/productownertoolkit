@@ -23,7 +23,7 @@ Conduct focused web research using Firecrawl to build a factual, synthesised vie
 
 ### 0. Load context
 
-- Read `context/preferences.md` — apply any relevant entries to research depth, source preferences, report tone, and formatting.
+- Read `{content}/context/preferences.md` — apply any relevant entries to research depth, source preferences, report tone, and formatting.
 
 ### 1. Clarify the research brief
 
@@ -114,6 +114,6 @@ Read **[references/output-format.md](references/output-format.md)** and produce 
 
 At the end of the session, if the user redirected research depth, preferred different source types, adjusted report formatting, or expressed a repeatable preference:
 
-- Propose adding it to `context/preferences.md` under the most relevant heading
+- Propose adding it to `{content}/context/preferences.md` under the most relevant heading
 - Confirm with the user before writing — never write silently
 - Only record durable patterns, not one-off task instructions

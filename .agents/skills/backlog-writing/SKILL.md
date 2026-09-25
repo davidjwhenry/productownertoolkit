@@ -42,7 +42,7 @@ Decision rules:
 
 ## Output Location
 
-All backlog files are written to `backlog/` at the repo root, grouped by Epic:
+All backlog files are written to `backlog/`, grouped by Epic:
 
 ```text
 backlog/

@@ -1,6 +1,6 @@
 ---
 name: weekly-review
-description: Review the last week of work and produce a structured weekly summary across personal work in `personal/` and corporate work in the repo. Use when the user asks for a weekly review, weekly wrap-up, weekly summary, what changed this week, or a recap of progress over the last 7 days. Defaults to the last 7 days ending today unless the user supplies a different window. Writes the final report to `personal/reports/` after showing a proposed summary for confirmation. Corporate review should include committed git history in the period plus current staged and unstaged local changes.
+description: Review the last week of work and produce a structured weekly summary across personal work in `{content}/personal/` and corporate work in the repo. Use when the user asks for a weekly review, weekly wrap-up, weekly summary, what changed this week, or a recap of progress over the last 7 days. Defaults to the last 7 days ending today unless the user supplies a different window. Writes the final report to `{content}/personal/reports/` after showing a proposed summary for confirmation. Corporate review should include committed git history in the period plus current staged and unstaged local changes.
 ---
 
 # Weekly Review
@@ -9,7 +9,7 @@ description: Review the last week of work and produce a structured weekly summar
 
 ### Phase 0: Load Preferences
 
-- Read `context/preferences.md` — apply any relevant entries to report structure, level of detail, how corporate vs. personal work is weighted, and next-week framing.
+- Read `{content}/context/preferences.md` — apply any relevant entries to report structure, level of detail, how corporate vs. personal work is weighted, and next-week framing.
 
 ### Phase 1: Set The Review Window
 
@@ -19,12 +19,12 @@ description: Review the last week of work and produce a structured weekly summar
 
 ### Phase 2: Gather Personal Evidence
 
-Review `personal/` first.
+Review `{content}/personal/` first.
 
 Prioritise:
-- `personal/notes/`
-- `personal/to-dos/not-done/`
-- `personal/to-dos/done/`
+- `{content}/personal/notes/`
+- `{content}/personal/to-dos/not-done/`
+- `{content}/personal/to-dos/done/`
 
 What to look for:
 - new or updated notes
@@ -88,7 +88,7 @@ Use this structure:
 ```markdown
 ## Proposed Weekly Review
 
-**File:** `personal/reports/2026-04-12-weekly-review.md`
+**File:** `{content}/personal/reports/2026-04-12-weekly-review.md`
 
 ### Personal
 - ...
@@ -111,7 +111,7 @@ Do not show empty sections. If one section has no evidence, say that briefly ins
 
 On confirmation:
 
-1. Create `personal/reports/` if it does not exist.
+1. Create `{content}/personal/reports/` if it does not exist.
 2. Write the weekly review markdown file.
 
 Use filename:
@@ -165,7 +165,7 @@ Adapt section density to the evidence. Keep it sharp and scannable.
 
 At the end of the session, if the user corrected report structure, adjusted detail level, changed how themes or next-week items are framed, or expressed a repeatable preference:
 
-- Propose adding it to `context/preferences.md` under the most relevant heading
+- Propose adding it to `{content}/context/preferences.md` under the most relevant heading
 - Confirm with the user before writing — never write silently
 - Only record durable patterns, not one-off task instructions
 

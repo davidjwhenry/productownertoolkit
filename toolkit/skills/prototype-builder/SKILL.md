@@ -21,8 +21,8 @@ Turn an approved PRD into two genuinely different, hypothesis-led prototype vari
 - **[references/html-runtime-contract.md](references/html-runtime-contract.md)** — the declarative interaction attributes, control rules, and bridge protocol
 
 ## Start Here
-1. Read `context/company-context.md`, `context/team-context.md`, `context/preferences.md`, and `context/product-language.md` when present.
-2. Read the supplied PRD, relevant accepted decisions and requirements, `design-system/profiles/ACTIVE`, the pinned profile's files, and any existing prototype manifest for the feature.
+1. Read `{content}/context/company-context.md`, `{content}/context/team-context.md`, `{content}/context/preferences.md`, and `{content}/context/product-language.md` when present.
+2. Read the supplied PRD, relevant accepted decisions and requirements, `{content}/design-system/profiles/ACTIVE`, the pinned profile's files, and any existing prototype manifest for the feature.
 3. Establish before designing: the primary user, the job, the core journey, the decision the variants must help make (the statement the variant deck argues about), in-scope requirement IDs, meaningful unhappy states, and prototype-only shortcuts.
 4. From the PRD, note the numbered sections the prototype touches — job (`§` JTBD), trust/goal, rules, scope — with their requirement IDs; these become screen `prdRefs` and the design notes.
 
@@ -34,7 +34,7 @@ Present a 3–5 bullet brief naming: the source PRD, the output path, the pinned
 
 ## Generating
 
-1. Write `requirements/<classification>/<feature>/prototypes/<prototype-id>/prototype.json` pinning the active profile's id, version, and fingerprint, with requirement traceability to the PRD's IDs.
+1. Write `{content}/requirements/<classification>/<feature>/prototypes/<prototype-id>/prototype.json` pinning the active profile's id, version, and fingerprint, with requirement traceability to the PRD's IDs.
 2. For each variant, declare its `screens` array: every `data-prototype-screen` in the entry, exactly once per scenario that uses it, with a stable `id` (match screen ids across variants wherever the screen is equivalent — switching variants keeps the reviewer on the same ground), a `label`, `order` within the scenario, `prdRefs: [{ section, requirementIds }]` resolving to the PRD's numbered headings, `branch: true` for unhappy-path screens, and a `fixture` (`values`, `checked`, `validation`) whenever a direct jump must land mid-state — the validation-error scenario, for instance, jumps straight to the invalid-amount state.
 3. Write `variants/<variant-id>.html` for each variant: full documents with doctype, `<html lang>`, `<title>`, viewport metadata, semantic HTML, the complete pinned token set inlined, local/system font fallbacks, inline CSS/SVG/data assets only, and only the documented runtime attributes.
 4. Write `companions/design-notes.json`: 3–5 verbatim, anchored passages quoted from the PRD — the job (§ JTBD), the trust goal, the operating rules, and the scope/rabbit holes. Each note carries `id`, `section`, `label`, the exact `quote` (copy, never paraphrase), and its `requirementIds`.

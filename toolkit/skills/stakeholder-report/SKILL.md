@@ -12,7 +12,7 @@ Use this skill for two common workflows:
 
 ## Phase 0: Load Preferences
 
-- Read `context/preferences.md` — apply any relevant entries to report tone, visual style, density, page format, and stakeholder communication preferences.
+- Read `{content}/context/preferences.md` — apply any relevant entries to report tone, visual style, density, page format, and stakeholder communication preferences.
 
 ## Phase 1: Context Gathering
 
@@ -21,7 +21,7 @@ If the user's prompt already answers a question, skip it. Gather missing context
 ### Required context
 
 1. **Subject** — What is this report about?
-   - If the prompt references files or a feature folder, read those now (`requirements/`, `examples/`, `personal/notes/`) to extract key facts before asking the user.
+   - If the prompt references files or a feature folder, read those now (`{content}/requirements/`, `{content}/examples/`, `{content}/personal/notes/`) to extract key facts before asking the user.
    - If no context files are named, ask: *"What should this report cover? Point me to any relevant files, or describe the topic."*
 
 2. **Audience** — Who will read this, and what do they care most about?
@@ -44,12 +44,12 @@ See [references/pen-dev-workflow.md](references/pen-dev-workflow.md) for the ful
 ### Summary
 
 1. If the user supplied a `.pen` file and asked for HTML, skip new design creation and move to the **Existing `.pen` shortcut** below.
-2. Otherwise, open `design-system/example-design-system.pen` in the editor.
+2. Otherwise, open `{content}/design-system/example-design-system.pen` in the editor.
 3. Immediately call `get_app_state` before any read or write work.
 4. Use `execute` `Get` and `GetVariables` to extract the colour palette, typography, and reusable component styles from the design system.
 5. Determine the output path:
-   - Prefer `[feature-folder]/reports/` (for example `requirements/savings/reports/`)
-   - For examples, prefer `examples/[name]/reports/`
+   - Prefer `[feature-folder]/reports/` (for example `{content}/requirements/savings/reports/`)
+   - For examples, prefer `{content}/examples/[name]/reports/`
    - If the user points at an existing `.pen` file directly, it is acceptable to export the HTML alongside that file
 6. Create a new `.pen` file at that path in the editor.
 7. Build the design:
@@ -119,7 +119,7 @@ See [references/html-export.md](references/html-export.md) for the A4 HTML templ
 |---|---|
 | Design | `[feature]/reports/[slug].pen` |
 | HTML export | `[feature]/reports/[slug].html` |
-| Design system reference | `design-system/example-design-system.pen` |
+| Design system reference | `{content}/design-system/example-design-system.pen` |
 
 If the user supplies an existing `.pen` file directly, place the HTML export alongside that file unless asked otherwise.
 
@@ -127,7 +127,7 @@ If the user supplies an existing `.pen` file directly, place the HTML export alo
 
 At the end of the session, if the user corrected report tone, adjusted layout density, changed how metrics or risks are presented, or expressed a repeatable preference:
 
-- Propose adding it to `context/preferences.md` under the most relevant heading
+- Propose adding it to `{content}/context/preferences.md` under the most relevant heading
 - Confirm with the user before writing — never write silently
 - Only record durable patterns, not one-off task instructions
 

@@ -21,8 +21,8 @@ Read before proposing a version:
 
 ## Start Here
 
-1. Read `context/company-context.md`, `context/preferences.md`, and, when present, `context/product-language.md`.
-2. Inventory `design-system/`: the raw sources under `design-system/sources/` (if any), the existing `example-design-system.pen`, and every committed `profiles/vNNN/` plus `profiles/ACTIVE`.
+1. Read `{content}/context/company-context.md`, `{content}/context/preferences.md`, and, when present, `{content}/context/product-language.md`.
+2. Inventory `{content}/design-system/`: the raw sources under `{content}/design-system/sources/` (if any), the existing `example-design-system.pen`, and every committed `profiles/vNNN/` plus `profiles/ACTIVE`.
 3. Classify every file the user supplied: `.pen` canvas, CSS custom-property file, Design Tokens Format Module (2025.10) JSON, Markdown guidance, or a Figma reference.
 
 ## Source Precedence
@@ -31,7 +31,7 @@ Order sources from lowest to highest precedence when merging:
 
 1. the example pen as a fallback baseline
 2. optional Figma extraction, when supplied and the MCP is reachable
-3. existing canonical local sources already under `design-system/`
+3. existing canonical local sources already under `{content}/design-system/`
 4. explicitly supplied current sources from this session
 
 A failed optional Figma read produces a warning and continues only when required local sources suffice. A missing or hash-drifted source marked `required` stops the run before any snapshot is written; optional ones are omitted with a warning.
@@ -44,11 +44,11 @@ Present a 3–5 bullet proposal covering: sources (with precedence order), theme
 
 After approval:
 
-1. Copy approved external local inputs into `design-system/sources/<source-id>/`; preserve existing sources in place.
+1. Copy approved external local inputs into `{content}/design-system/sources/<source-id>/`; preserve existing sources in place.
 2. Generate the next `vNNN` directory (`profile.json`, `tokens.css`, `components.json`, `assets.json`, plus `assets/` and `guidance/` only when files exist). Convert every source token to CSS custom properties, expand font stacks to local/system fallbacks, and convert numeric radii to pixels. Record each local source's SHA-256. Carry forward the previous version's `deviceChrome` and `layout` blocks unchanged unless the user is deliberately re-tuning device frames or the shell column rhythm — those values keep prototypes and the shell rendering consistent frames.
 3. Refuse to overwrite an existing version directory; choose the next number instead.
 4. Run `cd prototype-playground && npm run validate` and fix findings until the profile validates with zero errors.
-5. Only after validation succeeds, write `design-system/profiles/ACTIVE` as exactly two LF-terminated lines: the `vNNN` directory name, then `sha256:<64 lowercase hex>` of the fingerprint defined in the reference.
+5. Only after validation succeeds, write `{content}/design-system/profiles/ACTIVE` as exactly two LF-terminated lines: the `vNNN` directory name, then `sha256:<64 lowercase hex>` of the fingerprint defined in the reference.
 
 ## Report
 

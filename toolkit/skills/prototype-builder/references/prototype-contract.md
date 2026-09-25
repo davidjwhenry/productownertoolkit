@@ -5,7 +5,7 @@ The feature-local layout and manifest rules the playground validator enforces. T
 ## Layout
 
 ```text
-requirements/<classification>/<feature>/prototypes/<prototype-id>/
+{content}/requirements/<classification>/<feature>/prototypes/<prototype-id>/
   prototype.json
   variants/
     <variant-id>.html
@@ -14,7 +14,7 @@ requirements/<classification>/<feature>/prototypes/<prototype-id>/
   handoff/                              # generated only after review
 ```
 
-Example fixtures use the equivalent `examples/<feature>/prototypes/<prototype-id>/` layout. The classification directory is one of `platform-requirements`, `customer-functional-requirements`, or `internal-functional-requirements`. The feature and prototype directory names must be kebab-case and the manifest `id` must equal its prototype directory name; each variant entry must be named `variants/<variant-id>.html`. The PRD must live in the same feature's `prd/` directory; companions in `companions/`.
+Example fixtures use the equivalent `{content}/examples/<feature>/prototypes/<prototype-id>/` layout. The classification directory is one of `platform-requirements`, `customer-functional-requirements`, or `internal-functional-requirements`. The feature and prototype directory names must be kebab-case and the manifest `id` must equal its prototype directory name; each variant entry must be named `variants/<variant-id>.html`. The PRD must live in the same feature's `prd/` directory; companions in `companions/`.
 
 ## `prototype.json`
 

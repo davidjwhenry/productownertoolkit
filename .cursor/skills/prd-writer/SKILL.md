@@ -12,7 +12,7 @@ Read these files before writing or substantially editing any PRD:
 - **[references/prd-reference-guide.md](references/prd-reference-guide.md)** — Full structural guide: section-by-section instructions, phase guidance, formatting rules, and the review checklist. Read this first.
 - **[references/example-prd-customer-facing.md](references/example-prd-customer-facing.md)** — Worked MMP example: Savings Pots and Round-Ups.
 - **[references/example-prd-internal-tool.md](references/example-prd-internal-tool.md)** — Worked MVP example: Support Operations Triage Console.
-- **[../../shaping/product-grill/SKILL.md](../../shaping/product-grill/SKILL.md)** — Use when the brief is ambiguous enough to need back-and-forth before drafting.
+- **[../product-grill/SKILL.md](../product-grill/SKILL.md)** — Use when the brief is ambiguous enough to need back-and-forth before drafting.
 
 ## Workflow
 

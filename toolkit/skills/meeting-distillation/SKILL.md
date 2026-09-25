@@ -1,6 +1,6 @@
 ---
 name: meeting-distillation
-description: Ingest a meeting transcript or notes and produce structured outputs: action items, key decisions, open questions, and a markdown note file. Use when the user pastes or shares meeting notes, a transcript, or asks to process/distill/summarise/extract action items from a meeting. Writes to `personal/notes/` for general meetings or to a live feature's `notes/` directory when the meeting is clearly about that feature. Always play back the proposed output for explicit user confirmation before writing. Can also update `context/team-context.md` with durable, non-sensitive observations about working styles or stakeholder dynamics.
+description: Ingest a meeting transcript or notes and produce structured outputs: action items, key decisions, open questions, and a markdown note file. Use when the user pastes or shares meeting notes, a transcript, or asks to process/distill/summarise/extract action items from a meeting. Writes to `{content}/personal/notes/` for general meetings or to a live feature's `notes/` directory when the meeting is clearly about that feature. Always play back the proposed output for explicit user confirmation before writing. Can also update `{content}/context/team-context.md` with durable, non-sensitive observations about working styles or stakeholder dynamics.
 ---
 
 # Meeting Distillation
@@ -9,7 +9,7 @@ description: Ingest a meeting transcript or notes and produce structured outputs
 
 ### Phase 0: Load context
 
-- Read `context/preferences.md` — apply any relevant entries to note structure, action item formatting, level of detail, and how team observations are framed.
+- Read `{content}/context/preferences.md` — apply any relevant entries to note structure, action item formatting, level of detail, and how team observations are framed.
 
 ### Phase 1: Parse
 
@@ -28,10 +28,10 @@ Rules while parsing:
 
 ### Phase 2: Determine Destination
 
-1. **Feature notes** — if the meeting is primarily about a specific live feature or initiative with its own working directory, save to `[feature-dir]/notes/`. Prefer feature directories under `requirements/` or another real working area of the repo. Create the `notes/` directory if it doesn't exist.
-2. **Personal notes** — for general team, planning, or status meetings not tied to a specific feature, save to `personal/notes/`.
+1. **Feature notes** — if the meeting is primarily about a specific live feature or initiative with its own working directory, save to `[feature-dir]/notes/`. Prefer feature directories under `{content}/requirements/` or another real working area of the repo. Create the `notes/` directory if it doesn't exist.
+2. **Personal notes** — for general team, planning, or status meetings not tied to a specific feature, save to `{content}/personal/notes/`.
 
-Do not write meeting notes into `examples/` unless the user explicitly asks.
+Do not write meeting notes into `{content}/examples/` unless the user explicitly asks.
 
 If ambiguous, ask the user before proceeding.
 
@@ -42,7 +42,7 @@ Before writing anything, present a clear summary for confirmation:
 ```
 ## Proposed Output
 
-**File:** `personal/notes/2024-03-15-q2-planning.md`
+**File:** `{content}/personal/notes/2024-03-15-q2-planning.md`
 
 **Action items:**
 - [ ] @alice — Review auth PR by Friday
@@ -55,7 +55,7 @@ Before writing anything, present a clear summary for confirmation:
 **Open questions:**
 - Who owns the migration checklist?
 
-**Team context updates (`context/team-context.md`):**
+**Team context updates (`{content}/context/team-context.md`):**
 - Alice: prefers async reviews, concerned about timeline pressure
 
 Shall I write these files?
@@ -69,11 +69,11 @@ Do not show empty sections in the playback. If there are no clear decisions, act
 
 On confirmation:
 1. Write the meeting note .md file — see [references/meeting-note-format.md](references/meeting-note-format.md) for the template
-2. Update `context/team-context.md` if there are meaningful observations (create the file if it doesn't exist)
+2. Update `{content}/context/team-context.md` if there are meaningful observations (create the file if it doesn't exist)
 
 ## Team Context File
 
-Location: `context/team-context.md`
+Location: `{content}/context/team-context.md`
 
 Add or update entries under a `## [Name]` heading with:
 - Role (if known)
@@ -94,7 +94,7 @@ Rules:
 
 At the end of the session, if the user corrected note structure, changed action item formatting, adjusted how decisions or open questions are captured, or expressed a repeatable preference:
 
-- Propose adding it to `context/preferences.md` under the most relevant heading
+- Propose adding it to `{content}/context/preferences.md` under the most relevant heading
 - Confirm with the user before writing — never write silently
 - Only record durable patterns, not one-off task instructions
 

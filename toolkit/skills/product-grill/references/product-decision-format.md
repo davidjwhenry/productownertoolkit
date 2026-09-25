@@ -1,6 +1,6 @@
 # Product Decision Format
 
-Product decision records live in `requirements/decisions/`. They capture durable product choices that future PRDs, backlog items, and stakeholder discussions should not accidentally reopen.
+Product decision records live in `{content}/requirements/decisions/`. They capture durable product choices that future PRDs, backlog items, and stakeholder discussions should not accidentally reopen.
 
 They are deliberately lightweight. The goal is to preserve context, not create governance theater.
 
@@ -32,7 +32,7 @@ Poor examples:
 
 Decision records live at:
 
-`requirements/decisions/`
+`{content}/requirements/decisions/`
 
 Use sequential numbering:
 

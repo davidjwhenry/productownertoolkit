@@ -1,12 +1,12 @@
 # PRD Reference Guide
 
-This guide is for writing stage-aware, nearly-build-ready Product Requirement Documents (PRDs) for `{Company XYZ}` features.
+This guide is for writing stage-aware, nearly-build-ready Product Requirement Documents (PRDs) for `{Company XYZ}` features. `{Company XYZ}` stands for the company named in `{content}/context/company-context.md`.
 
 The bias is toward clarity over completeness. A strong PRD should help a stakeholder understand the bet quickly, help a delivery team turn scope into backlog work, and avoid pretending every feature needs the same document weight.
 
 For worked examples, see:
-- `examples/example-prd-internal-tool.md`
-- `examples/example-prd-customer-facing.md`
+- [example-prd-internal-tool.md](example-prd-internal-tool.md)
+- [example-prd-customer-facing.md](example-prd-customer-facing.md)
 
 ## Core Principles
 
@@ -457,7 +457,7 @@ The drafting workflow should:
 - identify likely entry points and integration surfaces before drafting
 - distinguish between a new product surface and an extension to an existing one
 - ask the user to confirm the logical fit when there are multiple plausible homes
-- use `context/company-context.md` as the source of truth for company defaults
+- use `{content}/context/company-context.md` as the source of truth for company defaults
 
 This avoids PRDs that are internally coherent but disconnected from the actual product landscape.
 
@@ -504,19 +504,19 @@ Language:
 
 ## Company-Specific Context
 
-The sections below are starter prompts only. Populate them from `context/company-context.md`, which should be updated by the `bootstrap-context` skill after cloning.
+The sections below are starter prompts only. Populate them from `{content}/context/company-context.md`, which should be updated by the `bootstrap-context` skill after cloning.
 
 ### Compliance Requirements
 
 Always include when relevant:
-- applicable data protection regulation based on the operating geographies in `context/company-context.md`
+- applicable data protection regulation based on the operating geographies in `{content}/context/company-context.md`
 - applicable financial services regulation
 - WCAG 2.1 AA accessibility standards
 - language and locale support, including RTL where required
 
 ### Standard Tech Stack
 
-Replace with the actual stack from `context/company-context.md`. Example structure:
+Replace with the actual stack from `{content}/context/company-context.md`. Example structure:
 - **Frontend:** [e.g. React Native, React, Swift]
 - **Backend:** [e.g. TypeScript microservices, Python, Go]
 - **Database:** [e.g. PostgreSQL, MySQL]
@@ -527,7 +527,7 @@ Replace with the actual stack from `context/company-context.md`. Example structu
 
 ### Default Audience Assumptions
 
-Replace with the actual target audience from `context/company-context.md`. Example structure:
+Replace with the actual target audience from `{content}/context/company-context.md`. Example structure:
 - [primary customer segment, e.g. digitally active retail banking customers]
 - [geographic or demographic qualifier, e.g. residents in the primary operating market]
 - digitally-first banking customers
@@ -535,7 +535,7 @@ Replace with the actual target audience from `context/company-context.md`. Examp
 
 ### Common Integration Points
 
-Replace with the actual integration landscape from `context/company-context.md`. Example structure:
+Replace with the actual integration landscape from `{content}/context/company-context.md`. Example structure:
 - core banking platform for account and balance operations
 - account management systems for account controls
 - push notification infrastructure

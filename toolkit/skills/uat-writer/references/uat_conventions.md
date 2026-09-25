@@ -22,7 +22,7 @@ Keep authored cases separate from execution results:
 
 | Layer | Where | What |
 |---|---|---|
-| Test case library | Productownertoolkit, `testing/uat/test_cases/` | Reusable scenarios — the source of truth |
+| Test case library | Productownertoolkit, `{content}/testing/uat/test_cases/` | Reusable scenarios — the source of truth |
 | Execution | External tracking system (test runner, spreadsheet, or tool of choice) | Build cycles, per-tester executions, pass/fail |
 
 Cases are authored here and synced to the execution system before a UAT cycle. If the execution system has its own schema, keep field names below aligned 1:1 with it so the sync is lossless.

@@ -25,11 +25,11 @@ Read only when needed:
 
 Before the first substantive question, read:
 
-- `context/company-context.md`
-- `context/team-context.md`
-- `context/preferences.md`
-- `context/product-language.md`, if present
-- relevant `requirements/` files and `requirements/decisions/`, if present
+- `{content}/context/company-context.md`
+- `{content}/context/team-context.md`
+- `{content}/context/preferences.md`
+- `{content}/context/product-language.md`, if present
+- relevant `{content}/requirements/` files and `{content}/requirements/decisions/`, if present
 - any PRD, backlog, research, note, transcript, or stakeholder input the user provides
 
 If the repo answers a question, use the repo answer. If the brief is too thin, ask only for the smallest useful brief: idea, intended output, and decision deadline.
@@ -65,9 +65,9 @@ When language is fuzzy, name the ambiguity and propose a canonical term. When a 
 
 Update repo memory only when the point is durable.
 
-Update `context/product-language.md` when a resolved term will recur across PRDs, backlog, reviews, or stakeholder discussions. Do not use it for one-off wording, speculative assumptions, or implementation detail.
+Update `{content}/context/product-language.md` when a resolved term will recur across PRDs, backlog, reviews, or stakeholder discussions. Do not use it for one-off wording, speculative assumptions, or implementation detail.
 
-Offer a product decision record in `requirements/decisions/` only when the decision is all three:
+Offer a product decision record in `{content}/requirements/decisions/` only when the decision is all three:
 
 1. **Durable** — it shapes more than one artefact, sprint, launch, or stakeholder conversation
 2. **Non-obvious** — a future reader may ask why this path was chosen

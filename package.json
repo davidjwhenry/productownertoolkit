@@ -1,0 +1,20 @@
+{
+  "name": "productownertoolkit-workspace",
+  "private": true,
+  "description": "Development workspace for the Product Owner Toolkit. Never published; the npm package is assembled separately.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "generate": "node scripts/generate.ts",
+    "check": "node scripts/generate.ts --check",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "26.4.1",
+    "ajv": "8.20.0",
+    "typescript": "7.0.2"
+  }
+}

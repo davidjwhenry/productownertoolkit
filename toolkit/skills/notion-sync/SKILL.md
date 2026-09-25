@@ -7,15 +7,15 @@ description: Sync markdown backlog artefacts from this repo into user-specified 
 
 Use this skill to sync repo markdown into Notion without hardcoding one team, one workspace, or one schema.
 
-Read `context/company-context.md` before asking setup questions. Use it to understand whether Notion is part of the team's normal workflow, what artefacts are tracked there, and any default Project IDs, tracking locations, or custom sync fields already captured during bootstrap.
+Read `{content}/context/company-context.md` before asking setup questions. Use it to understand whether Notion is part of the team's normal workflow, what artefacts are tracked there, and any default Project IDs, tracking locations, or custom sync fields already captured during bootstrap.
 
-Read `context/preferences.md` for any sync-related preferences — field naming conventions, default mappings, or workflow choices observed in previous sessions.
+Read `{content}/context/preferences.md` for any sync-related preferences — field naming conventions, default mappings, or workflow choices observed in previous sessions.
 
 ## Ask First
 
 Before reading backlog files, collect the missing project-specific inputs from the user.
 
-If `context/company-context.md` says Notion is not used for working artefacts, stop and confirm that this sync is a deliberate exception before proceeding.
+If `{content}/context/company-context.md` says Notion is not used for working artefacts, stop and confirm that this sync is a deliberate exception before proceeding.
 
 Minimum inputs:
 
@@ -30,7 +30,7 @@ Minimum inputs:
 - default owner names, assignee names, or explicit Notion user IDs
 - frontmatter field to write back, usually `notion_ticket`
 
-If `context/company-context.md` includes custom Notion fields to pass during sync, treat them as mandatory inputs for every sync. Confirm each field name, target database, property type if relevant, and value source before creating pages.
+If `{content}/context/company-context.md` includes custom Notion fields to pass during sync, treat them as mandatory inputs for every sync. Confirm each field name, target database, property type if relevant, and value source before creating pages.
 
 Ask for these too if the schema is not obvious:
 
@@ -105,7 +105,7 @@ Typical mappings to confirm:
 - tags
 - owner or assignee
 - parent relation
-- any custom fields required by `context/company-context.md`
+- any custom fields required by `{content}/context/company-context.md`
 
 If a local value does not match a valid Notion option:
 
@@ -167,7 +167,7 @@ Use this checklist when information is missing:
 | Input | Example placeholder |
 | --- | --- |
 | Source path | `path/to/backlog/` |
-| Allowed roots | `requirements/`, `docs/backlog/` |
+| Allowed roots | `{content}/requirements/`, `{content}/backlog/` |
 | Parent database ID or URL | `{PARENT_DATABASE_ID_OR_URL}` |
 | Child database ID or URL | `{CHILD_DATABASE_ID_OR_URL}` |
 | Parent title property | `{PARENT_TITLE_PROPERTY}` |
@@ -195,7 +195,7 @@ Use this checklist when information is missing:
 
 ## Example Trigger
 
-User: "Sync the backlog in `requirements/payments/backlog/` to Notion."
+User: "Sync the backlog in `{content}/backlog/EP-12-card-controls/` to Notion."
 
 Response flow:
 

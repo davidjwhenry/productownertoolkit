@@ -4,17 +4,6 @@ This file is the single instruction surface for Codex, Cursor, and Claude Code. 
 
 This is a markdown-first, local-first toolkit for Product Owners and PMs. It uses AI-assisted skills for PRD writing, backlog generation, review, research, meeting distillation, and stakeholder reporting.
 
-## Context Files
-
-Before any substantive drafting, reviewing, or presenting work, read:
-
-1. `context/company-context.md` — company defaults, stack, compliance, delivery workflow
-2. `context/team-context.md` — team members, stakeholder dynamics, working styles
-3. `context/preferences.md` — learned user preferences from previous sessions
-4. `context/product-language.md` — canonical product and domain language, if relevant to the artefact
-
-Apply preferences from `context/preferences.md` to output unless the user gives an explicit instruction that overrides them for the current task.
-
 ## Preference Memory
 
 This toolkit maintains a lightweight preference memory across sessions via `context/preferences.md`.
@@ -37,18 +26,42 @@ Rules for proposing preference updates:
 
 ## Repo Structure
 
+<!-- productownertoolkit:begin -->
+### Product Owner Toolkit
+
+Before substantive drafting, reviewing, or presenting work, read:
+
+1. `context/company-context.md` — company defaults, stack, compliance, delivery workflow
+2. `context/team-context.md` — team members, stakeholder dynamics, working styles
+3. `context/preferences.md` — learned preferences; apply them unless the user overrides them for the current task
+4. `context/product-language.md` — canonical product and domain language, if relevant to the artefact
+
+When a clear, reusable preference emerges in a session, propose an update to `context/preferences.md`. Never write it without the user's confirmation.
+
+| Path | Purpose |
+| --- | --- |
+| `context/` | Company, team, preferences, and product-language context. Read before substantive drafting, reviewing, or presenting work. |
+| `requirements/` | Requirement libraries by type (platform, customer, internal), feature folders, and product decisions in `requirements/decisions/`. |
+| `backlog/` | Generated Epics and User Stories, grouped by Epic. |
+| `testing/uat/test_cases/` | UAT test-case library, one JSON file per feature area. |
+| `personal/` | Personal notes, to-dos, and reports. |
+| `mcp-config/` | Setup guidance for the MCP servers the skills can use. |
+| `conventions/` | Shared conventions such as markdown front matter. |
+| `design-system/` | Design sources and immutable design profiles; `design-system/profiles/ACTIVE` pins the current profile. |
+| `prototype-playground/` | Local app that validates, previews, and packages prototypes. Run `npm run validate` there after generating prototypes. |
+| `examples/` | Worked examples: a PRD, prototypes, and an executive report. |
+
+Skills: `bootstrap-context`, `product-grill`, `desktop-research`, `prd-writer`, `backlog-writing`, `prd-reviewer`, `backlog-review`, `meeting-distillation`, `stakeholder-report`, `weekly-review`, `uat-writer`, `design-system-setup`, `prototype-builder`, `prototype-reviewer`, `notion-sync`, `notion-drift`, and `skill-creator` (in `.claude/skills/`, `.cursor/skills/`, and `.agents/skills/`). Run `bootstrap-context` first to configure company context.
+<!-- productownertoolkit:end -->
+
+Toolkit development files in this repository:
+
 | Path | Purpose |
 |---|---|
-| `context/` | Canonical working context — company, team, preferences, product language |
-| `requirements/` | Requirement libraries by type (platform, customer, internal), plus cross-cutting product decisions |
-| `backlog/` | Generated backlog items grouped by Epic |
-| `testing/` | UAT test-case library — one JSON file per feature area under `testing/uat/test_cases/` |
-| `examples/` | Worked examples |
-| `personal/` | Personal notes, to-dos, reports |
-| `design-system/` | Brand tokens, voice/tone, UI patterns; immutable design profiles under `design-system/profiles/` with the `ACTIVE` pointer |
-| `prototype-playground/` | Local web app that discovers, validates, previews, compares, and packages declarative repository prototypes; screen-addressable navigation with PRD § references and design notes, plus a dev-server amendments write path; run `npm run validate` from here after generating prototypes |
-| `toolkit/` | Canonical skill source (`toolkit/skills/`) and the capability catalogue (`toolkit/catalogue.json`). Edit skills here, never in the agent mirrors |
-| `.claude/skills/`, `.cursor/skills/`, `.agents/skills/` | Agent mirrors of `toolkit/skills/` for Claude Code, Cursor, and Codex |
+| `toolkit/` | Canonical skill source (`toolkit/skills/`), the capability catalogue (`toolkit/catalogue.json`), and the template for the managed block above. Edit skills here, never in the agent mirrors |
+| `.claude/skills/`, `.cursor/skills/`, `.agents/skills/` | Generated agent mirrors of `toolkit/skills/`. Run `npm run generate` after changing `toolkit/`; CI fails when they drift |
+| `cli/`, `scripts/` | Installer source and repository generators |
+| `adapters/` | Alternative local-first setups |
 
 ## Writing Standards
 

@@ -1,6 +1,6 @@
 ---
 name: backlog-writer
-description: Generate structured product backlogs from PRDs and root requirements. Produces Epics and User Story titles in a gated, sign-off-driven workflow before writing full backlog items. Uses the repo's PRD guidance plus `requirements/platform-requirements/`, `requirements/customer-functional-requirements/`, and `requirements/internal-functional-requirements/` to ensure functional requirements are fully captured. Use when asked to write a backlog, create epics, generate user stories, or break a PRD into delivery-ready tickets.
+description: Generate structured product backlogs from PRDs and root requirements. Produces Epics and User Story titles in a gated, sign-off-driven workflow before writing full backlog items. Uses the repo's PRD guidance plus `{content}/requirements/platform-requirements/`, `{content}/requirements/customer-functional-requirements/`, and `{content}/requirements/internal-functional-requirements/` to ensure functional requirements are fully captured. Use when asked to write a backlog, create epics, generate user stories, or break a PRD into delivery-ready tickets.
 ---
 
 # Backlog Writer
@@ -21,17 +21,17 @@ Use the `prd-writer` references as the source of truth for what a good requireme
 Backlogs should be grounded in these sources, in this order:
 
 1. The parent PRD
-2. The root `requirements/` folders, when present
-3. Accepted product decisions in `requirements/decisions/`
-4. `context/product-language.md`
-5. `context/company-context.md`
-6. Existing backlog numbering and nearby backlog patterns in `backlog/`
+2. The root `{content}/requirements/` folders, when present
+3. Accepted product decisions in `{content}/requirements/decisions/`
+4. `{content}/context/product-language.md`
+5. `{content}/context/company-context.md`
+6. Existing backlog numbering and nearby backlog patterns in `{content}/backlog/`
 
 Treat the requirements folders like this:
 
-- `requirements/platform-requirements/` - shared customer-facing platform capabilities such as login, password management, profile management
-- `requirements/customer-functional-requirements/` - customer-facing feature requirements
-- `requirements/internal-functional-requirements/` - internal tooling functional requirements, including internal-only platform-like capabilities
+- `{content}/requirements/platform-requirements/` - shared customer-facing platform capabilities such as login, password management, profile management
+- `{content}/requirements/customer-functional-requirements/` - customer-facing feature requirements
+- `{content}/requirements/internal-functional-requirements/` - internal tooling functional requirements, including internal-only platform-like capabilities
 
 Decision rules:
 
@@ -42,10 +42,10 @@ Decision rules:
 
 ## Output Location
 
-All backlog files are written to `backlog/` at the repo root, grouped by Epic:
+All backlog files are written to `{content}/backlog/`, grouped by Epic:
 
 ```text
-backlog/
+{content}/backlog/
   EP-1-epic-title/
     EP-1-epic-title.md
     US-1.1-story-title.md
@@ -66,7 +66,7 @@ Numbering is repo-wide and sequential, not per-feature or per-PRD.
 - never reuse or skip numbers
 - never reset numbering for a new PRD
 
-If `backlog/` does not exist, numbering starts at `EP-1`.
+If `{content}/backlog/` does not exist, numbering starts at `EP-1`.
 
 ## Workflow
 
@@ -94,13 +94,13 @@ Before Phase 1:
 
 1. Read the parent PRD in full.
 2. Read the `prd-writer` guidance listed above.
-3. Read `context/company-context.md`.
-4. Read `context/team-context.md` for durable stakeholder or approval dynamics that affect backlog sequencing.
-5. Read `context/preferences.md` — apply any relevant entries to story writing style, acceptance criteria format, naming conventions, and level of detail.
-6. Read `context/product-language.md` and use canonical actors, objects, and states in Epic and User Story language.
-7. Read `requirements/decisions/` and treat accepted product decisions as constraints unless the user explicitly says they are superseded.
+3. Read `{content}/context/company-context.md`.
+4. Read `{content}/context/team-context.md` for durable stakeholder or approval dynamics that affect backlog sequencing.
+5. Read `{content}/context/preferences.md` — apply any relevant entries to story writing style, acceptance criteria format, naming conventions, and level of detail.
+6. Read `{content}/context/product-language.md` and use canonical actors, objects, and states in Epic and User Story language.
+7. Read `{content}/requirements/decisions/` and treat accepted product decisions as constraints unless the user explicitly says they are superseded.
 8. Read the relevant root requirements for the product type.
-9. Scan `backlog/` for the highest existing Epic and User Story numbers.
+9. Scan `{content}/backlog/` for the highest existing Epic and User Story numbers.
 10. Build a lightweight traceability map from source requirements to likely backlog homes.
 
 Capture at least:
@@ -180,7 +180,7 @@ Goal: write the approved backlog to the repo.
 After Phase 2 sign-off:
 
 1. Read `references/example_epic.md` and `references/example_user_story.md` if they are not already in context.
-2. Create `backlog/` if it does not exist.
+2. Create `{content}/backlog/` if it does not exist.
 3. For each Epic, create its directory and write:
    - the Epic file: `EP-N-slug.md`
    - one User Story file per approved story: `US-N.X-slug.md`
@@ -206,10 +206,10 @@ At minimum:
 
 ## Writing Standards
 
-- mirror the persona, product surface, and company name from `context/company-context.md`
-- use canonical terms from `context/product-language.md` consistently across Epics, User Stories, states, and acceptance criteria
-- respect accepted product decisions in `requirements/decisions/` and preserve traceability when they shape backlog scope
-- respect the delivery workflow in `context/company-context.md`; do not imply Notion syncing or Notion-only tracking when the repo is configured as local-first
+- mirror the persona, product surface, and company name from `{content}/context/company-context.md`
+- use canonical terms from `{content}/context/product-language.md` consistently across Epics, User Stories, states, and acceptance criteria
+- respect accepted product decisions in `{content}/requirements/decisions/` and preserve traceability when they shape backlog scope
+- respect the delivery workflow in `{content}/context/company-context.md`; do not imply Notion syncing or Notion-only tracking when the repo is configured as local-first
 - acceptance criteria use Given / When / Then
 - priorities: `P0` = must-have for the Epic to ship, `P1` = should-have, `P2` = nice-to-have
 - keep story titles outcome-led, not task-led
@@ -229,11 +229,11 @@ After writing files, report:
 ```markdown
 ## Backlog Written
 
-**EP-N: [Epic Title]** -> `backlog/EP-N-slug/`
+**EP-N: [Epic Title]** -> `{content}/backlog/EP-N-slug/`
 - US-N.1: [Story title]
 - US-N.2: [Story title]
 
-**EP-N+1: [Epic Title]** -> `backlog/EP-N+1-slug/`
+**EP-N+1: [Epic Title]** -> `{content}/backlog/EP-N+1-slug/`
 - US-N+1.1: [Story title]
 
 ## Coverage Notes
@@ -250,7 +250,7 @@ Run `backlog-review` against the backlog just written and the parent PRD.
 
 At the end of the session, if the user corrected story structure, changed naming conventions, adjusted acceptance criteria style, or expressed a repeatable preference:
 
-- Propose adding it to `context/preferences.md` under the most relevant heading
+- Propose adding it to `{content}/context/preferences.md` under the most relevant heading
 - Confirm with the user before writing — never write silently
 - Only record durable patterns, not one-off task instructions
 - If the new preference conflicts with an existing entry, propose replacing the old one

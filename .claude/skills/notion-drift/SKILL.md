@@ -176,9 +176,9 @@ Use a compact summary like:
 ## Notion Drift Summary
 
 - `docs/prds/payments.md` — In Sync
-- `requirements/payments/backlog/EP-12.md` — Metadata Drift: `Status` differs (`Backlog` locally, `In Progress` in Notion)
-- `requirements/payments/backlog/US-12.3.md` — Missing Notion URL
-- `requirements/payments/backlog/US-12.4.md` — Needs Manual Review: custom field `Squad` missing in Notion
+- `backlog/EP-12-card-controls/EP-12-card-controls.md` — Metadata Drift: `Status` differs (`Backlog` locally, `In Progress` in Notion)
+- `backlog/EP-12-card-controls/US-12.3-freeze-card.md` — Missing Notion URL
+- `backlog/EP-12-card-controls/US-12.4-unfreeze-card.md` — Needs Manual Review: custom field `Squad` missing in Notion
 ```
 
 Then ask which direction should win for each drifted file: repo or Notion.

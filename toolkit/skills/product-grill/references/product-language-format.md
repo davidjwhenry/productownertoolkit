@@ -1,6 +1,6 @@
 # Product Language Format
 
-`context/product-language.md` stores durable product and domain language for this repo. It helps skills challenge ambiguous terms, keep PRDs consistent, and avoid re-litigating vocabulary across backlog, research, and stakeholder artefacts.
+`{content}/context/product-language.md` stores durable product and domain language for this repo. It helps skills challenge ambiguous terms, keep PRDs consistent, and avoid re-litigating vocabulary across backlog, research, and stakeholder artefacts.
 
 ## Purpose
 
@@ -20,7 +20,7 @@ Do not add:
 - implementation details that belong in technical docs
 - one-off PRD assumptions
 - speculative language that has not been confirmed
-- personal preferences, which belong in `context/preferences.md`
+- personal preferences, which belong in `{content}/context/preferences.md`
 
 ## Structure
 
@@ -77,7 +77,7 @@ _Avoid:_ Sent, created, raised
 
 During `product-grill`:
 
-1. Read `context/product-language.md` if it exists.
+1. Read `{content}/context/product-language.md` if it exists.
 2. When the user resolves a durable term, propose the exact language to add or change.
 3. Update the file once the user confirms the wording or the confirmation is clear from the conversation.
 4. Keep edits small and local. Do not reorganize the whole file unless the user asks.

@@ -7,9 +7,9 @@ description: Check markdown files already synced to Notion for drift by reading 
 
 Use this skill to review whether repo markdown and the corresponding Notion pages have drifted apart.
 
-Read `context/company-context.md` before asking setup questions. Use it to understand whether Notion is part of the team's normal workflow, what artefacts are tracked there, and any default Project IDs, tracking locations, custom sync fields, or special review expectations already captured during bootstrap.
+Read `{content}/context/company-context.md` before asking setup questions. Use it to understand whether Notion is part of the team's normal workflow, what artefacts are tracked there, and any default Project IDs, tracking locations, custom sync fields, or special review expectations already captured during bootstrap.
 
-Read `context/preferences.md` for any drift-review preferences — comparison scope defaults, how findings should be presented, or workflow choices observed in previous sessions.
+Read `{content}/context/preferences.md` for any drift-review preferences — comparison scope defaults, how findings should be presented, or workflow choices observed in previous sessions.
 
 ## Ask First
 
@@ -32,9 +32,9 @@ Also confirm:
 
 - whether to compare only frontmatter drift or also note obvious title or content drift
 - which frontmatter field stores the Notion URL, usually `notion_ticket`
-- whether any custom fields from `context/company-context.md` must be included in the drift check
+- whether any custom fields from `{content}/context/company-context.md` must be included in the drift check
 
-If `context/company-context.md` says Notion is not used for working artefacts, stop and confirm that this review is a deliberate exception before proceeding.
+If `{content}/context/company-context.md` says Notion is not used for working artefacts, stop and confirm that this review is a deliberate exception before proceeding.
 
 ## What To Compare
 
@@ -87,7 +87,7 @@ For each file, extract:
 - the configured Notion URL field, usually `notion_ticket`
 - title
 - frontmatter metadata relevant to the project
-- any custom sync fields required by `context/company-context.md`
+- any custom sync fields required by `{content}/context/company-context.md`
 
 ### 3. Validate reviewability
 
@@ -176,9 +176,9 @@ Use a compact summary like:
 ## Notion Drift Summary
 
 - `docs/prds/payments.md` — In Sync
-- `requirements/payments/backlog/EP-12.md` — Metadata Drift: `Status` differs (`Backlog` locally, `In Progress` in Notion)
-- `requirements/payments/backlog/US-12.3.md` — Missing Notion URL
-- `requirements/payments/backlog/US-12.4.md` — Needs Manual Review: custom field `Squad` missing in Notion
+- `{content}/backlog/EP-12-card-controls/EP-12-card-controls.md` — Metadata Drift: `Status` differs (`Backlog` locally, `In Progress` in Notion)
+- `{content}/backlog/EP-12-card-controls/US-12.3-freeze-card.md` — Missing Notion URL
+- `{content}/backlog/EP-12-card-controls/US-12.4-unfreeze-card.md` — Needs Manual Review: custom field `Squad` missing in Notion
 ```
 
 Then ask which direction should win for each drifted file: repo or Notion.

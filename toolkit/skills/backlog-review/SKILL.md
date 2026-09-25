@@ -9,11 +9,11 @@ description: Review an engineering backlog produced by `backlog-writing` or an e
 
 Read these before starting the review:
 
-- **[../../writing/prd-writer/SKILL.md](../../writing/prd-writer/SKILL.md)** - current PRD structure and review expectations. Read this first.
-- **[../../writing/prd-writer/references/prd-reference-guide.md](../../writing/prd-writer/references/prd-reference-guide.md)** - detailed PRD guidance. Pay particular attention to `Functional Requirements`, `Entry Points, Core Journey & Platform Fit`, and `Systems, Risks & Compliance`.
-- **[../../writing/backlog-writing/SKILL.md](../../writing/backlog-writing/SKILL.md)** - the intended backlog generation flow and backlog file structure.
-- **[../../writing/backlog-writing/references/example_epic.md](../../writing/backlog-writing/references/example_epic.md)** - expected Epic format.
-- **[../../writing/backlog-writing/references/example_user_story.md](../../writing/backlog-writing/references/example_user_story.md)** - expected User Story format.
+- **[../prd-writer/SKILL.md](../prd-writer/SKILL.md)** - current PRD structure and review expectations. Read this first.
+- **[../prd-writer/references/prd-reference-guide.md](../prd-writer/references/prd-reference-guide.md)** - detailed PRD guidance. Pay particular attention to `Functional Requirements`, `Entry Points, Core Journey & Platform Fit`, and `Systems, Risks & Compliance`.
+- **[../backlog-writing/SKILL.md](../backlog-writing/SKILL.md)** - the intended backlog generation flow and backlog file structure.
+- **[../backlog-writing/references/example_epic.md](../backlog-writing/references/example_epic.md)** - expected Epic format.
+- **[../backlog-writing/references/example_user_story.md](../backlog-writing/references/example_user_story.md)** - expected User Story format.
 
 Use these files as the quality bar even if the backlog being reviewed was written manually.
 
@@ -23,16 +23,16 @@ Review the backlog against all relevant sources, in this order:
 
 1. The parent PRD
 2. The backlog files being reviewed
-3. Accepted product decisions in `requirements/decisions/`
-4. `context/product-language.md`
-5. `context/company-context.md`
-6. The root `requirements/` folders, when present
+3. Accepted product decisions in `{content}/requirements/decisions/`
+4. `{content}/context/product-language.md`
+5. `{content}/context/company-context.md`
+6. The root `{content}/requirements/` folders, when present
 
 Treat the requirements folders like this:
 
-- `requirements/platform-requirements/` - shared customer-facing platform capabilities such as login, password management, profile management
-- `requirements/customer-functional-requirements/` - customer-facing feature requirements
-- `requirements/internal-functional-requirements/` - internal tooling functional requirements, including internal-only platform-like capabilities such as internal login
+- `{content}/requirements/platform-requirements/` - shared customer-facing platform capabilities such as login, password management, profile management
+- `{content}/requirements/customer-functional-requirements/` - customer-facing feature requirements
+- `{content}/requirements/internal-functional-requirements/` - internal tooling functional requirements, including internal-only platform-like capabilities such as internal login
 
 Important distinctions:
 
@@ -71,16 +71,16 @@ Default case: review the backlog that was just created by `backlog-writing` befo
      - detailed backlog items written only after that
    - if the backlog skips this logic and the resulting structure is muddled, call it out
 
-4. **Read `context/company-context.md`**
+4. **Read `{content}/context/company-context.md`**
    - capture company defaults that change how the backlog should be interpreted, especially audience assumptions, compliance context, team priorities, and whether delivery is `Notion-enabled` or `local-first`
 
-4a. **Read `context/preferences.md`**
+4a. **Read `{content}/context/preferences.md`**
    - apply any relevant entries to review tone, finding format, detail level, and traceability expectations
 
-4b. **Read `context/product-language.md`**
+4b. **Read `{content}/context/product-language.md`**
    - check whether Epic names, User Story titles, states, and acceptance criteria use canonical terms consistently
 
-4c. **Read `requirements/decisions/`**
+4c. **Read `{content}/requirements/decisions/`**
    - check whether backlog scope and sequencing respect accepted product decisions, or explicitly supersede them
 
 5. **Read the relevant root requirements**
@@ -152,8 +152,8 @@ At the detailed ticket layer, check that:
 - analytics, audit, permissions, error handling, and state handling are covered where they materially affect delivery
 - placeholders remain placeholders when the source material does not yet provide the answer
 - tickets do not invent scope beyond the PRD, accepted product decisions, or relevant requirements
-- canonical terms from `context/product-language.md` are used consistently in titles, descriptions, states, and acceptance criteria
-- tracking or handoff assumptions do not conflict with `context/company-context.md`
+- canonical terms from `{content}/context/product-language.md` are used consistently in titles, descriptions, states, and acceptance criteria
+- tracking or handoff assumptions do not conflict with `{content}/context/company-context.md`
 
 Flag these issues:
 
@@ -188,7 +188,7 @@ Use `Source` values such as:
 
 If the PRD and root requirements disagree, call out the mismatch explicitly rather than choosing one silently.
 
-If the backlog conflicts with `context/product-language.md` or an accepted product decision, treat that as a traceability issue and recommend whether to update the backlog, update the source PRD, or create a superseding decision record.
+If the backlog conflicts with `{content}/context/product-language.md` or an accepted product decision, treat that as a traceability issue and recommend whether to update the backlog, update the source PRD, or create a superseding decision record.
 
 ## Output Format
 
@@ -264,6 +264,6 @@ Use `REWORK` when:
 
 At the end of the session, if the user redirected review tone, changed how findings should be grouped, adjusted severity thresholds, or expressed a repeatable review preference:
 
-- Propose adding it to `context/preferences.md` under the most relevant heading
+- Propose adding it to `{content}/context/preferences.md` under the most relevant heading
 - Confirm with the user before writing — never write silently
 - Only record durable patterns, not one-off task instructions

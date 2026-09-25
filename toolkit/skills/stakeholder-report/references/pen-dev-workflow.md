@@ -20,11 +20,11 @@ There is no `open_document` tool any more — open or create the `.pen` file in 
 
 ## New Report Flow
 
-1. Open `design-system/example-design-system.pen`.
+1. Open `{content}/design-system/example-design-system.pen`.
 2. Use `execute` `Get` and `GetVariables` to inspect reusable components, palette, and typography.
 3. Decide the output path:
    - Prefer `[feature]/reports/` for feature work.
-   - Prefer `examples/[name]/reports/` for examples.
+   - Prefer `{content}/examples/[name]/reports/` for examples.
 4. Create a new `.pen` file at that path in the editor.
 5. Build one frame per page by default using `execute` `Insert` and related operations:
    - Print-first reports: `794 × 1123 px` A4 frames

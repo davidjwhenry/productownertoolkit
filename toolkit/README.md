@@ -6,12 +6,26 @@ This folder is the single source for everything the toolkit distributes.
 | --- | --- |
 | `skills/<skill-name>/` | Canonical skills, one level deep. Edit skills here. |
 | `catalogue.json` | Capabilities, their skills, and the managed and seed files each one installs. Validated by `catalogue.schema.json`. |
+| `support/agents-block.md` | Template for the managed Product Owner Toolkit block in `AGENTS.md`. |
 
-The agent folders `.claude/skills/`, `.cursor/skills/`, and `.agents/skills/` are mirrors of `skills/`. Don't edit them directly; they will be generated and checked in CI. Until the generator lands, copy changes across with:
+The agent folders `.claude/skills/`, `.cursor/skills/`, and `.agents/skills/` and the managed block in the root `AGENTS.md` are generated. Don't edit them directly. After changing anything in `toolkit/`, run:
 
 ```sh
-for m in .claude/skills .cursor/skills .agents/skills; do rsync -a --delete --exclude .DS_Store toolkit/skills/ "$m/"; done
+npm install        # once
+npm run generate   # rewrite the mirrors and the AGENTS.md block
+npm run check      # what CI runs: catalogue, path placeholders, and drift
 ```
+
+## Path placeholders
+
+Write toolkit paths in skills with a placeholder instead of a root-level path:
+
+| Placeholder | Standalone clone | Installed default |
+| --- | --- | --- |
+| `{content}/context/…` | `context/…` | `product/context/…` |
+| `{toolkit}/mcp-config/…` | `mcp-config/…` | `.product-owner-toolkit/guides/mcp-config/…` |
+
+`{content}` covers `context/`, `requirements/`, `backlog/`, `testing/`, `examples/`, `design-system/`, and `personal/`; `{toolkit}` covers `mcp-config/` and `conventions/`. `prototype-playground/` is at the repository root in both layouts, so it needs no placeholder. `npm run check` fails on a root-level path that should use a placeholder.
 
 Ownership in the catalogue:
 

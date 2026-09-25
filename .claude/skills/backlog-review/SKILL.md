@@ -9,11 +9,11 @@ description: Review an engineering backlog produced by `backlog-writing` or an e
 
 Read these before starting the review:
 
-- **[../../writing/prd-writer/SKILL.md](../../writing/prd-writer/SKILL.md)** - current PRD structure and review expectations. Read this first.
-- **[../../writing/prd-writer/references/prd-reference-guide.md](../../writing/prd-writer/references/prd-reference-guide.md)** - detailed PRD guidance. Pay particular attention to `Functional Requirements`, `Entry Points, Core Journey & Platform Fit`, and `Systems, Risks & Compliance`.
-- **[../../writing/backlog-writing/SKILL.md](../../writing/backlog-writing/SKILL.md)** - the intended backlog generation flow and backlog file structure.
-- **[../../writing/backlog-writing/references/example_epic.md](../../writing/backlog-writing/references/example_epic.md)** - expected Epic format.
-- **[../../writing/backlog-writing/references/example_user_story.md](../../writing/backlog-writing/references/example_user_story.md)** - expected User Story format.
+- **[../prd-writer/SKILL.md](../prd-writer/SKILL.md)** - current PRD structure and review expectations. Read this first.
+- **[../prd-writer/references/prd-reference-guide.md](../prd-writer/references/prd-reference-guide.md)** - detailed PRD guidance. Pay particular attention to `Functional Requirements`, `Entry Points, Core Journey & Platform Fit`, and `Systems, Risks & Compliance`.
+- **[../backlog-writing/SKILL.md](../backlog-writing/SKILL.md)** - the intended backlog generation flow and backlog file structure.
+- **[../backlog-writing/references/example_epic.md](../backlog-writing/references/example_epic.md)** - expected Epic format.
+- **[../backlog-writing/references/example_user_story.md](../backlog-writing/references/example_user_story.md)** - expected User Story format.
 
 Use these files as the quality bar even if the backlog being reviewed was written manually.
 

@@ -167,7 +167,7 @@ Use this checklist when information is missing:
 | Input | Example placeholder |
 | --- | --- |
 | Source path | `path/to/backlog/` |
-| Allowed roots | `requirements/`, `docs/backlog/` |
+| Allowed roots | `requirements/`, `backlog/` |
 | Parent database ID or URL | `{PARENT_DATABASE_ID_OR_URL}` |
 | Child database ID or URL | `{CHILD_DATABASE_ID_OR_URL}` |
 | Parent title property | `{PARENT_TITLE_PROPERTY}` |
@@ -195,7 +195,7 @@ Use this checklist when information is missing:
 
 ## Example Trigger
 
-User: "Sync the backlog in `requirements/payments/backlog/` to Notion."
+User: "Sync the backlog in `backlog/EP-12-card-controls/` to Notion."
 
 Response flow:
 

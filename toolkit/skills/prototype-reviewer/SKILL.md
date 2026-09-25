@@ -15,7 +15,7 @@ Close the loop from design review back into requirements. Amendments are the aud
 
 ## Start Here
 
-1. Read `context/company-context.md`, `context/team-context.md`, and `context/preferences.md` when present.
+1. Read `{content}/context/company-context.md`, `{content}/context/team-context.md`, and `{content}/context/preferences.md` when present.
 2. Read the prototype's `prototype.json` and `amendments.json`; filter to `status: "open"`.
 3. Read the feature PRD, especially the sections the amendments' requirement IDs belong to.
 

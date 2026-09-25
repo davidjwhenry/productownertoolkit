@@ -1,12 +1,12 @@
 # PRD Reference Guide
 
-This guide is for writing stage-aware, nearly-build-ready Product Requirement Documents (PRDs) for `{Company XYZ}` features.
+This guide is for writing stage-aware, nearly-build-ready Product Requirement Documents (PRDs) for `{Company XYZ}` features. `{Company XYZ}` stands for the company named in `context/company-context.md`.
 
 The bias is toward clarity over completeness. A strong PRD should help a stakeholder understand the bet quickly, help a delivery team turn scope into backlog work, and avoid pretending every feature needs the same document weight.
 
 For worked examples, see:
-- `examples/example-prd-internal-tool.md`
-- `examples/example-prd-customer-facing.md`
+- [example-prd-internal-tool.md](example-prd-internal-tool.md)
+- [example-prd-customer-facing.md](example-prd-customer-facing.md)
 
 ## Core Principles
 

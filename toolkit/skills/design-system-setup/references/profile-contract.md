@@ -5,7 +5,7 @@ The exact storage, source, precedence, and version rules the design profile and 
 ## Storage Layout
 
 ```text
-design-system/
+{content}/design-system/
   example-design-system.pen             # preserved example raw source
   sources/<source-id>/                  # copied external local inputs
   profiles/

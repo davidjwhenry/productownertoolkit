@@ -23,11 +23,11 @@ Read the full persona details before conducting each review:
 ## Workflow
 
 1. **Read the PRD** in full before beginning any review. Note both the document status (`Draft`, `In review`, `Approved`) and the PRD phase (`MVP`, `MMP`, `MLP`, `Enhancement`, or `Unknown`).
-2. **Read `context/company-context.md`** to calibrate the review against the company's stack, compliance context, target audience, business goals, team context, and delivery workflow defaults.
-3. **Read `context/team-context.md`** for durable stakeholder or decision dynamics that affect review posture.
-4. **Read `context/preferences.md`** — apply any relevant entries to review tone, finding format, detail level, and how recommendations are framed.
-5. **Read `context/product-language.md`** and flag terminology drift, overloaded actors, unclear states, or conflicting canonical language.
-6. **Read `requirements/decisions/`** and flag any PRD claim that contradicts an accepted product decision or should explicitly supersede one.
+2. **Read `{content}/context/company-context.md`** to calibrate the review against the company's stack, compliance context, target audience, business goals, team context, and delivery workflow defaults.
+3. **Read `{content}/context/team-context.md`** for durable stakeholder or decision dynamics that affect review posture.
+4. **Read `{content}/context/preferences.md`** — apply any relevant entries to review tone, finding format, detail level, and how recommendations are framed.
+5. **Read `{content}/context/product-language.md`** and flag terminology drift, overloaded actors, unclear states, or conflicting canonical language.
+6. **Read `{content}/requirements/decisions/`** and flag any PRD claim that contradicts an accepted product decision or should explicitly supersede one.
 7. **Read both persona reference files** to load the full lens before writing either review.
 8. **Conduct each review independently** — do not let one lens bleed into the other.
 9. **Produce a single output file** in the format below.
@@ -58,8 +58,8 @@ When the document status is `Draft` or the document is clearly incomplete:
 - GTM No-Go verdicts still apply — a draft should still have a PMF rationale and commercial link even if requirements aren't fully formed
 - Call out missing sections explicitly rather than inferring their absence is intentional
 - Judge completeness relative to the phase. A lean `MVP` draft should not be penalised for missing `MLP`-level polish detail.
-- If the PRD assumes a delivery surface or operating model that conflicts with `context/company-context.md` such as a Notion-only workflow in a local-first setup, call that out explicitly.
-- If the PRD uses terminology that conflicts with `context/product-language.md`, call it out as a requirements risk, not just a wording issue.
+- If the PRD assumes a delivery surface or operating model that conflicts with `{content}/context/company-context.md` such as a Notion-only workflow in a local-first setup, call that out explicitly.
+- If the PRD uses terminology that conflicts with `{content}/context/product-language.md`, call it out as a requirements risk, not just a wording issue.
 - If the PRD contradicts an accepted product decision, recommend either updating the PRD or creating a superseding decision record before delivery planning.
 
 ## Output Format
@@ -143,6 +143,6 @@ Save the review as a `.md` file in the same directory as the PRD, named `[prd-fi
 
 At the end of the session, if the user redirected review tone, asked for different finding formats, adjusted severity thresholds, or expressed a repeatable review preference:
 
-- Propose adding it to `context/preferences.md` under the most relevant heading
+- Propose adding it to `{content}/context/preferences.md` under the most relevant heading
 - Confirm with the user before writing — never write silently
 - Only record durable patterns, not one-off task instructions

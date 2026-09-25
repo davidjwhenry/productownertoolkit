@@ -1,6 +1,6 @@
 ---
 name: uat-writer
-description: Write and maintain User Acceptance Testing (UAT) test cases following a reusable-test-case library format. Produces black-box, tester-executable scenarios as structured JSON — one file per feature area, each case with a globally-unique `TC-XXX` id, priority, test type, pre-conditions, and atomic action/expected-result steps. Use when asked to "write UAT cases", "add test cases", "create test scenarios", "write acceptance tests", "cover [feature] for UAT", "add UAT for this PRD/build", "write happy/unhappy path tests", or when populating or extending files under `testing/uat/` in the Productownertoolkit repo.
+description: Write and maintain User Acceptance Testing (UAT) test cases following a reusable-test-case library format. Produces black-box, tester-executable scenarios as structured JSON — one file per feature area, each case with a globally-unique `TC-XXX` id, priority, test type, pre-conditions, and atomic action/expected-result steps. Use when asked to "write UAT cases", "add test cases", "create test scenarios", "write acceptance tests", "cover [feature] for UAT", "add UAT for this PRD/build", "write happy/unhappy path tests", or when populating or extending files under `{content}/testing/uat/` in the Productownertoolkit repo.
 ---
 
 # UAT Writer
@@ -11,10 +11,10 @@ Before drafting the first case of a session, read `references/uat_conventions.md
 
 ## Where cases live
 
-Cases are organised by feature area under `testing/uat/`:
+Cases are organised by feature area under `{content}/testing/uat/`:
 
 ```
-testing/uat/test_cases/<feature_area>.json
+{content}/testing/uat/test_cases/<feature_area>.json
 ```
 
 - **One JSON file per feature area.** Do not scatter a feature across files or mix features in one file.
@@ -37,7 +37,7 @@ Each feature-area file wraps its cases with area-level metadata:
 
 ## The folder README
 
-`testing/uat/test_cases/README.md` holds one table listing every feature-area file, its id range, and its status. It is the fast path for the next-id lookup and the map of what coverage exists. Add a row whenever you create a feature-area file:
+`{content}/testing/uat/test_cases/README.md` holds one table listing every feature-area file, its id range, and its status. It is the fast path for the next-id lookup and the map of what coverage exists. Add a row whenever you create a feature-area file:
 
 ```markdown
 | Feature area | File | ID range | Cases | Status |
@@ -97,7 +97,7 @@ Each feature-area file wraps its cases with area-level metadata:
 3. Find the next free global `TC-XXX` — take it from the target area's range in the README (fall back to max across all `test_cases/` + 1).
 4. Draft happy paths first, then unhappy paths, then edge cases only where they earn their place.
 5. Keep steps atomic; every `expected_result` must be pass/fail-able by a tester with no code access.
-6. Validate: run `python references/validate.py testing/uat/test_cases` — it checks each file against `references/case.schema.json`, enforces globally-unique ids, and confirms every case's `feature_area` matches its file. Update the README row's case count and status.
+6. Validate: run `python references/validate.py {content}/testing/uat/test_cases` — it checks each file against `references/case.schema.json`, enforces globally-unique ids, and confirms every case's `feature_area` matches its file. Update the README row's case count and status.
 
 ## Review before finishing
 
@@ -108,8 +108,8 @@ Each feature-area file wraps its cases with area-level metadata:
 - Steps atomic; unhappy paths assert recoverability; no implementation leakage.
 - File-level `notes` fences scope against sibling files where overlap is possible.
 - The README table has a row for every file with a non-overlapping ID range and current case count.
-- `python references/validate.py testing/uat/test_cases` passes (valid JSON, schema-conformant, unique ids, consistent feature_area).
+- `python references/validate.py {content}/testing/uat/test_cases` passes (valid JSON, schema-conformant, unique ids, consistent feature_area).
 
 ## Preference hook
 
-If the user redirects structure, tone, id conventions, priority/type definitions, or coverage depth in a repeatable way, propose a durable entry for `context/preferences.md` under a **UAT** heading (or the closest existing one). Confirm before writing — record durable patterns only, not one-off instructions.
+If the user redirects structure, tone, id conventions, priority/type definitions, or coverage depth in a repeatable way, propose a durable entry for `{content}/context/preferences.md` under a **UAT** heading (or the closest existing one). Confirm before writing — record durable patterns only, not one-off instructions.

@@ -1,11 +1,13 @@
 ---
 name: bootstrap-context
-description: Capture company-specific setup details for this toolkit and write them into the canonical context file and starter docs. Use after cloning the repo, when setting up the toolkit for a new company, when replacing `{Company XYZ}` placeholders, or when the user asks to configure the repo for their organisation. Covers company defaults, Notion-vs-local workflow decisions, team context, and current business goals.
+description: Capture company-specific setup details for this toolkit and write them into the canonical context files. Use after cloning or installing the toolkit, when setting up the toolkit for a new company, when replacing `{Company XYZ}` placeholders, or when the user asks to configure the repo for their organisation. Covers company defaults, Notion-vs-local workflow decisions, team context, and current business goals.
 ---
 
 # Bootstrap Context
 
-Use this skill for the initial post-clone setup pass.
+Use this skill for the initial setup pass after cloning or installing the toolkit.
+
+Only write the context files named below. Skill files, their references, and the examples are toolkit-managed: an installed toolkit replaces them on update, so edits there would be lost or block the update. Skills read company details from `context/company-context.md` instead, and `{Company XYZ}` in their templates stands for the company named there.
 
 ## Workflow
 
@@ -15,13 +17,10 @@ Use this skill for the initial post-clone setup pass.
 4. Normalize the answers into concise, reusable values.
 5. Update `context/company-context.md` as the source of truth.
 6. Verify `context/preferences.md` exists. If it is missing, create it from the standard template with empty placeholder sections. Do not pre-populate preferences during bootstrap — they are learned from usage.
-7. Update the obvious starter placeholders in key docs:
-   - `examples/prd-reference-guide.md`
-   - `examples/example-prd-internal-tool.md`
-   - `examples/example-prd-customer-facing.md`
-   - `README.md` only when setup instructions need to reflect the configured context
-7. If the user does not use Notion, remove or soften Notion-as-default assumptions in the starter docs and relevant skills that would otherwise imply a sync step is standard.
-8. Stop after the initial setup pass. Do not try to rewrite the entire repo.
+7. Update `context/team-context.md` with the team context and `context/product-language.md` with any product terms the user supplies.
+8. Record whether the workflow is `Notion-enabled` or `local-first` in `context/company-context.md`. Skills read this value, so do not edit skills to remove Notion assumptions.
+9. If `.product-owner-toolkit/installation.json` exists, set `configuration.status` to `complete` and `configuration.completedAt` to the current ISO 8601 timestamp, but only after every context write above has succeeded. Change no other field in that file.
+10. Stop after the initial setup pass. Do not try to rewrite the entire repo.
 
 ## Questions To Ask
 
@@ -69,12 +68,10 @@ Use `AskQuestion` for structured choices where useful. Keep the rest concise and
 
 - Treat `context/company-context.md` as the canonical file.
 - Prefer updating clearly labeled fields and bullets over freeform rewriting.
-- Replace `{Company XYZ}` only in starter documents where it is clearly a placeholder.
 - Do not replace example competitors, metrics, or product assumptions unless the user explicitly asks.
 - If the user does not know a value, leave a clear placeholder rather than inventing one.
-- If Notion is not used, update touched docs so they describe Notion as optional rather than assumed.
 - If Notion is used, store the tracking locations, Project IDs, and any custom sync fields in `context/company-context.md` instead of scattering them across multiple setup docs.
-- When touching skills, prefer small edits that teach them to read `context/company-context.md` rather than hardcoding one team's workflow.
+- Never edit skill files, `mcp-config/`, `conventions/`, or `examples/`.
 
 ## Output Expectations
 

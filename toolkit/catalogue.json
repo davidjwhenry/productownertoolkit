@@ -34,23 +34,74 @@
     }
   ],
   "skills": [
-    { "name": "bootstrap-context", "category": "setup" },
-    { "name": "product-grill", "category": "shaping" },
-    { "name": "desktop-research", "category": "writing" },
-    { "name": "prd-writer", "category": "writing" },
-    { "name": "backlog-writing", "category": "writing" },
-    { "name": "meeting-distillation", "category": "writing" },
-    { "name": "stakeholder-report", "category": "writing" },
-    { "name": "weekly-review", "category": "writing" },
-    { "name": "uat-writer", "category": "writing" },
-    { "name": "prd-reviewer", "category": "review" },
-    { "name": "backlog-review", "category": "review" },
-    { "name": "design-system-setup", "category": "setup" },
-    { "name": "prototype-builder", "category": "writing" },
-    { "name": "prototype-reviewer", "category": "review" },
-    { "name": "notion-sync", "category": "sync" },
-    { "name": "notion-drift", "category": "sync" },
-    { "name": "skill-creator", "category": "authoring" }
+    {
+      "name": "bootstrap-context",
+      "category": "setup"
+    },
+    {
+      "name": "product-grill",
+      "category": "shaping"
+    },
+    {
+      "name": "desktop-research",
+      "category": "writing"
+    },
+    {
+      "name": "prd-writer",
+      "category": "writing"
+    },
+    {
+      "name": "backlog-writing",
+      "category": "writing"
+    },
+    {
+      "name": "meeting-distillation",
+      "category": "writing"
+    },
+    {
+      "name": "stakeholder-report",
+      "category": "writing"
+    },
+    {
+      "name": "weekly-review",
+      "category": "writing"
+    },
+    {
+      "name": "uat-writer",
+      "category": "writing"
+    },
+    {
+      "name": "prd-reviewer",
+      "category": "review"
+    },
+    {
+      "name": "backlog-review",
+      "category": "review"
+    },
+    {
+      "name": "design-system-setup",
+      "category": "setup"
+    },
+    {
+      "name": "prototype-builder",
+      "category": "writing"
+    },
+    {
+      "name": "prototype-reviewer",
+      "category": "review"
+    },
+    {
+      "name": "notion-sync",
+      "category": "sync"
+    },
+    {
+      "name": "notion-drift",
+      "category": "sync"
+    },
+    {
+      "name": "skill-creator",
+      "category": "authoring"
+    }
   ],
   "capabilities": [
     {
@@ -71,27 +122,111 @@
         "weekly-review",
         "uat-writer"
       ],
+      "map": [
+        {
+          "path": "{content}/context/",
+          "purpose": "Company, team, preferences, and product-language context. Read before substantive drafting, reviewing, or presenting work."
+        },
+        {
+          "path": "{content}/requirements/",
+          "purpose": "Requirement libraries by type (platform, customer, internal), feature folders, and product decisions in `{content}/requirements/decisions/`."
+        },
+        {
+          "path": "{content}/backlog/",
+          "purpose": "Generated Epics and User Stories, grouped by Epic."
+        },
+        {
+          "path": "{content}/testing/uat/test_cases/",
+          "purpose": "UAT test-case library, one JSON file per feature area."
+        },
+        {
+          "path": "{content}/personal/",
+          "purpose": "Personal notes, to-dos, and reports."
+        },
+        {
+          "path": "{toolkit}/mcp-config/",
+          "purpose": "Setup guidance for the MCP servers the skills can use."
+        },
+        {
+          "path": "{toolkit}/conventions/",
+          "purpose": "Shared conventions such as markdown front matter."
+        }
+      ],
       "managed": [
-        { "source": "mcp-config/README.md", "install": "{toolkit}/mcp-config/README.md" },
-        { "source": "mcp-config/firecrawl.md", "install": "{toolkit}/mcp-config/firecrawl.md" },
-        { "source": "mcp-config/github.md", "install": "{toolkit}/mcp-config/github.md" },
-        { "source": "conventions/front-matter.md", "install": "{toolkit}/conventions/front-matter.md" }
+        {
+          "source": "mcp-config/README.md",
+          "install": "{toolkit}/mcp-config/README.md"
+        },
+        {
+          "source": "mcp-config/firecrawl.md",
+          "install": "{toolkit}/mcp-config/firecrawl.md"
+        },
+        {
+          "source": "mcp-config/github.md",
+          "install": "{toolkit}/mcp-config/github.md"
+        },
+        {
+          "source": "conventions/front-matter.md",
+          "install": "{toolkit}/conventions/front-matter.md"
+        }
       ],
       "seed": [
-        { "source": "context/README.md", "install": "{content}/context/README.md" },
-        { "source": "context/company-context.md", "install": "{content}/context/company-context.md" },
-        { "source": "context/team-context.md", "install": "{content}/context/team-context.md" },
-        { "source": "context/preferences.md", "install": "{content}/context/preferences.md" },
-        { "source": "context/product-language.md", "install": "{content}/context/product-language.md" },
-        { "source": "requirements/README.md", "install": "{content}/requirements/README.md" },
-        { "source": "requirements/decisions/README.md", "install": "{content}/requirements/decisions/README.md" },
-        { "source": "requirements/customer-functional-requirements/.gitkeep", "install": "{content}/requirements/customer-functional-requirements/.gitkeep" },
-        { "source": "requirements/internal-functional-requirements/.gitkeep", "install": "{content}/requirements/internal-functional-requirements/.gitkeep" },
-        { "source": "requirements/platform-requirements/.gitkeep", "install": "{content}/requirements/platform-requirements/.gitkeep" },
-        { "source": "testing/uat/test_cases/README.md", "install": "{content}/testing/uat/test_cases/README.md" },
-        { "source": "personal/README.md", "install": "{content}/personal/README.md" },
-        { "source": "personal/to-dos/done/.gitkeep", "install": "{content}/personal/to-dos/done/.gitkeep" },
-        { "source": "personal/to-dos/not-done/.gitkeep", "install": "{content}/personal/to-dos/not-done/.gitkeep" }
+        {
+          "source": "context/README.md",
+          "install": "{content}/context/README.md"
+        },
+        {
+          "source": "context/company-context.md",
+          "install": "{content}/context/company-context.md"
+        },
+        {
+          "source": "context/team-context.md",
+          "install": "{content}/context/team-context.md"
+        },
+        {
+          "source": "context/preferences.md",
+          "install": "{content}/context/preferences.md"
+        },
+        {
+          "source": "context/product-language.md",
+          "install": "{content}/context/product-language.md"
+        },
+        {
+          "source": "requirements/README.md",
+          "install": "{content}/requirements/README.md"
+        },
+        {
+          "source": "requirements/decisions/README.md",
+          "install": "{content}/requirements/decisions/README.md"
+        },
+        {
+          "source": "requirements/customer-functional-requirements/.gitkeep",
+          "install": "{content}/requirements/customer-functional-requirements/.gitkeep"
+        },
+        {
+          "source": "requirements/internal-functional-requirements/.gitkeep",
+          "install": "{content}/requirements/internal-functional-requirements/.gitkeep"
+        },
+        {
+          "source": "requirements/platform-requirements/.gitkeep",
+          "install": "{content}/requirements/platform-requirements/.gitkeep"
+        },
+        {
+          "source": "testing/uat/test_cases/README.md",
+          "install": "{content}/testing/uat/test_cases/README.md"
+        },
+        {
+          "source": "personal/README.md",
+          "install": "{content}/personal/README.md"
+        },
+        {
+          "source": "personal/to-dos/done/.gitkeep",
+          "install": "{content}/personal/to-dos/done/.gitkeep"
+        },
+        {
+          "source": "personal/to-dos/not-done/.gitkeep",
+          "install": "{content}/personal/to-dos/not-done/.gitkeep"
+        }
       ]
     },
     {
@@ -99,10 +234,30 @@
       "label": "Prototyping",
       "description": "Design-system profiles, interactive prototypes from PRDs, the local prototype playground, and amendment review.",
       "required": false,
-      "skills": ["design-system-setup", "prototype-builder", "prototype-reviewer"],
+      "skills": [
+        "design-system-setup",
+        "prototype-builder",
+        "prototype-reviewer"
+      ],
+      "map": [
+        {
+          "path": "{content}/design-system/",
+          "purpose": "Design sources and immutable design profiles; `{content}/design-system/profiles/ACTIVE` pins the current profile."
+        },
+        {
+          "path": "prototype-playground/",
+          "purpose": "Local app that validates, previews, and packages prototypes. Run `npm run validate` there after generating prototypes."
+        }
+      ],
       "managed": [
-        { "source": "mcp-config/pen-dev.md", "install": "{toolkit}/mcp-config/pen-dev.md" },
-        { "source": "mcp-config/figma.md", "install": "{toolkit}/mcp-config/figma.md" }
+        {
+          "source": "mcp-config/pen-dev.md",
+          "install": "{toolkit}/mcp-config/pen-dev.md"
+        },
+        {
+          "source": "mcp-config/figma.md",
+          "install": "{toolkit}/mcp-config/figma.md"
+        }
       ],
       "runtime": {
         "source": "prototype-playground",
@@ -119,17 +274,46 @@
           "scripts/validate.ts",
           "src/**/*.{ts,tsx,css}"
         ],
-        "exclude": ["src/**/*.test.ts", "src/testing/**"],
-        "unmanaged": ["node_modules/**", "dist/**", "test-results/**", ".e2e-tmp/**"]
+        "exclude": [
+          "src/**/*.test.ts",
+          "src/testing/**"
+        ],
+        "unmanaged": [
+          "node_modules/**",
+          "dist/**",
+          "test-results/**",
+          ".e2e-tmp/**"
+        ]
       },
       "seed": [
-        { "source": "design-system/README.md", "install": "{content}/design-system/README.md" },
-        { "source": "design-system/example-design-system.pen", "install": "{content}/design-system/example-design-system.pen" },
-        { "source": "design-system/profiles/ACTIVE", "install": "{content}/design-system/profiles/ACTIVE" },
-        { "source": "design-system/profiles/v002/profile.json", "install": "{content}/design-system/profiles/v002/profile.json" },
-        { "source": "design-system/profiles/v002/tokens.css", "install": "{content}/design-system/profiles/v002/tokens.css" },
-        { "source": "design-system/profiles/v002/components.json", "install": "{content}/design-system/profiles/v002/components.json" },
-        { "source": "design-system/profiles/v002/assets.json", "install": "{content}/design-system/profiles/v002/assets.json" }
+        {
+          "source": "design-system/README.md",
+          "install": "{content}/design-system/README.md"
+        },
+        {
+          "source": "design-system/example-design-system.pen",
+          "install": "{content}/design-system/example-design-system.pen"
+        },
+        {
+          "source": "design-system/profiles/ACTIVE",
+          "install": "{content}/design-system/profiles/ACTIVE"
+        },
+        {
+          "source": "design-system/profiles/v002/profile.json",
+          "install": "{content}/design-system/profiles/v002/profile.json"
+        },
+        {
+          "source": "design-system/profiles/v002/tokens.css",
+          "install": "{content}/design-system/profiles/v002/tokens.css"
+        },
+        {
+          "source": "design-system/profiles/v002/components.json",
+          "install": "{content}/design-system/profiles/v002/components.json"
+        },
+        {
+          "source": "design-system/profiles/v002/assets.json",
+          "install": "{content}/design-system/profiles/v002/assets.json"
+        }
       ]
     },
     {
@@ -137,9 +321,16 @@
       "label": "Notion",
       "description": "Sync backlog artefacts to Notion databases and check synced pages for drift.",
       "required": false,
-      "skills": ["notion-sync", "notion-drift"],
+      "skills": [
+        "notion-sync",
+        "notion-drift"
+      ],
+      "map": [],
       "managed": [
-        { "source": "mcp-config/notion.md", "install": "{toolkit}/mcp-config/notion.md" }
+        {
+          "source": "mcp-config/notion.md",
+          "install": "{toolkit}/mcp-config/notion.md"
+        }
       ],
       "seed": []
     },
@@ -148,7 +339,10 @@
       "label": "Toolkit authoring",
       "description": "Create and validate your own skills.",
       "required": false,
-      "skills": ["skill-creator"],
+      "skills": [
+        "skill-creator"
+      ],
+      "map": [],
       "managed": [],
       "seed": []
     },
@@ -158,10 +352,25 @@
       "description": "A worked PRD, prototype, and executive report to learn from.",
       "required": false,
       "skills": [],
+      "map": [
+        {
+          "path": "{content}/examples/",
+          "purpose": "Worked examples: a PRD, prototypes, and an executive report."
+        }
+      ],
       "managed": [
-        { "source": "examples/README.md", "install": "{content}/examples/README.md" },
-        { "source": "examples/example-feature", "install": "{content}/examples/example-feature" },
-        { "source": "examples/executive-report", "install": "{content}/examples/executive-report" }
+        {
+          "source": "examples/README.md",
+          "install": "{content}/examples/README.md"
+        },
+        {
+          "source": "examples/example-feature",
+          "install": "{content}/examples/example-feature"
+        },
+        {
+          "source": "examples/executive-report",
+          "install": "{content}/examples/executive-report"
+        }
       ],
       "seed": []
     }
