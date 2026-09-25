@@ -25,7 +25,7 @@ Every tool in this toolkit earns its place in one of three capability bands.
 - [GitHub MCP](./mcp-config/github.md) for shipping reality — PRs, commits, what actually went out
 - [Figma Dev Mode MCP](./mcp-config/figma.md) for design context inside your PRDs
 
-**Synthesise** — where Claude, or your LLM of choice turns inputs into artefacts. Skills are mirrored for Claude Code and Cursor under `.claude/skills/` and `.cursor/skills/`, and for Codex under `.agents/skills/`. The post-clone setup skill lives in `.cursor/skills/bootstrap-context/` and `.claude/skills/bootstrap-context/`.
+**Synthesise** — where Claude, or your LLM of choice turns inputs into artefacts. Skills are authored once in [`toolkit/skills/`](./toolkit/skills/) and mirrored for Claude Code (`.claude/skills/`), Cursor (`.cursor/skills/`), and Codex (`.agents/skills/`). [`toolkit/catalogue.json`](./toolkit/catalogue.json) groups them into capabilities. The post-clone setup skill is `bootstrap-context`.
 
 The intended flow is:
 
@@ -152,6 +152,9 @@ Explore, learn, add more, but don't *panic*. There's a temptation to jump on eve
 ```text
 productowner/
 ├── README.md
+├── toolkit/
+│   ├── catalogue.json
+│   └── skills/
 ├── .claude/
 │   └── skills/
 ├── .cursor/
@@ -187,7 +190,7 @@ productowner/
 2. Connect the recommended MCPs from [`mcp-config/`](./mcp-config/): start with `Firecrawl` and `pen.dev`, add `Notion` if your team uses it, and add `Figma` if you want design context in the repo.
 3. Run the `bootstrap-context` skill and fill in your company defaults in [`context/company-context.md`](./context/company-context.md).
 4. Review the updated starter docs and confirm the placeholder replacements and workflow defaults look right.
-5. Review the shipped skills under `.claude/skills/` or `.cursor/skills/` and wire them into your preferred local setup.
+5. Review the shipped skills under `toolkit/skills/`; each agent loads its own mirror automatically.
 6. Use `product-grill` on a messy idea or stakeholder request before drafting the first serious PRD.
 7. Run the relevant writing skill once the shape is clear enough: `prd-writer`, `backlog-writing`, `meeting-distillation`, or `stakeholder-report`.
 8. Run the paired review skill before treating a PRD or backlog as ready.

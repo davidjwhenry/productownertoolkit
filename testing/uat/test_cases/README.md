@@ -9,4 +9,4 @@ One JSON file per feature area. IDs (`TC-XXX`) are globally unique across the wh
 
 _Add a row when you create a feature-area file. New areas take the next open 50-id block after the highest range above. Never renumber; retire cases with `"active": false`._
 
-_See `.claude/skills/writing/uat-writer/SKILL.md` (or the `.cursor` mirror) for the full schema, workflow, and validation command._
+_See `toolkit/skills/uat-writer/SKILL.md` for the full schema, workflow, and validation command._

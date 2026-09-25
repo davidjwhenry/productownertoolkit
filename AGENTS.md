@@ -47,7 +47,8 @@ Rules for proposing preference updates:
 | `personal/` | Personal notes, to-dos, reports |
 | `design-system/` | Brand tokens, voice/tone, UI patterns; immutable design profiles under `design-system/profiles/` with the `ACTIVE` pointer |
 | `prototype-playground/` | Local web app that discovers, validates, previews, compares, and packages declarative repository prototypes; screen-addressable navigation with PRD § references and design notes, plus a dev-server amendments write path; run `npm run validate` from here after generating prototypes |
-| `.agents/skills/` | Codex-discoverable copies of the repo skills (`design-system-setup`, `prototype-builder`, `product-grill`) |
+| `toolkit/` | Canonical skill source (`toolkit/skills/`) and the capability catalogue (`toolkit/catalogue.json`). Edit skills here, never in the agent mirrors |
+| `.claude/skills/`, `.cursor/skills/`, `.agents/skills/` | Agent mirrors of `toolkit/skills/` for Claude Code, Cursor, and Codex |
 
 ## Writing Standards
 
