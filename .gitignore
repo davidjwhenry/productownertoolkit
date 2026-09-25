@@ -2,3 +2,4 @@
 .DS_Store
 *.skill
 node_modules/
+cli/dist/

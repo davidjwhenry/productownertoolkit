@@ -33,6 +33,8 @@ export interface RuntimeDefinition {
   include: string[]
   exclude: string[]
   unmanaged: string[]
+  /** Included files the user's tooling may rewrite: installed once, never checksummed. */
+  seed?: string[]
 }
 
 export interface CapabilityDefinition {

@@ -9,7 +9,14 @@
     "noEmit": true,
     "strict": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
-  "include": ["scripts/**/*.ts", "cli/src/**/*.ts"]
+  "include": [
+    "scripts/**/*.ts",
+    "cli/src/**/*.ts",
+    "cli/test/**/*.ts",
+    "vitest.config.ts"
+  ]
 }

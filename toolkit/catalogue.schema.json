@@ -207,6 +207,10 @@
               "unmanaged": {
                 "$ref": "#/$defs/globs",
                 "description": "Paths created by the user's own tooling (for example `npm install`) that checksums and conflict detection ignore."
+              },
+              "seed": {
+                "$ref": "#/$defs/globs",
+                "description": "Included files that the user's own tooling may rewrite (for example the lockfile). Installed once and never checksummed."
               }
             }
           }

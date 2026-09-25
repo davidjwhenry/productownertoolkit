@@ -11,6 +11,8 @@ export interface AgentsBlockOptions {
   roots: RootValues
   /** Set for installed repositories; omitted for the standalone toolkit clone. */
   manifestPath?: string
+  /** Level of the block's own heading (default 3, as in the template). */
+  headingLevel?: number
 }
 
 function list(items: string[]): string {
@@ -33,7 +35,9 @@ export function renderAgentsBlock(template: string, catalogue: Catalogue, option
     ? `This repository uses the Product Owner Toolkit, recorded in \`${options.manifestPath}\`. Product work lives in \`{content}/\`.\n\n`
     : ''
 
+  const heading = '#'.repeat(Math.min(Math.max(options.headingLevel ?? 3, 1), 6))
   const body = template
+    .replace(/^#{1,6} /, `${heading} `)
     .replace('{{installation}}', installation)
     .replace('{{map}}', map)
     .replace('{{skills}}', `${list(skills)} (in ${list(directories)})`)

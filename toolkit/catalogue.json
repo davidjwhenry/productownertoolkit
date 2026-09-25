@@ -294,6 +294,9 @@
           "dist/**",
           "test-results/**",
           ".e2e-tmp/**"
+        ],
+        "seed": [
+          "package-lock.json"
         ]
       },
       "seed": [

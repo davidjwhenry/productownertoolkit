@@ -60,7 +60,7 @@ Toolkit development files in this repository:
 |---|---|
 | `toolkit/` | Canonical skill source (`toolkit/skills/`), the capability catalogue (`toolkit/catalogue.json`), and the template for the managed block above. Edit skills here, never in the agent mirrors |
 | `.claude/skills/`, `.agents/skills/` | Generated agent mirrors of `toolkit/skills/` (Claude Code reads the first, Codex the second, Cursor both). Run `npm run generate` after changing `toolkit/`; CI fails when they drift |
-| `cli/`, `scripts/` | Installer source and repository generators |
+| `cli/`, `scripts/` | Installer source (`init` and `doctor`, no runtime dependencies) and repository generators. From the root: `npm test`, `npm run cli -- <command>`, `npm run build:cli` |
 | `adapters/` | Alternative local-first setups |
 
 ## Writing Standards
