@@ -57,6 +57,11 @@ export function loadCatalogue(repoRoot: string): LoadResult {
       else if (stat.isSymbolicLink()) errors.push(`capability "${capability.id}" source ${source} is a symlink`)
     }
   }
+  for (const agent of catalogue.agents) {
+    if (!agent.reads.includes(agent.preferredDirectory)) {
+      errors.push(`agent "${agent.id}" preferredDirectory ${agent.preferredDirectory} is not in its reads list`)
+    }
+  }
   if (catalogue.capabilities.filter((c) => c.required).length !== 1) {
     errors.push('exactly one capability must be required')
   }

@@ -25,7 +25,7 @@ Every tool in this toolkit earns its place in one of three capability bands.
 - [GitHub MCP](./mcp-config/github.md) for shipping reality — PRs, commits, what actually went out
 - [Figma Dev Mode MCP](./mcp-config/figma.md) for design context inside your PRDs
 
-**Synthesise** — where Claude, or your LLM of choice turns inputs into artefacts. Skills are authored once in [`toolkit/skills/`](./toolkit/skills/) and mirrored for Claude Code (`.claude/skills/`), Cursor (`.cursor/skills/`), and Codex (`.agents/skills/`). [`toolkit/catalogue.json`](./toolkit/catalogue.json) groups them into capabilities. The post-clone setup skill is `bootstrap-context`.
+**Synthesise** — where Claude, or your LLM of choice turns inputs into artefacts. Skills are authored once in [`toolkit/skills/`](./toolkit/skills/) and mirrored into `.claude/skills/` for Claude Code and `.agents/skills/` for Codex. Cursor reads both folders, so it lists each skill twice; that is expected. [`toolkit/catalogue.json`](./toolkit/catalogue.json) groups them into capabilities. The post-clone setup skill is `bootstrap-context`.
 
 The intended flow is:
 
@@ -156,8 +156,6 @@ productowner/
 │   ├── catalogue.json
 │   └── skills/
 ├── .claude/
-│   └── skills/
-├── .cursor/
 │   └── skills/
 ├── .agents/
 │   └── skills/

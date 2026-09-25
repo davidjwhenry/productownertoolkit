@@ -1,3 +1,4 @@
+import { skillDirectoriesFor } from './agents.ts'
 import { renderTokens } from './tokens.ts'
 import type { Catalogue, RootValues } from './types.ts'
 
@@ -21,14 +22,13 @@ function list(items: string[]): string {
 /** Render the managed block, including its delimiters, from the block template. */
 export function renderAgentsBlock(template: string, catalogue: Catalogue, options: AgentsBlockOptions): string {
   const capabilities = catalogue.capabilities.filter((c) => c.required || options.capabilities.includes(c.id))
-  const agents = catalogue.agents.filter((a) => options.agents.includes(a.id))
 
   const map = capabilities
     .flatMap((c) => c.map)
     .map((row) => `| \`${row.path}\` | ${row.purpose} |`)
     .join('\n')
   const skills = capabilities.flatMap((c) => c.skills).map((s) => `\`${s}\``)
-  const directories = agents.map((a) => `\`${a.skillDirectory}/\``)
+  const directories = skillDirectoriesFor(catalogue, options.agents).map((dir) => `\`${dir}/\``)
   const installation = options.manifestPath
     ? `This repository uses the Product Owner Toolkit, recorded in \`${options.manifestPath}\`. Product work lives in \`{content}/\`.\n\n`
     : ''

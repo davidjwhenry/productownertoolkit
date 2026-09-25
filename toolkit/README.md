@@ -8,7 +8,7 @@ This folder is the single source for everything the toolkit distributes.
 | `catalogue.json` | Capabilities, their skills, and the managed and seed files each one installs. Validated by `catalogue.schema.json`. |
 | `support/agents-block.md` | Template for the managed Product Owner Toolkit block in `AGENTS.md`. |
 
-The agent folders `.claude/skills/`, `.cursor/skills/`, and `.agents/skills/` and the managed block in the root `AGENTS.md` are generated. Don't edit them directly. After changing anything in `toolkit/`, run:
+The agent folders `.claude/skills/` and `.agents/skills/` and the managed block in the root `AGENTS.md` are generated. Don't edit them directly. After changing anything in `toolkit/`, run:
 
 ```sh
 npm install        # once
@@ -26,6 +26,18 @@ Write toolkit paths in skills with a placeholder instead of a root-level path:
 | `{toolkit}/mcp-config/…` | `mcp-config/…` | `.product-owner-toolkit/guides/mcp-config/…` |
 
 `{content}` covers `context/`, `requirements/`, `backlog/`, `testing/`, `examples/`, `design-system/`, and `personal/`; `{toolkit}` covers `mcp-config/` and `conventions/`. `prototype-playground/` is at the repository root in both layouts, so it needs no placeholder. `npm run check` fails on a root-level path that should use a placeholder.
+
+## Agent skill folders
+
+Each agent in the catalogue lists every folder it `reads`, verified on 2026-09-25:
+
+| Agent | `.claude/skills/` | `.cursor/skills/` | `.agents/skills/` |
+| --- | --- | --- | --- |
+| Claude Code | ✅ | | |
+| Codex | | | ✅ |
+| Cursor | ✅ | ✅ | ✅ |
+
+Skills are written to the fewest folders that cover the selected agents (`cli/src/catalogue/agents.ts`). This repository supports all three, so it has `.claude/skills/` and `.agents/skills/`. Cursor sees both, so each skill appears twice there; this is accepted. Re-check the table when an agent changes how it discovers skills.
 
 Ownership in the catalogue:
 

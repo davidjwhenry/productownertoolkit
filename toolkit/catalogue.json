@@ -17,19 +17,30 @@
     {
       "id": "claude-code",
       "label": "Claude Code",
-      "skillDirectory": ".claude/skills",
+      "reads": [
+        ".claude/skills"
+      ],
+      "preferredDirectory": ".claude/skills",
       "invocation": "Ask Claude to use the `{skill}` skill"
     },
     {
       "id": "cursor",
       "label": "Cursor",
-      "skillDirectory": ".cursor/skills",
+      "reads": [
+        ".cursor/skills",
+        ".claude/skills",
+        ".agents/skills"
+      ],
+      "preferredDirectory": ".agents/skills",
       "invocation": "Ask the Cursor agent to use the `{skill}` skill"
     },
     {
       "id": "codex",
       "label": "Codex",
-      "skillDirectory": ".agents/skills",
+      "reads": [
+        ".agents/skills"
+      ],
+      "preferredDirectory": ".agents/skills",
       "invocation": "Type `${skill}` in Codex"
     }
   ],

@@ -7,7 +7,8 @@ export interface RootDefinition {
 export interface AgentDefinition {
   id: string
   label: string
-  skillDirectory: string
+  reads: string[]
+  preferredDirectory: string
   invocation: string
 }
 

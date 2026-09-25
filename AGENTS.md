@@ -51,7 +51,7 @@ When a clear, reusable preference emerges in a session, propose an update to `co
 | `prototype-playground/` | Local app that validates, previews, and packages prototypes. Run `npm run validate` there after generating prototypes. |
 | `examples/` | Worked examples: a PRD, prototypes, and an executive report. |
 
-Skills: `bootstrap-context`, `product-grill`, `desktop-research`, `prd-writer`, `backlog-writing`, `prd-reviewer`, `backlog-review`, `meeting-distillation`, `stakeholder-report`, `weekly-review`, `uat-writer`, `design-system-setup`, `prototype-builder`, `prototype-reviewer`, `notion-sync`, `notion-drift`, and `skill-creator` (in `.claude/skills/`, `.cursor/skills/`, and `.agents/skills/`). Run `bootstrap-context` first to configure company context.
+Skills: `bootstrap-context`, `product-grill`, `desktop-research`, `prd-writer`, `backlog-writing`, `prd-reviewer`, `backlog-review`, `meeting-distillation`, `stakeholder-report`, `weekly-review`, `uat-writer`, `design-system-setup`, `prototype-builder`, `prototype-reviewer`, `notion-sync`, `notion-drift`, and `skill-creator` (in `.claude/skills/` and `.agents/skills/`). Run `bootstrap-context` first to configure company context.
 <!-- productownertoolkit:end -->
 
 Toolkit development files in this repository:
@@ -59,7 +59,7 @@ Toolkit development files in this repository:
 | Path | Purpose |
 |---|---|
 | `toolkit/` | Canonical skill source (`toolkit/skills/`), the capability catalogue (`toolkit/catalogue.json`), and the template for the managed block above. Edit skills here, never in the agent mirrors |
-| `.claude/skills/`, `.cursor/skills/`, `.agents/skills/` | Generated agent mirrors of `toolkit/skills/`. Run `npm run generate` after changing `toolkit/`; CI fails when they drift |
+| `.claude/skills/`, `.agents/skills/` | Generated agent mirrors of `toolkit/skills/` (Claude Code reads the first, Codex the second, Cursor both). Run `npm run generate` after changing `toolkit/`; CI fails when they drift |
 | `cli/`, `scripts/` | Installer source and repository generators |
 | `adapters/` | Alternative local-first setups |
 

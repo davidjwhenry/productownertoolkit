@@ -7,6 +7,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { allSkillDirectories, skillDirectoriesFor } from '../cli/src/catalogue/agents.ts'
 import { renderAgentsBlock, replaceManagedBlock } from '../cli/src/catalogue/agents-block.ts'
 import { loadCatalogue, SKILLS_PATH } from '../cli/src/catalogue/load.ts'
 import { lintTokens, renderTokens, STANDALONE_ROOTS } from '../cli/src/catalogue/tokens.ts'
@@ -61,10 +62,12 @@ for (const rel of [...canonical.map((f) => `${SKILLS_PATH}/${f}`), AGENTS_BLOCK_
 }
 
 // Expected generated files: repo-relative path → contents.
+// This repository supports every agent, so it carries the minimal folder set for all of them.
+const mirrors = skillDirectoriesFor(catalogue, catalogue.agents.map((a) => a.id))
 const expected = new Map<string, Buffer>()
-for (const agent of catalogue.agents) {
+for (const dir of mirrors) {
   for (const rel of canonical) {
-    expected.set(`${agent.skillDirectory}/${rel}`, renderFile(fs.readFileSync(path.join(skillsRoot, rel))))
+    expected.set(`${dir}/${rel}`, renderFile(fs.readFileSync(path.join(skillsRoot, rel))))
   }
 }
 const agentsPath = path.join(repoRoot, 'AGENTS.md')
@@ -86,9 +89,11 @@ if (problems.length) {
 
 // Compare with, or write to, the working tree. Generated mirror directories are owned outright.
 const drift: string[] = []
-const unexpected = catalogue.agents.flatMap((agent) =>
-  listFiles(path.join(repoRoot, agent.skillDirectory))
-    .map((rel) => `${agent.skillDirectory}/${rel}`)
+// Any skill folder an agent reads is owned by the generator; files outside the mirror set are stale.
+const ownedDirectories = allSkillDirectories(catalogue)
+const unexpected = ownedDirectories.flatMap((dir) =>
+  listFiles(path.join(repoRoot, dir))
+    .map((rel) => `${dir}/${rel}`)
     .filter((rel) => !expected.has(rel)),
 )
 for (const [rel, contents] of expected) {
@@ -106,13 +111,14 @@ for (const rel of unexpected) {
   if (!check) fs.rmSync(path.join(repoRoot, rel))
 }
 if (!check) {
-  for (const agent of catalogue.agents) {
-    const root = path.join(repoRoot, agent.skillDirectory)
+  for (const dir of ownedDirectories) {
+    const root = path.join(repoRoot, dir)
+    if (!fs.existsSync(root)) continue
     const dirs = fs.readdirSync(root, { recursive: true, withFileTypes: true })
       .filter((d) => d.isDirectory())
       .map((d) => path.join(d.parentPath, d.name))
       .sort((a, b) => b.length - a.length)
-    for (const dir of dirs) if (fs.readdirSync(dir).every((f) => IGNORED.has(f))) fs.rmSync(dir, { recursive: true })
+    for (const empty of [...dirs, root]) if (fs.readdirSync(empty).every((f) => IGNORED.has(f))) fs.rmSync(empty, { recursive: true })
   }
 }
 

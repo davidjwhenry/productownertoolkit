@@ -44,7 +44,8 @@
         "required": [
           "id",
           "label",
-          "skillDirectory",
+          "reads",
+          "preferredDirectory",
           "invocation"
         ],
         "properties": {
@@ -55,7 +56,17 @@
             "type": "string",
             "minLength": 1
           },
-          "skillDirectory": {
+          "reads": {
+            "description": "Every project skill folder this agent loads skills from, as verified against the agent.",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/relativePath"
+            }
+          },
+          "preferredDirectory": {
+            "description": "Folder to install into when no other selected agent already provides one this agent reads. Must be listed in `reads`.",
             "$ref": "#/$defs/relativePath"
           },
           "invocation": {
