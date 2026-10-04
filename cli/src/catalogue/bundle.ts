@@ -146,14 +146,16 @@ export function desiredFiles(bundle: Bundle, selection: Selection): DesiredFile[
     if (runtime) {
       // Never descend into dependency or build output, which can be large.
       const prune = (dir: string) => matchesAny(`${dir}/-`, runtime.unmanaged)
-      for (const rel of listSource(bundle, runtime.source, prune)) {
+      for (const packaged of listSource(bundle, runtime.source, prune)) {
+        // npm drops `.gitignore` from tarballs, so packaging stores it as `_gitignore`.
+        const rel = packaged === '_gitignore' ? '.gitignore' : packaged
         if (!matchesAny(rel, runtime.include)) continue
         if (matchesAny(rel, runtime.exclude) || matchesAny(rel, runtime.unmanaged)) continue
         files.push({
           path: joinRelative(installPath(runtime.install), rel),
           ownership: matchesAny(rel, runtime.seed ?? []) ? 'seed' : 'managed',
           capability: capability.id,
-          contents: normalise(readSource(bundle, runtime.source, rel)),
+          contents: normalise(readSource(bundle, runtime.source, packaged)),
         })
       }
     }

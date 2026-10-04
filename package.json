@@ -14,7 +14,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build:cli": "tsc -p cli/tsconfig.build.json",
-    "cli": "node cli/src/bin.ts"
+    "cli": "node cli/src/bin.ts",
+    "package": "npm run build:cli && node scripts/pack.ts"
   },
   "devDependencies": {
     "@types/node": "26.4.1",
