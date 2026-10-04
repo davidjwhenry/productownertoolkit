@@ -28,7 +28,7 @@ Ask for these company defaults:
 - author name
 - company name
 - one-sentence company description
-- primary product surface: `Web`, `Mobile`, `Internal tooling`, or `Mixed`
+- product surfaces: any combination of `Web`, `Mobile`, and `Internal tooling` (ask as a multi-select, since many companies ship on more than one)
 - operating geographies
 - whether the company is in financial services
 - if yes, licences held
@@ -62,7 +62,7 @@ Ask for current business context:
 - known constraints, sensitivities, or stakeholder pressures
 - anything else likely to shape PRDs, backlog trade-offs, or review standards
 
-Use `AskQuestion` for structured choices where useful. Keep the rest concise and practical. Do not ask the entire checklist in one giant block if the conversation would be clearer in two short rounds.
+Use `AskQuestion` for structured choices where useful, with multi-select enabled for questions that can have more than one answer, such as product surfaces. Keep the rest concise and practical. Do not ask the entire checklist in one giant block if the conversation would be clearer in two short rounds.
 
 ## Update Rules
 
