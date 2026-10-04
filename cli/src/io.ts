@@ -1,4 +1,7 @@
 import readline from 'node:readline/promises'
+import { selectPrompt, type Choice, type SelectOptions } from './select.ts'
+
+export type { Choice }
 
 /** Terminal access, injectable so commands can be tested without a TTY. */
 export interface Io {
@@ -8,6 +11,8 @@ export interface Io {
   interactive: boolean
   /** Ask one question; resolves to the trimmed answer. */
   ask(question: string): Promise<string>
+  /** Pick from a list with the arrow keys and space bar; resolves to the chosen ids. */
+  select(message: string, choices: Choice[], options: SelectOptions): Promise<string[]>
   color: boolean
   cwd: string
   env: Record<string, string | undefined>
@@ -36,6 +41,7 @@ export function processIo(): Io {
         rl.close()
       }
     },
+    select: (message, choices, options) => selectPrompt(process.stdin, process.stdout, message, choices, options),
     color,
     cwd: process.cwd(),
     env,

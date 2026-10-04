@@ -100,8 +100,24 @@ describe('interactive init', () => {
     dir.mkdir('.cursor')
     const { code, io } = await init(dir, [], ['', 'notion', '', 'y'])
     expect(code).toBe(0)
-    expect(io.questions[0]).toContain('[cursor]')
+    expect(io.questions[0]).toContain('Install for which agents?')
     expect(manifestOf(dir)).toMatchObject({ agents: ['cursor'], capabilities: ['core', 'notion'], skillDirectories: ['.agents/skills'] })
+  })
+
+  it('installs into an existing folder chosen from the list', async () => {
+    const dir = tempDir()
+    dir.mkdir('notes')
+    const { code } = await init(dir, ['--agents', 'codex'], ['', 'notes', 'y'])
+    expect(code).toBe(0)
+    expect(manifestOf(dir).contentRoot).toBe('notes')
+  })
+
+  it('asks for a name when Create a new folder is chosen', async () => {
+    const dir = tempDir()
+    const { code, io } = await init(dir, ['--agents', 'codex'], ['', '\u0000new', 'my-work', 'y'])
+    expect(code).toBe(0)
+    expect(io.questions).toContain('New folder name: ')
+    expect(manifestOf(dir).contentRoot).toBe('my-work')
   })
 
   it('writes nothing when the user declines', async () => {

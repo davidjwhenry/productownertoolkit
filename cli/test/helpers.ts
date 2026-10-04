@@ -76,6 +76,11 @@ export function scriptedIo(cwd: string, answers?: string[]): ScriptedIo {
       if (answer === undefined) throw new Error(`Unexpected prompt: ${question}`)
       return answer
     },
+    /** Answers are comma-separated ids; '' keeps the initial selection. */
+    async select(message, choices, { initial = [] }) {
+      const answer = await this.ask(message)
+      return answer === '' ? initial : answer.split(',').map((item) => item.trim()).filter(Boolean)
+    },
     color: false,
     cwd,
     env: {},

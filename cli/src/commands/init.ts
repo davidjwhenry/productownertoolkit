@@ -2,6 +2,7 @@
  * `init`: detect, select, preview, confirm, write, and hand off to
  * `bootstrap-context` (IN.1–IN.10, ON.6, ON.8, CP.6, DT.5).
  */
+import fs from 'node:fs'
 import path from 'node:path'
 import type { CliOptions } from '../args.ts'
 import type { Bundle } from '../catalogue/bundle.ts'
@@ -63,11 +64,9 @@ export async function runInit(options: CliOptions, io: Io, bundle: Bundle): Prom
   if (!agents) {
     const detected = detectAgents(target).filter((id) => !existing?.agents.includes(id))
     if (ask) {
-      io.out(`Agents: ${catalogue.agents.map((a) => `${a.id} (${a.label})`).join(', ')}`)
       if (existing) io.out(`Already installed for: ${existing.agents.map(label).join(', ')}`)
-      const suggestion = existing ? '' : detected.join(',')
-      const answer = await ask(existing ? 'Add agents (comma-separated, Enter for none): ' : `Install for which agents? [${suggestion || 'none detected'}] `)
-      agents = answer === '' ? (suggestion ? suggestion.split(',') : []) : parseList(answer)
+      const choices = catalogue.agents.filter((a) => !existing?.agents.includes(a.id)).map((a) => ({ id: a.id, label: a.label }))
+      agents = await io.select(existing ? 'Add agents' : 'Install for which agents?', choices, { multi: true, initial: existing ? [] : detected })
     } else {
       agents = existing ? [] : detected
     }
@@ -83,9 +82,8 @@ export async function runInit(options: CliOptions, io: Io, bundle: Bundle): Prom
     if (ask) {
       const optional = catalogue.capabilities.filter((c) => !c.required && !existing?.capabilities.includes(c.id))
       if (optional.length) {
-        io.out('Core is always installed. Optional capabilities:')
-        for (const c of optional) io.out(`  ${c.id.padEnd(12)} ${c.label}: ${c.description}`)
-        capabilities = parseList(await ask('Add which capabilities? (comma-separated, Enter for none) '))
+        io.out('Core is always installed.')
+        capabilities = await io.select('Add optional capabilities', optional.map((c) => ({ id: c.id, label: c.label, hint: c.description })), { multi: true })
       }
     }
   }
@@ -93,7 +91,7 @@ export async function runInit(options: CliOptions, io: Io, bundle: Bundle): Prom
   let contentRoot = options.contentRoot ?? existing?.contentRoot
   if (contentRoot === undefined) {
     const fallback = catalogue.roots.content.installedDefault
-    contentRoot = ask ? (await ask(`Folder for your product work? [${fallback}] `)) || fallback : fallback
+    contentRoot = ask ? await chooseContentRoot(io, target.root, fallback) : fallback
   }
   contentRoot = contentRoot.replace(/\/+$/, '') || '.'
 
@@ -265,4 +263,22 @@ function renderCompletion(io: Io, bundle: Bundle, plan: Plan, claudeImport: bool
   }
   io.out('')
   io.out('Check the installation at any time with: npx productownertoolkit@latest doctor')
+}
+
+const NEW_FOLDER = '\u0000new'
+
+/** Offer the default and the folders already here, or a typed new name. */
+async function chooseContentRoot(io: Io, root: string, fallback: string): Promise<string> {
+  const dirs = fs.readdirSync(root, { withFileTypes: true })
+    .filter((e) => e.isDirectory() && !e.name.startsWith('.') && e.name !== 'node_modules' && e.name !== fallback)
+    .map((e) => e.name)
+  const exists = fs.existsSync(path.join(root, fallback))
+  const choices = [
+    { id: fallback, label: fallback, hint: exists ? '(default)' : '(default, will be created)' },
+    ...dirs.map((id) => ({ id, label: id })),
+    { id: NEW_FOLDER, label: 'Create a new folder…' },
+  ]
+  const [picked] = await io.select('Folder for your product work?', choices, { multi: false, initial: [fallback] })
+  if (picked !== NEW_FOLDER) return picked ?? fallback
+  return (await io.ask('New folder name: ')) || fallback
 }
