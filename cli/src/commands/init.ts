@@ -105,7 +105,7 @@ export async function runInit(options: CliOptions, io: Io, bundle: Bundle): Prom
     return 1
   }
 
-  renderPreview(io, target, bundle, plan, options.dryRun)
+  renderPreview(io, target, bundle, plan, options.dryRun, options.noInstall)
   if (plan.conflicts.length) {
     io.err('')
     io.err(paint(io, 'red', `Stopped: ${plan.conflicts.length} conflict${plan.conflicts.length === 1 ? '' : 's'}. Nothing was written.`))
@@ -148,7 +148,8 @@ export async function runInit(options: CliOptions, io: Io, bundle: Bundle): Prom
     io.err(error.message)
     return 1
   }
-  renderCompletion(io, bundle, plan, claudeImport)
+  const installed = await installPlayground(io, target.root, plan, options, ask)
+  renderCompletion(io, bundle, plan, claudeImport, installed)
   return 0
 }
 
@@ -176,7 +177,7 @@ function renderGroups(io: Io, plan: Plan, files: PlannedFile[], full: boolean): 
   for (const [key, count] of groups) io.out(`    ${key.padEnd(44)} ${count} file${count === 1 ? '' : 's'}`)
 }
 
-function renderPreview(io: Io, target: Target, bundle: Bundle, plan: Plan, full: boolean): void {
+function renderPreview(io: Io, target: Target, bundle: Bundle, plan: Plan, full: boolean, noInstall: boolean): void {
   const { catalogue } = bundle
   const agentLabel = (id: string) => catalogue.agents.find((a) => a.id === id)?.label ?? id
   const capabilityLabel = (id: string) => catalogue.capabilities.find((c) => c.id === id)?.label ?? id
@@ -227,7 +228,7 @@ function renderPreview(io: Io, target: Target, bundle: Bundle, plan: Plan, full:
 
   if (plan.capabilities.includes('prototyping') && plan.addedCapabilities.includes('prototyping')) {
     const ok = nodeSatisfies(io.nodeVersion, PLAYGROUND_NODE)
-    plan.notes.push(`The prototype playground needs Node.js ${PLAYGROUND_NODE.join('.')} or later; this machine has ${io.nodeVersion}${ok ? '' : ', so upgrade Node.js before setting it up'}. Its dependencies are not installed for you.`)
+    plan.notes.push(`The prototype playground needs Node.js ${PLAYGROUND_NODE.join('.')} or later; this machine has ${io.nodeVersion}${ok ? '' : ', so upgrade Node.js before setting it up'}. ${ok ? (noInstall ? 'Its dependencies are not installed (--no-install).' : 'Its dependencies are installed after the files are written.') : 'Its dependencies are not installed.'}`)
   }
   if (plan.notes.length) {
     heading('Notes')
@@ -239,7 +240,7 @@ function renderPreview(io: Io, target: Target, bundle: Bundle, plan: Plan, full:
   }
 }
 
-function renderCompletion(io: Io, bundle: Bundle, plan: Plan, claudeImport: boolean): void {
+function renderCompletion(io: Io, bundle: Bundle, plan: Plan, claudeImport: boolean, playgroundInstalled: boolean): void {
   const { catalogue } = bundle
   io.out('')
   io.out(paint(io, 'green', plan.mode === 'install' ? `Installed Product Owner Toolkit ${bundle.version}.` : 'Added to the Product Owner Toolkit installation.'))
@@ -259,7 +260,7 @@ function renderCompletion(io: Io, bundle: Bundle, plan: Plan, claudeImport: bool
     io.out('')
     io.out('Prototyping:')
     io.out(`  The design profile in ${plan.contentRoot}/design-system/ is an example that you now own. Run design-system-setup to use your company's design sources.`)
-    io.out(`  To start the playground (Node.js ${PLAYGROUND_NODE.join('.')} or later): cd ${plan.manifest.playgroundRoot} && npm install && npm start`)
+    io.out(`  To start the playground (Node.js ${PLAYGROUND_NODE.join('.')} or later): cd ${plan.manifest.playgroundRoot} && ${playgroundInstalled ? '' : 'npm install && '}npm start`)
   }
   io.out('')
   io.out('Check the installation at any time with: npx productownertoolkit@latest doctor')
@@ -281,4 +282,19 @@ async function chooseContentRoot(io: Io, root: string, fallback: string): Promis
   const [picked] = await io.select('Folder for your product work?', choices, { multi: false, initial: [fallback] })
   if (picked !== NEW_FOLDER) return picked ?? fallback
   return (await io.ask('New folder name: ')) || fallback
+}
+
+/** Install the playground dependencies when Prototyping was just added. Failure never undoes the install. */
+async function installPlayground(io: Io, root: string, plan: Plan, options: CliOptions, ask: Io['ask'] | undefined): Promise<boolean> {
+  const dir = plan.manifest.playgroundRoot
+  if (!dir || !plan.addedCapabilities.includes('prototyping') || options.noInstall) return false
+  if (!nodeSatisfies(io.nodeVersion, PLAYGROUND_NODE) || fs.existsSync(path.join(root, dir, 'node_modules'))) return false
+  if (ask) {
+    const answer = (await ask('Install the prototype playground dependencies now? [Y/n] ')).toLowerCase()
+    if (answer !== '' && answer !== 'y' && answer !== 'yes') return false
+  }
+  io.out(`\nInstalling playground dependencies in ${dir}/ ...`)
+  if ((await io.exec('npm', ['install'], path.join(root, dir))) === 0) return true
+  io.err(`npm install failed. The toolkit is installed; retry with: cd ${dir} && npm install`)
+  return false
 }

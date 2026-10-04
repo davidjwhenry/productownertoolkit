@@ -11,6 +11,7 @@ export interface CliOptions {
   contentRoot?: string
   yes: boolean
   dryRun: boolean
+  noInstall: boolean
   json: boolean
   help: boolean
   version: boolean
@@ -31,6 +32,7 @@ Options:
   --content-root <dir>       Folder for your product work (default: product)
   --dry-run                  Show the plan without writing anything
   --yes                      Apply the plan without asking for confirmation
+  --no-install               Do not install the prototype playground dependencies
   --json                     doctor only: print a machine-readable result
   --help                     Show this help
   --version                  Show the toolkit version
@@ -55,6 +57,7 @@ export function parseCli(argv: string[]): CliOptions {
         'content-root': { type: 'string' },
         yes: { type: 'boolean', short: 'y', default: false },
         'dry-run': { type: 'boolean', default: false },
+        'no-install': { type: 'boolean', default: false },
         json: { type: 'boolean', default: false },
         help: { type: 'boolean', short: 'h', default: false },
         version: { type: 'boolean', short: 'v', default: false },
@@ -75,7 +78,7 @@ export function parseCli(argv: string[]): CliOptions {
     for (const flag of ['agents', 'capabilities', 'content-root'] as const) {
       if (values[flag] !== undefined) throw new UsageError(`--${flag} is only supported by init`)
     }
-    if (values.yes || values['dry-run']) throw new UsageError('doctor never writes, so --yes and --dry-run do not apply')
+    if (values.yes || values['dry-run'] || values['no-install']) throw new UsageError('doctor never writes, so --yes, --dry-run and --no-install do not apply')
   }
   return {
     command,
@@ -85,6 +88,7 @@ export function parseCli(argv: string[]): CliOptions {
     contentRoot: values['content-root'],
     yes: values.yes,
     dryRun: values['dry-run'],
+    noInstall: values['no-install'],
     json: values.json,
     help: values.help,
     version: values.version,

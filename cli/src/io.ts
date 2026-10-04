@@ -1,3 +1,4 @@
+import { spawn } from 'node:child_process'
 import readline from 'node:readline/promises'
 import { selectPrompt, type Choice, type SelectOptions } from './select.ts'
 
@@ -13,6 +14,8 @@ export interface Io {
   ask(question: string): Promise<string>
   /** Pick from a list with the arrow keys and space bar; resolves to the chosen ids. */
   select(message: string, choices: Choice[], options: SelectOptions): Promise<string[]>
+  /** Run a command with its output shown; resolves to the exit code. */
+  exec(command: string, args: string[], cwd: string): Promise<number>
   color: boolean
   cwd: string
   env: Record<string, string | undefined>
@@ -42,6 +45,12 @@ export function processIo(): Io {
       }
     },
     select: (message, choices, options) => selectPrompt(process.stdin, process.stdout, message, choices, options),
+    exec: (command, args, cwd) =>
+      new Promise((resolve) => {
+        const child = spawn(command, args, { cwd, stdio: 'inherit', shell: process.platform === 'win32' })
+        child.on('error', () => resolve(1))
+        child.on('close', (code) => resolve(code ?? 1))
+      }),
     color,
     cwd: process.cwd(),
     env,

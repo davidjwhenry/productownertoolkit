@@ -53,14 +53,16 @@ export interface ScriptedIo extends Io {
   stdout: string[]
   stderr: string[]
   questions: string[]
+  execs: string[]
   output(): string
 }
 
 /** An Io whose prompts are answered from `answers`, in order. */
-export function scriptedIo(cwd: string, answers?: string[]): ScriptedIo {
+export function scriptedIo(cwd: string, answers?: string[], execCode = 0): ScriptedIo {
   const stdout: string[] = []
   const stderr: string[] = []
   const questions: string[] = []
+  const execs: string[] = []
   const queue = [...(answers ?? [])]
   return {
     stdout,
@@ -81,6 +83,11 @@ export function scriptedIo(cwd: string, answers?: string[]): ScriptedIo {
       const answer = await this.ask(message)
       return answer === '' ? initial : answer.split(',').map((item) => item.trim()).filter(Boolean)
     },
+    async exec(command, args, cwd) {
+      execs.push([command, ...args, cwd].join(' '))
+      return execCode
+    },
+    execs,
     color: false,
     cwd,
     env: {},

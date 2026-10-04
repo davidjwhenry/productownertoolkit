@@ -140,6 +140,34 @@ describe('interactive init', () => {
   })
 })
 
+describe('playground dependencies', () => {
+  const args = ['--agents', 'codex', '--capabilities', 'prototyping', '--yes']
+
+  it('installs them when Prototyping is added', async () => {
+    const dir = tempDir()
+    const { code, io } = await init(dir, args)
+    expect(code).toBe(0)
+    expect(io.execs).toEqual([`npm install ${dir.root}/prototype-playground`])
+    expect(io.output()).toContain('cd prototype-playground && npm start')
+  })
+
+  it('skips them with --no-install', async () => {
+    const dir = tempDir()
+    const { io } = await init(dir, [...args, '--no-install'])
+    expect(io.execs).toEqual([])
+    expect(io.output()).toContain('npm install && npm start')
+  })
+
+  it('keeps the installation when npm fails', async () => {
+    const dir = tempDir()
+    const io = scriptedIo(dir.root, undefined, 1)
+    const code = await run(['init', ...args], { io, bundle })
+    expect(code).toBe(0)
+    expect(io.stderr.join('\n')).toContain('retry with: cd prototype-playground && npm install')
+    expect(manifestOf(dir).capabilities).toContain('prototyping')
+  })
+})
+
 describe('init into an established repository', () => {
   it('adopts byte-identical files and keeps different user-owned starters', async () => {
     const dir = tempDir()
