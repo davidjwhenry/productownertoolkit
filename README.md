@@ -51,6 +51,7 @@ The intended flow is:
 2. **Write** the PRD, backlog, research report, meeting note, or stakeholder output.
 3. **Review** the written artefact for consistency, traceability, and readiness.
 4. **Sync or ship** it to the place stakeholders will actually use.
+5. **Close** the session so repeated corrections become context or skill improvements.
 
 *Setup skills:*
 - `bootstrap-context` — one-time post-clone setup for company defaults, placeholders, stack, and regulatory context
@@ -72,6 +73,7 @@ The intended flow is:
 *Review skills — after writing:*
 - `prd-reviewer` — check a PRD for internal consistency
 - `backlog-review` — check a backlog internally and against its parent PRD
+- `done` — close a session by reviewing recent conversations for patterns, then suggest context updates, skill improvements, or new skills
 
 *Sync skills — the optional bridge to Notion:*
 - `notion-sync` — push markdown to Notion, write the page URL back to front matter
@@ -212,6 +214,7 @@ productowner/
 8. Run the paired review skill before treating a PRD or backlog as ready.
 9. Drop your brand tokens into [`design-system/`](./design-system/) and run `design-system-setup` to compile the first design profile.
 10. Launch the prototype playground with `cd prototype-playground && npm install && npm start`; review generated prototypes at `http://127.0.0.1:5173`.
+11. Run `done` at the end of a working session. It reviews your recent conversations and suggests updates to `context/`, improvements to skills, or new skills, and applies only what you confirm.
 
 Repository instructions live in the root [`AGENTS.md`](./AGENTS.md), which Codex, Cursor, and Claude Code (v2.1.277 or later) all read directly. Don't add a `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md`: by default Claude Code reads those instead of `AGENTS.md`. If you need Claude-specific instructions, or your Claude Code session can't load `AGENTS.md`, create a `CLAUDE.md` whose first line is `@AGENTS.md` and add your instructions below it.
 
