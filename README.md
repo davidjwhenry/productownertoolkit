@@ -30,7 +30,7 @@ After installing or cloning, do two setup steps first: connect the MCPs you expe
 
 If you're a PO or PM who wants to adopt this way of working, [install it](#install) or clone the repo. Everything you need is here.
 
-If you're a stakeholder who just wants to see what it produces, the live published example PRD is here: [Savings Example PRD](https://childlike-damselfly-6a7.notion.site/Savings-Example-PRD-3405b7b6a16e80ecb5e2d9be33e5fc6c?source=copy_link). More live examples can follow. This repo is the engine room. Notion, at least for now, is the showroom, as a relatively inexpsenive counterpart that provides a less technical presentation layer.
+If you're a stakeholder who just wants to see what it produces, the live published example PRD is here: [Savings Example PRD](https://childlike-damselfly-6a7.notion.site/Savings-Example-PRD-3405b7b6a16e80ecb5e2d9be33e5fc6c?source=copy_link). More live examples can follow. This repo is the engine room. Notion, at least for now, is the showroom, as a relatively inexpensive counterpart that provides a less technical presentation layer.
 
 ## The model: Sense, Synthesise, Ship
 

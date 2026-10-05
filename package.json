@@ -1,6 +1,6 @@
 {
   "name": "productownertoolkit-workspace",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Development workspace for the Product Owner Toolkit. Never published; the npm package is assembled separately.",
   "license": "MIT",

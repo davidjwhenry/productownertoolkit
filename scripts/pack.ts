@@ -10,6 +10,7 @@ import { loadCatalogue } from '../cli/src/catalogue/load.ts'
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const out = path.join(repoRoot, 'dist-package')
 const cliDist = path.join(repoRoot, 'cli/dist')
+const repoUrl = 'https://github.com/davidjwhenry/productownertoolkit'
 const SKIP = new Set(['node_modules', 'dist', 'test-results', '.e2e-tmp', '.DS_Store'])
 
 const { catalogue, errors } = loadCatalogue(repoRoot)
@@ -60,20 +61,13 @@ const pkg = {
   type: 'module',
   bin: { productownertoolkit: 'cli/dist/bin.js' },
   engines: { node: '>=22' },
-  repository: { type: 'git', url: 'git+https://github.com/davidjwhenry/productownertoolkit.git' },
+  repository: { type: 'git', url: `git+${repoUrl}.git` },
   keywords: ['product-management', 'ai-agents', 'claude-code', 'codex', 'cursor', 'skills'],
 }
 fs.writeFileSync(path.join(out, 'package.json'), `${JSON.stringify(pkg, null, 2)}\n`)
-fs.writeFileSync(
-  path.join(out, 'README.md'),
-  `# Product Owner Toolkit
-
-\`\`\`sh
-npx productownertoolkit@latest init      # install into the current folder
-npx productownertoolkit@latest doctor    # check an installation
-\`\`\`
-
-Run \`init --help\` for options. Needs Node.js 22 or later.
-`,
-)
+// The npm page shows the repository README; relative links only resolve on GitHub, so point them there.
+const readme = fs
+  .readFileSync(path.join(repoRoot, 'README.md'), 'utf8')
+  .replace(/\]\(\.\/([^)]+)\)/g, (_, target: string) => `](${repoUrl}/${target.endsWith('/') ? 'tree' : 'blob'}/main/${target})`)
+fs.writeFileSync(path.join(out, 'README.md'), readme)
 console.log(`Staged ${pkg.name}@${pkg.version} in dist-package/`)
