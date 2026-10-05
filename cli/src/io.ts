@@ -17,6 +17,8 @@ export interface Io {
   /** Run a command with its output shown; resolves to the exit code. */
   exec(command: string, args: string[], cwd: string): Promise<number>
   color: boolean
+  /** Terminal width in columns. */
+  columns: number
   cwd: string
   env: Record<string, string | undefined>
   nodeVersion: string
@@ -44,7 +46,7 @@ export function processIo(): Io {
         rl.close()
       }
     },
-    select: (message, choices, options) => selectPrompt(process.stdin, process.stdout, message, choices, options),
+    select: (message, choices, options) => selectPrompt(process.stdin, process.stdout, message, choices, { ...options, color }),
     exec: (command, args, cwd) =>
       new Promise((resolve) => {
         const child = spawn(command, args, { cwd, stdio: 'inherit', shell: process.platform === 'win32' })
@@ -52,6 +54,7 @@ export function processIo(): Io {
         child.on('close', (code) => resolve(code ?? 1))
       }),
     color,
+    columns: process.stdout.columns || 80,
     cwd: process.cwd(),
     env,
     nodeVersion: process.versions.node,

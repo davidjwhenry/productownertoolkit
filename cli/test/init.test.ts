@@ -107,13 +107,14 @@ describe('interactive init', () => {
 
   it('shows the banner and numbered steps only when prompting', async () => {
     const prompted = await init(tempDir(), [], ['claude-code', '', '', 'y'])
-    expect(prompted.output).toContain('▲  Product Owner Toolkit')
-    expect(prompted.output).toMatch(/1\/4 Agents[\s\S]*2\/4 Capabilities[\s\S]*3\/4 Folder[\s\S]*4\/4 Review/)
+    expect(prompted.output).toContain('█▀█ █▀█ █▀█')
+    expect(prompted.output).toContain('● Agents  ─  ○ Capabilities  ─  ○ Folder  ─  ○ Review')
+    expect(prompted.output).toContain('✔ Agents  ─  ✔ Capabilities  ─  ✔ Folder  ─  ● Review')
     expect(prompted.output).toContain('What next')
 
     const scripted = await init(tempDir(), ['--yes', '--agents', 'claude-code'])
-    expect(scripted.output).not.toContain('▲')
-    expect(scripted.output).not.toMatch(/\d\/\d /)
+    expect(scripted.output).not.toContain('█')
+    expect(scripted.output).not.toContain('● ')
     expect(scripted.output).toContain('What next')
   })
 

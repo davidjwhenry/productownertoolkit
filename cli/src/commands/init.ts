@@ -7,7 +7,7 @@ import path from 'node:path'
 import type { CliOptions } from '../args.ts'
 import type { Bundle } from '../catalogue/bundle.ts'
 import { ApplyError, applyPlan } from '../apply.ts'
-import { banner, stepHeading } from '../brand.ts'
+import { banner, card, stepper } from '../brand.ts'
 import { Target, UnsafePathError } from '../fsx.ts'
 import { paint, type Io } from '../io.ts'
 import { MANIFEST_PATH, parseManifest, type InstallationManifest } from '../manifest.ts'
@@ -72,7 +72,8 @@ export async function runInit(options: CliOptions, io: Io, bundle: Bundle): Prom
   const step = (title: string) => {
     if (!ask) return
     io.out('')
-    io.out(stepHeading(io, steps.indexOf(title) + 1, steps.length, title))
+    io.out(stepper(io, steps, steps.indexOf(title)))
+    io.out('')
   }
   if (ask) for (const line of banner(io, bundle.version)) io.out(line)
 
@@ -154,6 +155,7 @@ export async function runInit(options: CliOptions, io: Io, bundle: Bundle): Prom
       io.err('Confirmation is needed, but this terminal cannot prompt. Rerun with --yes to apply this plan, or --dry-run to only preview it.')
       return 1
     }
+    io.out('')
     const answer = (await ask(plan.mode === 'install' ? 'Install? [y/N] ' : 'Apply these additions? [y/N] ')).toLowerCase()
     if (answer !== 'y' && answer !== 'yes') {
       io.out('Cancelled. Nothing was written.')
@@ -203,7 +205,7 @@ function renderPreview(io: Io, target: Target, bundle: Bundle, plan: Plan, full:
   const capabilityLabel = (id: string) => catalogue.capabilities.find((c) => c.id === id)?.label ?? id
   const added = (all: string[], fresh: string[], label: (id: string) => string) =>
     all.map((id) => (plan.mode === 'add' && fresh.includes(id) ? `${label(id)} (new)` : label(id))).join(', ')
-  const heading = (text: string) => io.out(`\n${paint(io, 'bold', text)}`)
+  const heading = (text: string) => io.out(`\n${paint(io, 'cyan', '▍')}${paint(io, 'bold', text)}`)
 
   io.out(paint(io, 'bold', `Product Owner Toolkit ${bundle.version}: ${plan.mode === 'install' ? 'install into' : 'add to the installation in'} ${target.root}`))
   io.out('')
@@ -288,13 +290,12 @@ function renderCompletion(io: Io, bundle: Bundle, plan: Plan, claudeImport: bool
   }
   next.push(['Check the installation at any time with: npx productownertoolkit@latest doctor'])
 
+  const body = next.flatMap((lines, index) => [
+    ...(index ? [''] : []),
+    ...lines.map((line, i) => `${i === 0 ? paint(io, 'cyan', `${index + 1}.`) : '  '} ${line}`),
+  ])
   io.out('')
-  io.out(paint(io, 'bold', 'What next'))
-  next.forEach((lines, index) => {
-    lines.forEach((line, i) => io.out(`  ${i === 0 ? paint(io, 'cyan', `${index + 1}.`) : '  '} ${line}`))
-  })
-  io.out('')
-  io.out(paint(io, 'dim', `Docs: ${REPOSITORY_URL}`))
+  for (const line of card(io, 'What next', [...body, '', paint(io, 'dim', `Docs: ${REPOSITORY_URL}`)])) io.out(line)
 }
 
 const NEW_FOLDER = '\u0000new'
