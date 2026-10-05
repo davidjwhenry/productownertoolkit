@@ -3,6 +3,7 @@ import { readFile, readdir, realpath, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { buildHandoff, HANDOFF_MARKER_NAME, HOST_CSP } from './build'
 import { makeFixtureRepo, type FixtureRepo } from '../testing/make-fixture-repo'
+import { makeInstalledLayout } from '../testing/make-installed-layout'
 
 async function withRepo(fn: (repo: FixtureRepo) => Promise<void>): Promise<void> {
   const repo = await makeFixtureRepo()
@@ -24,6 +25,17 @@ describe('buildHandoff', () => {
         ).rejects.toThrow(/protected|refusing/i)
       }
     })
+  })
+
+  it('protects the repository root when it differs from the content root', async () => {
+    const layout = await makeInstalledLayout()
+    try {
+      await expect(
+        buildHandoff({ repoRoot: layout.contentRoot, workspaceRoot: layout.repoRoot, prototypeId: 'demo', outputDir: '..' }),
+      ).rejects.toThrow(`Refusing to use protected destination: ${layout.repoRoot}`)
+    } finally {
+      await layout.cleanup()
+    }
   })
 
   it('rejects unknown prototype ids', async () => {

@@ -1,7 +1,9 @@
-import { describe, expect, it } from 'vitest'
+import path from 'node:path'
+import { describe, expect, it, vi } from 'vitest'
 import prototypeRegistryPlugin from './vite-plugin'
 import { loadRepositoryCatalogue } from './catalogue'
 import { makeFixtureRepo, validEntryHtml, type FixtureRepo } from '../testing/make-fixture-repo'
+import { makeInstalledLayout } from '../testing/make-installed-layout'
 
 const RESOLVED_REGISTRY_ID = '\0virtual:prototype-registry'
 const RESOLVED_VARIANT_PREFIX = '\0virtual:prototype-variant/'
@@ -73,5 +75,55 @@ describe('prototypeRegistryPlugin', () => {
       expect(payload.activeProfile).toEqual(catalogue.activeProfile)
       expect(payload.records[0].id).toBe(catalogue.records[0]?.id)
     })
+  })
+})
+
+describe('prototypeRegistryPlugin in an installed layout', () => {
+  it('reads and watches the manifest content root', async () => {
+    const layout = await makeInstalledLayout()
+    vi.stubEnv('PROTOTYPE_PLAYGROUND_ROOT', '')
+    try {
+      const plugin = prototypeRegistryPlugin() as unknown as LoadablePlugin & {
+        configResolved(config: { command: string; root: string }): void
+        configureServer(server: unknown): void
+      }
+      plugin.configResolved({ command: 'serve', root: layout.appRoot })
+
+      const handlers = new Map<string, (file: string) => void>()
+      const watched: string[] = []
+      const sent: unknown[] = []
+      const server = {
+        middlewares: { use: () => undefined },
+        watcher: {
+          add: (paths: string[]) => watched.push(...paths),
+          on: (event: string, handler: (file: string) => void) => handlers.set(event, handler),
+        },
+        moduleGraph: { getModuleById: () => undefined, invalidateModule: () => undefined },
+        ws: { send: (payload: unknown) => sent.push(payload) },
+        config: { logger: { error: (message: string) => { throw new Error(message) } } },
+      }
+      plugin.configureServer(server)
+
+      const registryModule = (await plugin.load(RESOLVED_REGISTRY_ID)) as string
+      const payload = JSON.parse(Buffer.from(extractBase64(registryModule, 'PAYLOAD'), 'base64').toString('utf8'))
+      expect(payload.records.map((record: { id: string }) => record.id)).toEqual(['demo'])
+
+      await vi.waitFor(() => expect(handlers.has('change')).toBe(true))
+      expect(watched).toEqual([
+        path.join(layout.contentRoot, 'requirements'),
+        path.join(layout.contentRoot, 'examples'),
+        path.join(layout.contentRoot, 'design-system', 'profiles'),
+      ])
+      const change = handlers.get('change')!
+      // Paths relative to the repository root, not the content root, are ignored.
+      change(path.join(layout.repoRoot, 'examples', 'demo-feature', 'prototypes', 'demo', 'prototype.json'))
+      change(path.join(layout.appRoot, 'examples', 'x', 'prototype.json'))
+      expect(sent).toEqual([])
+      change(path.join(layout.contentRoot, 'examples', 'demo-feature', 'prototypes', 'demo', 'prototype.json'))
+      expect(sent).toEqual([{ type: 'full-reload' }])
+    } finally {
+      vi.unstubAllEnvs()
+      await layout.cleanup()
+    }
   })
 })

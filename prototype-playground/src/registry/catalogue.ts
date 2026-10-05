@@ -100,7 +100,9 @@ function warning(path: string, code: string, message: string): Diagnostic {
  * Load the full repository catalogue. `includeExamples` controls record
  * presentation only: examples are always scanned so their diagnostics
  * remain available. `selectedPrototypeId` restricts record discovery to
- * one prototype (hand-off builds).
+ * one prototype (hand-off builds). `repoRoot` is the content root (see
+ * `resolveWorkspace`), which differs from the repository root in an
+ * installed layout.
  */
 export async function loadRepositoryCatalogue(
   repoRoot: string,

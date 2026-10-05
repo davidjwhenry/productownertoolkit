@@ -1,0 +1,286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/davidjwhenry/productownertoolkit/toolkit/catalogue.schema.json",
+  "title": "Product Owner Toolkit catalogue",
+  "description": "Canonical list of skills, capabilities, and the files each capability installs. Agent skill mirrors and the npm package are generated from this file.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "roots",
+    "agents",
+    "skills",
+    "capabilities"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "roots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "content",
+        "toolkit"
+      ],
+      "properties": {
+        "content": {
+          "$ref": "#/$defs/root"
+        },
+        "toolkit": {
+          "$ref": "#/$defs/root"
+        }
+      }
+    },
+    "agents": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "label",
+          "reads",
+          "preferredDirectory",
+          "invocation"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reads": {
+            "description": "Every project skill folder this agent loads skills from, as verified against the agent.",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/relativePath"
+            }
+          },
+          "preferredDirectory": {
+            "description": "Folder to install into when no other selected agent already provides one this agent reads. Must be listed in `reads`.",
+            "$ref": "#/$defs/relativePath"
+          },
+          "invocation": {
+            "type": "string",
+            "pattern": "\\{skill\\}",
+            "description": "Completion-output wording; `{skill}` is replaced with the skill name."
+          }
+        }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "category"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/$defs/id",
+            "description": "Directory name under `toolkit/skills/` and the installed skill name."
+          },
+          "category": {
+            "enum": [
+              "setup",
+              "shaping",
+              "writing",
+              "review",
+              "sync",
+              "authoring"
+            ],
+            "description": "Catalogue metadata only; never part of an installed path."
+          }
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "label",
+          "description",
+          "required",
+          "skills",
+          "map",
+          "managed",
+          "seed"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/id"
+            },
+            "uniqueItems": true
+          },
+          "map": {
+            "description": "Rows for the repository map in the managed AGENTS.md block when this capability is installed.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "purpose"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "purpose": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "managed": {
+            "description": "Toolkit-owned files: checksummed at install and replaced by updates.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/fileMapping"
+            }
+          },
+          "seed": {
+            "description": "User-owned starter files: created once, never checksummed or updated.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/fileMapping"
+            }
+          },
+          "runtime": {
+            "description": "A toolkit-managed application directory installed at a fixed path.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source",
+              "install",
+              "include",
+              "exclude",
+              "unmanaged"
+            ],
+            "properties": {
+              "source": {
+                "$ref": "#/$defs/relativePath"
+              },
+              "install": {
+                "$ref": "#/$defs/relativePath"
+              },
+              "include": {
+                "$ref": "#/$defs/globs"
+              },
+              "exclude": {
+                "$ref": "#/$defs/globs"
+              },
+              "unmanaged": {
+                "$ref": "#/$defs/globs",
+                "description": "Paths created by the user's own tooling (for example `npm install`) that checksums and conflict detection ignore."
+              },
+              "seed": {
+                "$ref": "#/$defs/globs",
+                "description": "Included files that the user's own tooling may rewrite (for example the lockfile). Installed once and never checksummed."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "not": {
+        "pattern": "(^/|^[A-Za-z]:|(^|/)\\.\\.(/|$)|\\\\)"
+      }
+    },
+    "installPath": {
+      "type": "string",
+      "pattern": "^\\{(content|toolkit)\\}/",
+      "not": {
+        "pattern": "(/|^)\\.\\.(/|$)|\\\\"
+      }
+    },
+    "globs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "root": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "description",
+        "installedDefault",
+        "standalone"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "installedDefault": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "standalone": {
+          "type": "string",
+          "const": "."
+        }
+      }
+    },
+    "fileMapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "install"
+      ],
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/relativePath",
+          "description": "Repository-relative source file or directory."
+        },
+        "install": {
+          "$ref": "#/$defs/installPath"
+        }
+      }
+    }
+  }
+}

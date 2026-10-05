@@ -6,13 +6,31 @@ This repo is shaped by practical use, not theory. I've been using a similar setu
 
 The model is local-first and markdown-first. Markdown becomes the source of truth. Your LLM of choice helps you synthesise thinking into useful outputs. Notion, if your team uses it, can act as the review and publishing layer for PRDs, tickets, and notes, while the repo still works well as a standalone setup for solo or early-stage work. You still own the quality of every document that leaves your desk, but this stack gives you a serious force multiplier.
 
-After cloning, do two setup steps first: connect the MCPs you expect to use, then run the `bootstrap-context` skill. For most people that means `Firecrawl MCP` for research and `pen.dev MCP` for prototyping (formerly Pencil). Add `Notion MCP` if your team uses Notion for PRDs, tickets, or notes, and consider `Figma Dev Mode MCP` if design context matters in your workflow (though beware the token feast that can become for an LLM). Then run `bootstrap-context`: it captures your company name, stack, geographies, regulatory context, delivery workflow, team context, and current business goals, writes them into `context/company-context.md`, and replaces the starter placeholders in the key docs.
+## Install
+
+The quickest way in is the installer. From the repository or folder where you want the toolkit, run:
+
+```sh
+npx productownertoolkit@latest init
+```
+
+It asks which agents you use (Claude Code, Codex, Cursor), which optional capabilities you want (prototyping, Notion, skill authoring, worked examples), and which folder should hold your product work. It shows the full plan before writing anything, and installs the prototype playground's dependencies if you chose prototyping. Add `--dry-run` to preview, or `--yes` to skip the prompts. It needs Node.js 22 or later.
+
+Check an installation at any time with `npx productownertoolkit@latest doctor`. An `update` command is not available yet.
+
+**Prefer to clone?** The whole toolkit also works as a standalone repository, which is the better route if you want to change the skills themselves:
+
+```sh
+git clone https://github.com/davidjwhenry/productownertoolkit.git
+```
+
+After installing or cloning, do two setup steps first: connect the MCPs you expect to use, then run the `bootstrap-context` skill. For most people that means `Firecrawl MCP` for research and `pen.dev MCP` for prototyping (formerly Pencil). Add `Notion MCP` if your team uses Notion for PRDs, tickets, or notes, and consider `Figma Dev Mode MCP` if design context matters in your workflow (though beware the token feast that can become for an LLM). Then run `bootstrap-context`: it captures your company name, stack, geographies, regulatory context, delivery workflow, team context, and current business goals, writes them into `context/company-context.md`, and replaces the starter placeholders in the key docs.
 
 ## Two audiences, two entry points
 
-If you're a PO or PM who wants to adopt this way of working, clone the repo. Everything you need is here.
+If you're a PO or PM who wants to adopt this way of working, [install it](#install) or clone the repo. Everything you need is here.
 
-If you're a stakeholder who just wants to see what it produces, the live published example PRD is here: [Savings Example PRD](https://childlike-damselfly-6a7.notion.site/Savings-Example-PRD-3405b7b6a16e80ecb5e2d9be33e5fc6c?source=copy_link). More live examples can follow. This repo is the engine room. Notion, at least for now, is the showroom, as a relatively inexpsenive counterpart that provides a less technical presentation layer.
+If you're a stakeholder who just wants to see what it produces, the live published example PRD is here: [Savings Example PRD](https://childlike-damselfly-6a7.notion.site/Savings-Example-PRD-3405b7b6a16e80ecb5e2d9be33e5fc6c?source=copy_link). More live examples can follow. This repo is the engine room. Notion, at least for now, is the showroom, as a relatively inexpensive counterpart that provides a less technical presentation layer.
 
 ## The model: Sense, Synthesise, Ship
 
@@ -25,7 +43,7 @@ Every tool in this toolkit earns its place in one of three capability bands.
 - [GitHub MCP](./mcp-config/github.md) for shipping reality — PRs, commits, what actually went out
 - [Figma Dev Mode MCP](./mcp-config/figma.md) for design context inside your PRDs
 
-**Synthesise** — where Claude, or your LLM of choice turns inputs into artefacts. Skills are mirrored for Claude Code and Cursor under `.claude/skills/` and `.cursor/skills/`, and for Codex under `.agents/skills/`. The post-clone setup skill lives in `.cursor/skills/bootstrap-context/` and `.claude/skills/bootstrap-context/`.
+**Synthesise** — where Claude, or your LLM of choice turns inputs into artefacts. Skills are authored once in [`toolkit/skills/`](./toolkit/skills/) and mirrored into `.claude/skills/` for Claude Code and `.agents/skills/` for Codex. Cursor reads both folders, so it lists each skill twice; that is expected. [`toolkit/catalogue.json`](./toolkit/catalogue.json) groups them into capabilities. The post-clone setup skill is `bootstrap-context`.
 
 The intended flow is:
 
@@ -152,9 +170,10 @@ Explore, learn, add more, but don't *panic*. There's a temptation to jump on eve
 ```text
 productowner/
 ├── README.md
-├── .claude/
+├── toolkit/
+│   ├── catalogue.json
 │   └── skills/
-├── .cursor/
+├── .claude/
 │   └── skills/
 ├── .agents/
 │   └── skills/
@@ -183,16 +202,18 @@ productowner/
 
 ## Getting started
 
-1. Clone the repo.
+1. [Install the toolkit](#install) with `npx productownertoolkit@latest init`, or clone the repo. (An installed toolkit keeps your product work in the folder you chose, `product/` by default, so read paths such as `context/` as `product/context/`.)
 2. Connect the recommended MCPs from [`mcp-config/`](./mcp-config/): start with `Firecrawl` and `pen.dev`, add `Notion` if your team uses it, and add `Figma` if you want design context in the repo.
 3. Run the `bootstrap-context` skill and fill in your company defaults in [`context/company-context.md`](./context/company-context.md).
 4. Review the updated starter docs and confirm the placeholder replacements and workflow defaults look right.
-5. Review the shipped skills under `.claude/skills/` or `.cursor/skills/` and wire them into your preferred local setup.
+5. Review the shipped skills under `toolkit/skills/`; each agent loads its own mirror automatically.
 6. Use `product-grill` on a messy idea or stakeholder request before drafting the first serious PRD.
 7. Run the relevant writing skill once the shape is clear enough: `prd-writer`, `backlog-writing`, `meeting-distillation`, or `stakeholder-report`.
 8. Run the paired review skill before treating a PRD or backlog as ready.
 9. Drop your brand tokens into [`design-system/`](./design-system/) and run `design-system-setup` to compile the first design profile.
 10. Launch the prototype playground with `cd prototype-playground && npm install && npm start`; review generated prototypes at `http://127.0.0.1:5173`.
+
+Repository instructions live in the root [`AGENTS.md`](./AGENTS.md), which Codex, Cursor, and Claude Code (v2.1.277 or later) all read directly. Don't add a `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md`: by default Claude Code reads those instead of `AGENTS.md`. If you need Claude-specific instructions, or your Claude Code session can't load `AGENTS.md`, create a `CLAUDE.md` whose first line is `@AGENTS.md` and add your instructions below it.
 
 Claude Code and Cursor invoke skills with a normal prompt naming the skill (for example, "use `prototype-builder` on `examples/example-feature/prd/savings-example-prd.md`"); Codex uses the `$` prefix, such as `$prototype-builder`.
 

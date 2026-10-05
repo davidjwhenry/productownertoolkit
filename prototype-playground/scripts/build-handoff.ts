@@ -2,10 +2,10 @@
  * `npm run handoff -- --prototype <id> [--output <directory>] [--force]` —
  * build one offline hand-off and print the written directory.
  */
-import { realpathSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { buildHandoff } from '../src/handoff/build'
+import { resolveWorkspace } from '../src/workspace'
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -29,12 +29,15 @@ if (!prototypeId) {
 const output = argValue('output')
 const force = process.argv.includes('--force')
 
-const repoRoot = process.env.PROTOTYPE_PLAYGROUND_ROOT
-  ? path.resolve(process.env.PROTOTYPE_PLAYGROUND_ROOT)
-  : realpathSync(path.resolve(appRoot, '..'))
-
 try {
-  const directory = await buildHandoff({ repoRoot, prototypeId, outputDir: output, force })
+  const workspace = resolveWorkspace(appRoot)
+  const directory = await buildHandoff({
+    repoRoot: workspace.contentRoot,
+    workspaceRoot: workspace.repoRoot,
+    prototypeId,
+    outputDir: output,
+    force,
+  })
   console.log(directory)
 } catch (error) {
   console.error(`Hand-off failed: ${(error as Error).message}`)

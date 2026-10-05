@@ -10,12 +10,12 @@
  * Node-only: this plugin and the catalogue it loads never enter the
  * browser bundle; the browser consumes the generated virtual modules.
  */
-import { realpathSync } from 'node:fs'
 import path from 'node:path'
 import type { Plugin, ViteDevServer } from 'vite'
 import type { CatalogueResult, PrototypeRecord } from '../contracts'
 import { loadRepositoryCatalogue } from './catalogue'
 import { handleAmendmentsRequest } from './amendments-api'
+import { resolveWorkspace } from '../workspace'
 
 const REGISTRY_ID = 'virtual:prototype-registry'
 const RESOLVED_REGISTRY_ID = '\0virtual:prototype-registry'
@@ -23,6 +23,7 @@ const VARIANT_PREFIX = 'virtual:prototype-variant/'
 const RESOLVED_VARIANT_PREFIX = '\0virtual:prototype-variant/'
 
 export type PrototypeRegistryPluginOptions = {
+  /** Content root override; otherwise resolved by `resolveWorkspace`. */
   repoRoot?: string
   selectedPrototypeId?: string
   eager?: boolean
@@ -38,6 +39,7 @@ const DECODE_SNIPPET = [
 ].join('\n')
 
 type PluginState = {
+  /** The content root (see `resolveWorkspace`), not necessarily the repository root. */
   repoRoot: string
   strict: boolean
   cataloguePromise: Promise<CatalogueResult> | null
@@ -57,13 +59,6 @@ export default function prototypeRegistryPlugin(options: PrototypeRegistryPlugin
   }
   const eager = options.eager ?? false
   const selectedPrototypeId = options.selectedPrototypeId
-
-  const resolveRepoRoot = (appRoot: string): string => {
-    if (options.repoRoot) return path.resolve(options.repoRoot)
-    const override = process.env.PROTOTYPE_PLAYGROUND_ROOT
-    if (override) return path.resolve(override)
-    return realpathSync(path.resolve(appRoot, '..'))
-  }
 
   const loadCatalogue = (server?: ViteDevServer): Promise<CatalogueResult> => {
     if (!state.cataloguePromise) {
@@ -204,7 +199,7 @@ export default function prototypeRegistryPlugin(options: PrototypeRegistryPlugin
     enforce: 'pre',
 
     configResolved(config) {
-      state.repoRoot = resolveRepoRoot(config.root)
+      state.repoRoot = resolveWorkspace(config.root, { repoRoot: options.repoRoot }).contentRoot
       state.strict = config.command === 'build'
     },
 

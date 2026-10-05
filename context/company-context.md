@@ -8,7 +8,7 @@ Run the `bootstrap-context` skill after cloning the repo, then replace the start
 
 - **Company name:** `{Company XYZ}`
 - **Company description:** `[One sentence on what the company does]`
-- **Primary product surface:** `[Web | Mobile | Internal tooling | Mixed]`
+- **Product surfaces:** `[Web, Mobile, Internal tooling; list all that apply]`
 
 ## Author Defaults
 
