@@ -51,7 +51,7 @@ When a clear, reusable preference emerges in a session, propose an update to `co
 | `prototype-playground/` | Local app that validates, previews, and packages prototypes. Run `npm run validate` there after generating prototypes. |
 | `examples/` | Worked examples: a PRD, prototypes, and an executive report. |
 
-Skills: `bootstrap-context`, `product-grill`, `desktop-research`, `prd-writer`, `backlog-writing`, `prd-reviewer`, `backlog-review`, `meeting-distillation`, `stakeholder-report`, `weekly-review`, `uat-writer`, `design-system-setup`, `prototype-builder`, `prototype-reviewer`, `notion-sync`, `notion-drift`, and `skill-creator` (in `.claude/skills/` and `.agents/skills/`). Run `bootstrap-context` first to configure company context.
+Skills: `bootstrap-context`, `product-grill`, `desktop-research`, `prd-writer`, `backlog-writing`, `prd-reviewer`, `backlog-review`, `meeting-distillation`, `stakeholder-report`, `weekly-review`, `uat-writer`, `done`, `design-system-setup`, `prototype-builder`, `prototype-reviewer`, `notion-sync`, `notion-drift`, and `skill-creator` (in `.claude/skills/` and `.agents/skills/`). Run `bootstrap-context` first to configure company context.
 <!-- productownertoolkit:end -->
 
 Toolkit development files in this repository:

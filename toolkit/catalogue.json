@@ -78,6 +78,10 @@
       "category": "writing"
     },
     {
+      "name": "done",
+      "category": "review"
+    },
+    {
       "name": "uat-writer",
       "category": "writing"
     },
@@ -118,7 +122,7 @@
     {
       "id": "core",
       "label": "Core",
-      "description": "Context setup, shaping, research, PRDs, backlogs, reviews, meeting notes, stakeholder reports, weekly reviews, and UAT cases.",
+      "description": "Context setup, shaping, research, PRDs, backlogs, reviews, meeting notes, stakeholder reports, weekly reviews, UAT cases, and session reviews.",
       "required": true,
       "skills": [
         "bootstrap-context",
@@ -131,7 +135,8 @@
         "meeting-distillation",
         "stakeholder-report",
         "weekly-review",
-        "uat-writer"
+        "uat-writer",
+        "done"
       ],
       "map": [
         {
