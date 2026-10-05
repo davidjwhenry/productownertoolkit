@@ -105,6 +105,19 @@ describe('interactive init', () => {
     expect(manifestOf(dir)).toMatchObject({ agents: ['cursor'], capabilities: ['core', 'notion'], skillDirectories: ['.agents/skills'] })
   })
 
+  it('shows the banner and numbered steps only when prompting', async () => {
+    const prompted = await init(tempDir(), [], ['claude-code', '', '', 'y'])
+    expect(prompted.output).toContain('█▀█ █▀█ █▀█')
+    expect(prompted.output).toContain('● Agents  ─  ○ Capabilities  ─  ○ Folder  ─  ○ Review')
+    expect(prompted.output).toContain('✔ Agents  ─  ✔ Capabilities  ─  ✔ Folder  ─  ● Review')
+    expect(prompted.output).toContain('What next')
+
+    const scripted = await init(tempDir(), ['--yes', '--agents', 'claude-code'])
+    expect(scripted.output).not.toContain('█')
+    expect(scripted.output).not.toContain('● ')
+    expect(scripted.output).toContain('What next')
+  })
+
   it('installs into an existing folder chosen from the list', async () => {
     const dir = tempDir()
     dir.mkdir('notes')

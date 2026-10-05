@@ -89,6 +89,8 @@ export function scriptedIo(cwd: string, answers?: string[], execCode = 0): Scrip
     },
     execs,
     color: false,
+    truecolor: false,
+    columns: 80,
     cwd,
     env: {},
     nodeVersion: '22.12.0',

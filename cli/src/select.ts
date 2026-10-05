@@ -1,4 +1,5 @@
 import readline from 'node:readline'
+import { accentCode } from './io.ts'
 
 export interface Choice {
   id: string
@@ -11,6 +12,9 @@ export interface SelectOptions {
   multi: boolean
   /** Ids ticked (multi) or highlighted (single) to start with. */
   initial?: string[]
+  /** Decorate with colour; the markers alone carry the meaning. */
+  color?: boolean
+  truecolor?: boolean
 }
 
 /** Arrow-key / space selector on a TTY. No dependencies; Ctrl-C exits like any other prompt. */
@@ -19,16 +23,19 @@ export function selectPrompt(
   output: NodeJS.WriteStream,
   message: string,
   choices: Choice[],
-  { multi, initial = [] }: SelectOptions,
+  { multi, initial = [], color = false, truecolor = false }: SelectOptions,
 ): Promise<string[]> {
   const picked = new Set(initial)
   let cursor = Math.max(0, multi ? 0 : choices.findIndex((c) => c.id === initial[0]))
   const help = multi ? '↑/↓ move, space select, enter confirm' : '↑/↓ move, enter confirm'
+  const accent = accentCode(truecolor)
+  const style = (code: number | string, text: string) => (color ? `\u001b[${code}m${text}\u001b[0m` : text)
   const lines = () => [
-    `${message} (${help})`,
+    `${style(1, message)} ${style(2, `(${help})`)}`,
     ...choices.map((c, i) => {
-      const mark = multi ? (picked.has(c.id) ? '[x] ' : '[ ] ') : ''
-      return `${i === cursor ? '❯' : ' '} ${mark}${c.label}${c.hint ? `  ${c.hint}` : ''}`
+      const mark = multi ? (picked.has(c.id) ? `${style(32, '◉')} ` : `${style(2, '○')} `) : ''
+      const label = i === cursor ? style(accent, c.label) : c.label
+      return `${i === cursor ? style(accent, '❯') : ' '} ${mark}${label}${c.hint ? `  ${style(2, c.hint)}` : ''}`
     }),
   ]
   let drawn = 0
@@ -47,7 +54,7 @@ export function selectPrompt(
       input.off('keypress', onKey)
       input.setRawMode(false)
       input.pause()
-      output.write(`\u001b[${drawn}F\u001b[J${message} ${ids.map((id) => choices.find((c) => c.id === id)?.label ?? id).join(', ') || 'none'}\n`)
+      output.write(`\u001b[${drawn}F\u001b[J${style(32, '✔')} ${message.replace(/\?$/, '')}: ${style(accent, ids.map((id) => choices.find((c) => c.id === id)?.label ?? id).join(', ') || 'none')}\n`)
       resolve(ids)
     }
     const onKey = (_: string, key: readline.Key) => {
