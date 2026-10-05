@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+import path from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { applyPlan, ApplyError } from '../src/apply.ts'
 import { BLOCK_BEGIN, BLOCK_END } from '../src/catalogue/agents-block.ts'
@@ -147,7 +148,7 @@ describe('playground dependencies', () => {
     const dir = tempDir()
     const { code, io } = await init(dir, args)
     expect(code).toBe(0)
-    expect(io.execs).toEqual([`npm install ${dir.root}/prototype-playground`])
+    expect(io.execs).toEqual([`npm install ${path.join(dir.root, 'prototype-playground')}`])
     expect(io.output()).toContain('cd prototype-playground && npm start')
   })
 
