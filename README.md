@@ -6,11 +6,29 @@ This repo is shaped by practical use, not theory. I've been using a similar setu
 
 The model is local-first and markdown-first. Markdown becomes the source of truth. Your LLM of choice helps you synthesise thinking into useful outputs. Notion, if your team uses it, can act as the review and publishing layer for PRDs, tickets, and notes, while the repo still works well as a standalone setup for solo or early-stage work. You still own the quality of every document that leaves your desk, but this stack gives you a serious force multiplier.
 
-After cloning, do two setup steps first: connect the MCPs you expect to use, then run the `bootstrap-context` skill. For most people that means `Firecrawl MCP` for research and `pen.dev MCP` for prototyping (formerly Pencil). Add `Notion MCP` if your team uses Notion for PRDs, tickets, or notes, and consider `Figma Dev Mode MCP` if design context matters in your workflow (though beware the token feast that can become for an LLM). Then run `bootstrap-context`: it captures your company name, stack, geographies, regulatory context, delivery workflow, team context, and current business goals, writes them into `context/company-context.md`, and replaces the starter placeholders in the key docs.
+## Install
+
+The quickest way in is the installer. From the repository or folder where you want the toolkit, run:
+
+```sh
+npx productownertoolkit@latest init
+```
+
+It asks which agents you use (Claude Code, Codex, Cursor), which optional capabilities you want (prototyping, Notion, skill authoring, worked examples), and which folder should hold your product work. It shows the full plan before writing anything, and installs the prototype playground's dependencies if you chose prototyping. Add `--dry-run` to preview, or `--yes` to skip the prompts. It needs Node.js 22 or later.
+
+Check an installation at any time with `npx productownertoolkit@latest doctor`. An `update` command is not available yet.
+
+**Prefer to clone?** The whole toolkit also works as a standalone repository, which is the better route if you want to change the skills themselves:
+
+```sh
+git clone https://github.com/davidjwhenry/productownertoolkit.git
+```
+
+After installing or cloning, do two setup steps first: connect the MCPs you expect to use, then run the `bootstrap-context` skill. For most people that means `Firecrawl MCP` for research and `pen.dev MCP` for prototyping (formerly Pencil). Add `Notion MCP` if your team uses Notion for PRDs, tickets, or notes, and consider `Figma Dev Mode MCP` if design context matters in your workflow (though beware the token feast that can become for an LLM). Then run `bootstrap-context`: it captures your company name, stack, geographies, regulatory context, delivery workflow, team context, and current business goals, writes them into `context/company-context.md`, and replaces the starter placeholders in the key docs.
 
 ## Two audiences, two entry points
 
-If you're a PO or PM who wants to adopt this way of working, clone the repo. Everything you need is here.
+If you're a PO or PM who wants to adopt this way of working, [install it](#install) or clone the repo. Everything you need is here.
 
 If you're a stakeholder who just wants to see what it produces, the live published example PRD is here: [Savings Example PRD](https://childlike-damselfly-6a7.notion.site/Savings-Example-PRD-3405b7b6a16e80ecb5e2d9be33e5fc6c?source=copy_link). More live examples can follow. This repo is the engine room. Notion, at least for now, is the showroom, as a relatively inexpsenive counterpart that provides a less technical presentation layer.
 
@@ -184,7 +202,7 @@ productowner/
 
 ## Getting started
 
-1. Clone the repo.
+1. [Install the toolkit](#install) with `npx productownertoolkit@latest init`, or clone the repo. (An installed toolkit keeps your product work in the folder you chose, `product/` by default, so read paths such as `context/` as `product/context/`.)
 2. Connect the recommended MCPs from [`mcp-config/`](./mcp-config/): start with `Firecrawl` and `pen.dev`, add `Notion` if your team uses it, and add `Figma` if you want design context in the repo.
 3. Run the `bootstrap-context` skill and fill in your company defaults in [`context/company-context.md`](./context/company-context.md).
 4. Review the updated starter docs and confirm the placeholder replacements and workflow defaults look right.
