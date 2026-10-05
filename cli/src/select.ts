@@ -47,7 +47,7 @@ export function selectPrompt(
       input.off('keypress', onKey)
       input.setRawMode(false)
       input.pause()
-      output.write(`\u001b[${drawn}F\u001b[J${message} ${ids.map((id) => choices.find((c) => c.id === id)?.label ?? id).join(', ') || 'none'}\n`)
+      output.write(`\u001b[${drawn}F\u001b[J✔ ${message.replace(/\?$/, ''')}: ${ids.map((id) => choices.find((c) => c.id === id)?.label ?? id).join(', ') || 'none'}\n`)
       resolve(ids)
     }
     const onKey = (_: string, key: readline.Key) => {

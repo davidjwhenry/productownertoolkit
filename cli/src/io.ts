@@ -23,9 +23,9 @@ export interface Io {
 }
 
 /** Colour only decorates; every message must make sense without it (DT.7). */
-export function paint(io: Pick<Io, 'color'>, code: 'bold' | 'dim' | 'red' | 'yellow' | 'green', text: string): string {
+export function paint(io: Pick<Io, 'color'>, code: 'bold' | 'dim' | 'red' | 'yellow' | 'green' | 'cyan', text: string): string {
   if (!io.color) return text
-  const codes = { bold: [1, 22], dim: [2, 22], red: [31, 39], yellow: [33, 39], green: [32, 39] }[code]
+  const codes = { bold: [1, 22], dim: [2, 22], red: [31, 39], yellow: [33, 39], green: [32, 39], cyan: [36, 39] }[code]
   return `\u001b[${codes[0]}m${text}\u001b[${codes[1]}m`
 }
 

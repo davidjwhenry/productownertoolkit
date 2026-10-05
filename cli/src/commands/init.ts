@@ -7,12 +7,14 @@ import path from 'node:path'
 import type { CliOptions } from '../args.ts'
 import type { Bundle } from '../catalogue/bundle.ts'
 import { ApplyError, applyPlan } from '../apply.ts'
+import { banner, stepHeading } from '../brand.ts'
 import { Target, UnsafePathError } from '../fsx.ts'
 import { paint, type Io } from '../io.ts'
 import { MANIFEST_PATH, parseManifest, type InstallationManifest } from '../manifest.ts'
 import { plan as buildPlan, PlanError, type Plan, type PlannedFile } from '../planner.ts'
 
 const PLAYGROUND_NODE = [22, 12] as const
+const REPOSITORY_URL = 'https://github.com/davidjwhenry/productownertoolkit'
 
 /** Agents whose folders or instruction files are already in the target (IN.4). */
 export function detectAgents(target: Target): string[] {
@@ -59,11 +61,27 @@ export async function runInit(options: CliOptions, io: Io, bundle: Bundle): Prom
   const label = (id: string) => catalogue.agents.find((a) => a.id === id)?.label ?? catalogue.capabilities.find((c) => c.id === id)?.label ?? id
   const ask = options.yes ? undefined : io.interactive ? io.ask : undefined
 
+  // Prompted runs get the banner and numbered steps; scripted runs stay plain.
+  const optional = catalogue.capabilities.filter((c) => !c.required && !existing?.capabilities.includes(c.id))
+  const steps = [
+    !options.agents && 'Agents',
+    !options.capabilities && optional.length > 0 && 'Capabilities',
+    (options.contentRoot ?? existing?.contentRoot) === undefined && 'Folder',
+    'Review',
+  ].filter((title) => title !== false)
+  const step = (title: string) => {
+    if (!ask) return
+    io.out('')
+    io.out(stepHeading(io, steps.indexOf(title) + 1, steps.length, title))
+  }
+  if (ask) for (const line of banner(io, bundle.version)) io.out(line)
+
   // Agents: flags, then the existing installation, then detection and a prompt.
   let agents = options.agents
   if (!agents) {
     const detected = detectAgents(target).filter((id) => !existing?.agents.includes(id))
     if (ask) {
+      step('Agents')
       if (existing) io.out(`Already installed for: ${existing.agents.map(label).join(', ')}`)
       const choices = catalogue.agents.filter((a) => !existing?.agents.includes(a.id)).map((a) => ({ id: a.id, label: a.label }))
       agents = await io.select(existing ? 'Add agents' : 'Install for which agents?', choices, { multi: true, initial: existing ? [] : detected })
@@ -80,8 +98,8 @@ export async function runInit(options: CliOptions, io: Io, bundle: Bundle): Prom
   if (!capabilities) {
     capabilities = []
     if (ask) {
-      const optional = catalogue.capabilities.filter((c) => !c.required && !existing?.capabilities.includes(c.id))
       if (optional.length) {
+        step('Capabilities')
         io.out('Core is always installed.')
         capabilities = await io.select('Add optional capabilities', optional.map((c) => ({ id: c.id, label: c.label, hint: c.description })), { multi: true })
       }
@@ -91,6 +109,7 @@ export async function runInit(options: CliOptions, io: Io, bundle: Bundle): Prom
   let contentRoot = options.contentRoot ?? existing?.contentRoot
   if (contentRoot === undefined) {
     const fallback = catalogue.roots.content.installedDefault
+    if (ask) step('Folder')
     contentRoot = ask ? await chooseContentRoot(io, target.root, fallback) : fallback
   }
   contentRoot = contentRoot.replace(/\/+$/, '') || '.'
@@ -105,6 +124,7 @@ export async function runInit(options: CliOptions, io: Io, bundle: Bundle): Prom
     return 1
   }
 
+  step('Review')
   renderPreview(io, target, bundle, plan, options.dryRun, options.noInstall)
   if (plan.conflicts.length) {
     io.err('')
@@ -243,27 +263,38 @@ function renderPreview(io: Io, target: Target, bundle: Bundle, plan: Plan, full:
 function renderCompletion(io: Io, bundle: Bundle, plan: Plan, claudeImport: boolean, playgroundInstalled: boolean): void {
   const { catalogue } = bundle
   io.out('')
-  io.out(paint(io, 'green', plan.mode === 'install' ? `Installed Product Owner Toolkit ${bundle.version}.` : 'Added to the Product Owner Toolkit installation.'))
+  io.out(paint(io, 'green', `✔ ${plan.mode === 'install' ? `Installed Product Owner Toolkit ${bundle.version}.` : 'Added to the Product Owner Toolkit installation.'}`))
   if (plan.claude.kind === 'import' && !claudeImport) {
     io.out(`${plan.claude.path} was left unchanged, so Claude Code will not see the toolkit map until you add \`@AGENTS.md\` to it. doctor reports this.`)
   }
+
+  const next: string[][] = []
   if (plan.manifest.configuration.status === 'pending') {
-    io.out('')
-    io.out(paint(io, 'bold', 'Files are installed, but company configuration is still pending.'))
-    io.out('Next, run the bootstrap-context skill to set up your company context:')
-    for (const id of plan.agents) {
-      const agent = catalogue.agents.find((a) => a.id === id)!
-      io.out(`  ${agent.label}: ${agent.invocation.replace('{skill}', 'bootstrap-context')}`)
-    }
+    next.push([
+      paint(io, 'bold', 'Files are installed, but company configuration is still pending.'),
+      'Next, run the bootstrap-context skill to set up your company context:',
+      ...plan.agents.map((id) => {
+        const agent = catalogue.agents.find((a) => a.id === id)!
+        return `  ${agent.label}: ${agent.invocation.replace('{skill}', 'bootstrap-context')}`
+      }),
+    ])
   }
   if (plan.addedCapabilities.includes('prototyping')) {
-    io.out('')
-    io.out('Prototyping:')
-    io.out(`  The design profile in ${plan.contentRoot}/design-system/ is an example that you now own. Run design-system-setup to use your company's design sources.`)
-    io.out(`  To start the playground (Node.js ${PLAYGROUND_NODE.join('.')} or later): cd ${plan.manifest.playgroundRoot} && ${playgroundInstalled ? '' : 'npm install && '}npm start`)
+    next.push([
+      paint(io, 'bold', 'Prototyping'),
+      `The design profile in ${plan.contentRoot}/design-system/ is an example that you now own. Run design-system-setup to use your company's design sources.`,
+      `To start the playground (Node.js ${PLAYGROUND_NODE.join('.')} or later): cd ${plan.manifest.playgroundRoot} && ${playgroundInstalled ? '' : 'npm install && '}npm start`,
+    ])
   }
+  next.push(['Check the installation at any time with: npx productownertoolkit@latest doctor'])
+
   io.out('')
-  io.out('Check the installation at any time with: npx productownertoolkit@latest doctor')
+  io.out(paint(io, 'bold', 'What next'))
+  next.forEach((lines, index) => {
+    lines.forEach((line, i) => io.out(`  ${i === 0 ? paint(io, 'cyan', `${index + 1}.`) : '  '} ${line}`))
+  })
+  io.out('')
+  io.out(paint(io, 'dim', `Docs: ${REPOSITORY_URL}`))
 }
 
 const NEW_FOLDER = '\u0000new'
