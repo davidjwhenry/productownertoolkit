@@ -45,13 +45,48 @@ Ask for these company defaults:
 - one-sentence company description
 - product surfaces: any combination of `Web`, `Mobile`, and `Internal tooling` (ask as a multi-select, since many companies ship on more than one)
 - operating geographies
-- whether the company is in financial services
-- if yes, licences held
-- if yes, regulators
-- applicable data protection regimes
+- licensing, using the fixed script in **Licensing Questions** below
+- data protection regimes, using the fixed script in **Data Protection Questions** below
 - standard tech stack
 - default audience assumptions
 - common integration points
+
+### Licensing Questions
+
+Ask these exactly as written, in this order, every time. Do not reword them, add or remove options, or merge them into another question.
+
+1. **"What level of financial-services licensing does the company hold?"** Single choice, with exactly these three options in this order:
+   - `Unlicensed`
+   - `Full bank licence`
+   - `Non-bank FI`
+2. Only if the answer is `Full bank licence` or `Non-bank FI`: **"In what jurisdiction is the licence held?"** Free text.
+3. Only if the answer is `Non-bank FI`: **"What type of licence does the company hold?"** Free text.
+
+Rules:
+
+- Offer no default, example, or suggested answer for any of the three: no pre-selected level, no named country or regulator, no sample licence type. Do not infer the jurisdiction from the operating geographies or anything else in the conversation.
+- Questions 2 and 3 are free-text inputs, never a list of choices.
+- If the user is `Unlicensed`, skip questions 2 and 3 and record both as `None`.
+- Record the answers verbatim.
+
+### Data Protection Questions
+
+Ask this exactly as written, every time. Do not reword it or add, remove, rename, or reorder options.
+
+1. **"Which data protection regimes apply to the company?"** Multiple choice, with exactly these six options in this order:
+   - `EU GDPR`
+   - `UK GDPR`
+   - `USA Onshore`
+   - `UAE PDPL`
+   - `Other`
+   - `None`
+2. Only if `Other` is selected: **"Which other data protection regimes apply?"** Free text.
+
+Rules:
+
+- Pre-select nothing. Do not infer regimes from the operating geographies, the licence jurisdiction, or anything else in the conversation.
+- `None` stands alone. If the user selects it with another option, ask which they meant.
+- Record each selected option verbatim, one per bullet, replacing `Other` with what the user typed. If the answer is `None`, record `None`.
 
 Ask this workflow branch next:
 - whether they use Notion for PRDs, Epics, Stories, or related artefacts
@@ -78,6 +113,8 @@ Ask for current business context:
 - anything else likely to shape PRDs, backlog trade-offs, or review standards
 
 Use `AskQuestion` for structured choices where useful, with multi-select enabled for questions that can have more than one answer, such as product surfaces. Keep the rest concise and practical. Do not ask the entire checklist in one giant block if the conversation would be clearer in two short rounds.
+
+Ask the questions in the order listed. Never pre-fill or suggest an answer from a guess about the company, such as a country, a regulator, an industry, or a type of bank; placeholders and examples stay neutral.
 
 ## Update Rules
 

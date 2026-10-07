@@ -35,16 +35,14 @@ Run the `bootstrap-context` skill after cloning the repo, then replace the start
 
 ## Regulatory Context
 
-- **Financial services company:** `[Yes/No]`
-- **Licences held:** `[List licences or write None]`
-- **Regulators:** `[List regulators or write None]`
+- **Licensing level:** `[Unlicensed | Full bank licence | Non-bank FI]`
+- **Licence jurisdiction:** `[Jurisdiction, or write None if Unlicensed]`
+- **Licence type:** `[Type of licence if Non-bank FI, otherwise write None]`
 - **Other regulatory obligations:** `[Optional]`
 
 ## Data Protection Regimes
 
-- `[Applicable regime, e.g. GDPR]`
-- `[Applicable regime, e.g. UK GDPR]`
-- `[Applicable regime, e.g. CCPA/CPRA]`
+- `[EU GDPR | UK GDPR | USA Onshore | UAE PDPL | other regime as typed; one per bullet, or write None]`
 
 ## Standard Tech Stack
 
