@@ -1,13 +1,13 @@
 ---
 name: bootstrap-context
-description: Capture company-specific setup details for this toolkit and write them into the canonical context files. Use after cloning or installing the toolkit, when setting up the toolkit for a new company, when replacing `{Company XYZ}` placeholders, or when the user asks to configure the repo for their organisation. Covers company defaults, Notion-vs-local workflow decisions, team context, and current business goals.
+description: Capture company-specific setup details for this toolkit and write them into the canonical context files. Use after cloning or installing the toolkit, when setting up the toolkit for a new company, when replacing `{Company XYZ}` placeholders, or when the user asks to configure the repo for their organisation. Covers company defaults, Notion-vs-local workflow decisions, team context, current business goals, and, when the prototyping capability is installed, finding the repository's own design system so prototypes stop defaulting to the sample one.
 ---
 
 # Bootstrap Context
 
 Use this skill for the initial setup pass after cloning or installing the toolkit.
 
-Only write the context files named below. Skill files, their references, and the examples are toolkit-managed: an installed toolkit replaces them on update, so edits there would be lost or block the update. Skills read company details from `{content}/context/company-context.md` instead, and `{Company XYZ}` in their templates stands for the company named there.
+Only write the context files named below; the design profile is written by `design-system-setup` through its own approval gate, never directly by this skill. Skill files, their references, and the examples are toolkit-managed: an installed toolkit replaces them on update, so edits there would be lost or block the update. Skills read company details from `{content}/context/company-context.md` instead, and `{Company XYZ}` in their templates stands for the company named there.
 
 ## Workflow
 
@@ -20,7 +20,22 @@ Only write the context files named below. Skill files, their references, and the
 7. Update `{content}/context/team-context.md` with the team context and `{content}/context/product-language.md` with any product terms the user supplies.
 8. Record whether the workflow is `Notion-enabled` or `local-first` in `{content}/context/company-context.md`. Skills read this value, so do not edit skills to remove Notion assumptions.
 9. If `.product-owner-toolkit/installation.json` exists, set `configuration.status` to `complete` and `configuration.completedAt` to the current ISO 8601 timestamp, but only after every context write above has succeeded. Change no other field in that file.
-10. Stop after the initial setup pass. Do not try to rewrite the entire repo.
+10. If the prototyping capability is installed, set up the design system (see below).
+11. Stop after the initial setup pass. Do not try to rewrite the entire repo.
+
+## Design System
+
+Run this step only when `{content}/design-system/` and the `design-system-setup` skill are both present. Skip it silently otherwise. It comes after the context files are written, so an abandoned design-system proposal never leaves the company context half-configured.
+
+The toolkit ships a sample design profile. Until a real one replaces it, every prototype renders in the sample system.
+
+1. Read `{content}/design-system/profiles/ACTIVE` and the pinned `profile.json`. If its sources already go beyond `example-design-system.pen`, a real design system is in place: report the active version and move on.
+2. Otherwise, look for a design system in the repository, following **Discovering Sources In The Repository** in the `design-system-setup` skill: pen.dev files, CSS custom properties, Design Tokens Format Module files, design guidance in Markdown, tokens defined in code such as a Tailwind or theme configuration, and component libraries.
+3. If candidates are found, list them with their paths and what each would contribute (tokens, components, assets, guidance), then continue into `design-system-setup` to compile them. Its proposal gate still applies: nothing is copied or written until the user approves the plan.
+4. If nothing is found, ask: "Do you have a design system you want to add as a folder that I can bring in as a reference?" If the user points to a folder, run `design-system-setup` on it.
+5. If the user has none, or would rather do it later, keep the sample profile. Say plainly that prototypes will use the sample system for now, and that running `design-system-setup` at any time replaces it.
+
+Do not invent tokens, colours, or components to fill a gap, and do not treat the sample profile as the company's design system in any context file.
 
 ## Questions To Ask
 
@@ -80,4 +95,5 @@ After updating files:
 - mention any fields still left as placeholders
 - mention whether the repo is now configured as `Notion-enabled` or `local-first`
 - confirm that `{content}/context/preferences.md` is present and ready for use
+- when the prototyping capability is installed, state which design system prototypes will use: the newly compiled profile and its sources, an existing real profile, or the sample system
 - point the user to `{content}/context/company-context.md` for future edits and explain that `{content}/context/preferences.md` will accumulate preferences from future working sessions
