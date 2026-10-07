@@ -54,8 +54,8 @@ The intended flow is:
 5. **Close** the session so repeated corrections become context or skill improvements.
 
 *Setup skills:*
-- `bootstrap-context` — one-time post-clone setup for company defaults, placeholders, stack, and regulatory context
-- `design-system-setup` — compile local `.pen`, CSS, DTCG, or Markdown design sources into the next immutable design profile and promote it via `ACTIVE`
+- `bootstrap-context` — one-time post-clone setup for company defaults, placeholders, stack, and regulatory context; also finds a design system already in your repository and hands it to `design-system-setup`
+- `design-system-setup` — compile local `.pen`, CSS, DTCG, or Markdown design sources into the next immutable design profile and promote it via `ACTIVE`; discovers sources in the repository, including tokens and components defined in code, when you supply none
 
 *Shaping skills — before writing:*
 - `product-grill` — interrogate an idea, PRD, requirement, or backlog plan one question at a time before the artefact hardens
@@ -212,7 +212,7 @@ productowner/
 6. Use `product-grill` on a messy idea or stakeholder request before drafting the first serious PRD.
 7. Run the relevant writing skill once the shape is clear enough: `prd-writer`, `backlog-writing`, `meeting-distillation`, or `stakeholder-report`.
 8. Run the paired review skill before treating a PRD or backlog as ready.
-9. Drop your brand tokens into [`design-system/`](./design-system/) and run `design-system-setup` to compile the first design profile.
+9. Let `bootstrap-context` find the design system already in your repository, or drop your brand tokens into [`design-system/`](./design-system/), and run `design-system-setup` to compile the first design profile. Until then, prototypes use the sample system.
 10. Launch the prototype playground with `cd prototype-playground && npm install && npm start`; review generated prototypes at `http://127.0.0.1:5173`.
 11. Run `done` at the end of a working session. It reviews your recent conversations and suggests updates to `context/`, improvements to skills, or new skills, and applies only what you confirm.
 
