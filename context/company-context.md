@@ -42,7 +42,7 @@ Run the `bootstrap-context` skill after cloning the repo, then replace the start
 
 ## Data Protection Regimes
 
-- `[EU GDPR | UK GDPR | USA Onshore | UAE PDPL | other regime as typed; one per bullet, or write None]`
+- `[EU GDPR | UK GDPR | USA Onshore | UAE PDPL | Other, recorded as the regime named; one per bullet, or write None]`
 
 ## Standard Tech Stack
 

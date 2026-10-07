@@ -51,6 +51,38 @@ Ask for these company defaults:
 - default audience assumptions
 - common integration points
 
+Ask this workflow branch next:
+- whether they use Notion for PRDs, Epics, Stories, or related artefacts
+- if yes:
+  - where PRDs are tracked
+  - where Epics are tracked
+  - where Stories are tracked
+  - any default Notion Project IDs by workstream or product area
+  - whether there are any custom Notion fields they always want passed during sync
+  - if yes, what those fields are, which database each applies to, and where the value should come from
+- if no:
+  - where PRDs, Epics, and Stories should live instead
+  - whether the repo should stay fully local-first by default
+
+Ask for team context:
+- key team members
+- titles or roles
+- anything each person especially cares about, such as delivery speed, compliance, customer impact, analytics, polish, or platform consistency
+
+Ask for current business context:
+- org goals for the next period
+- team goals for the next period
+- known constraints, sensitivities, or stakeholder pressures
+- anything else likely to shape PRDs, backlog trade-offs, or review standards
+
+Use `AskQuestion` for structured choices where useful, with multi-select enabled for questions that can have more than one answer, such as product surfaces. Keep the rest concise and practical. Do not ask the entire checklist in one giant block if the conversation would be clearer in two short rounds.
+
+Ask the groups in the order listed: company defaults, then the workflow branch, then team context, then current business context. Within a group, keep the listed order. Never pre-fill or suggest an answer from a guess about the company, such as a country, a regulator, an industry, or a type of bank; placeholders and examples stay neutral.
+
+## Fixed Scripts
+
+The licensing and data protection questions are asked at their place in the company defaults, from these scripts.
+
 ### Licensing Questions
 
 Ask these exactly as written, in this order, every time. Do not reword them, add or remove options, or merge them into another question.
@@ -87,34 +119,6 @@ Rules:
 - Pre-select nothing. Do not infer regimes from the operating geographies, the licence jurisdiction, or anything else in the conversation.
 - `None` stands alone. If the user selects it with another option, ask which they meant.
 - Record each selected option verbatim, one per bullet, replacing `Other` with what the user typed. If the answer is `None`, record `None`.
-
-Ask this workflow branch next:
-- whether they use Notion for PRDs, Epics, Stories, or related artefacts
-- if yes:
-  - where PRDs are tracked
-  - where Epics are tracked
-  - where Stories are tracked
-  - any default Notion Project IDs by workstream or product area
-  - whether there are any custom Notion fields they always want passed during sync
-  - if yes, what those fields are, which database each applies to, and where the value should come from
-- if no:
-  - where PRDs, Epics, and Stories should live instead
-  - whether the repo should stay fully local-first by default
-
-Ask for team context:
-- key team members
-- titles or roles
-- anything each person especially cares about, such as delivery speed, compliance, customer impact, analytics, polish, or platform consistency
-
-Ask for current business context:
-- org goals for the next period
-- team goals for the next period
-- known constraints, sensitivities, or stakeholder pressures
-- anything else likely to shape PRDs, backlog trade-offs, or review standards
-
-Use `AskQuestion` for structured choices where useful, with multi-select enabled for questions that can have more than one answer, such as product surfaces. Keep the rest concise and practical. Do not ask the entire checklist in one giant block if the conversation would be clearer in two short rounds.
-
-Ask the questions in the order listed. Never pre-fill or suggest an answer from a guess about the company, such as a country, a regulator, an industry, or a type of bank; placeholders and examples stay neutral.
 
 ## Update Rules
 
