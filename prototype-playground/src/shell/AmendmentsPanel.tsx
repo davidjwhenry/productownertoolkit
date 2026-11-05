@@ -17,6 +17,7 @@ type AmendmentsPanelProps = {
   record: PrototypeRecord
   selection: Selection
   update: (next: Partial<Selection>, options?: SelectionUpdateOptions) => void
+  onOpenCountChange?: (count: number) => void
   writable: boolean
 }
 
@@ -38,7 +39,7 @@ function nextAmendmentId(existing: Amendment[]): string {
 }
 
 export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
-  const { record, selection, update, writable } = props
+  const { record, selection, update, writable, onOpenCountChange } = props
   const [amendments, setAmendments] = useState<Amendment[]>(record.amendments)
   const [proposing, setProposing] = useState(false)
   const [title, setTitle] = useState('')
@@ -47,6 +48,7 @@ export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
   const [screenId, setScreenId] = useState('')
   const [requirementId, setRequirementId] = useState('')
   const [busy, setBusy] = useState(false)
+  const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [revision, setRevision] = useState<string | null>(null)
 
@@ -70,6 +72,7 @@ export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
     setRevision(null)
     setProposing(false)
     setError(null)
+    setSaved(false)
     if (writable) void refresh()
   }, [record.id, record.amendments, writable, refresh])
 
@@ -77,19 +80,22 @@ export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
   const screens = useMemo(() => {
     const byId = new Map<string, { id: string; label: string; scenarioId: string }>()
     for (const declaration of variant?.screens ?? []) {
-      if (!byId.has(declaration.id)) {
+      if (!byId.has(declaration.id) || declaration.scenarioId === selection.scenarioId) {
         byId.set(declaration.id, { id: declaration.id, label: declaration.label, scenarioId: declaration.scenarioId })
       }
     }
     return [...byId.values()]
-  }, [variant])
+  }, [variant, selection.scenarioId])
   const requirementIds = useMemo(
     () => [...new Set([...record.source.requirementIds, ...record.scenarios.flatMap((scenario) => scenario.requirementIds)])],
     [record],
   )
   const openCount = amendments.filter((amendment) => amendment.status === 'open').length
 
+  useEffect(() => { onOpenCountChange?.(openCount) }, [openCount, onOpenCountChange])
+
   const persist = async (next: Amendment[]): Promise<boolean> => {
+    setSaved(false)
     setBusy(true)
     setError(null)
     try {
@@ -112,6 +118,7 @@ export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
       const doc = (await response.json()) as { amendments: Amendment[] }
       setAmendments(doc.amendments)
       setRevision(response.headers.get('etag'))
+      setSaved(true)
       return true
     } catch {
       setError('Save failed — is the dev server running?')
@@ -184,39 +191,6 @@ export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
         <p className="notes-empty">No amendments yet. Reviews that change the design land here, pinned to a screen and requirement.</p>
       ) : null}
 
-      <ul className="amendments-list">
-        {amendments.map((amendment) => {
-          const screenLabel = screens.find((candidate) => candidate.id === amendment.screenId)?.label ?? amendment.screenId
-          return (
-            <li key={amendment.id} className="amendment-card" data-status={amendment.status}>
-              <div className="amendment-head">
-                <button type="button" className="amendment-title" onClick={() => jump(amendment)} title="Jump to this screen">
-                  {amendment.title}
-                </button>
-                <span className={`amendment-status amendment-status-${amendment.status}`}>{STATUS_LABEL[amendment.status]}</span>
-              </div>
-              <p className="amendment-note">{amendment.note}</p>
-              <p className="amendment-meta">
-                Screen · {screenLabel}{amendment.requirementId ? ` — ${amendment.requirementId}` : ''} · {amendment.author}, {amendment.date}
-              </p>
-              {writable ? (
-                <div className="amendment-actions">
-                  {amendment.status === 'open' ? (
-                    <>
-                      <button type="button" disabled={busy} onClick={() => setStatus(amendment.id, 'resolved')}>Resolve</button>
-                      <button type="button" disabled={busy} onClick={() => setStatus(amendment.id, 'dismissed')}>Dismiss</button>
-                    </>
-                  ) : (
-                    <button type="button" disabled={busy} onClick={() => setStatus(amendment.id, 'open')}>Reopen</button>
-                  )}
-                  <button type="button" className="amendment-delete" disabled={busy} onClick={() => remove(amendment.id)}>Delete</button>
-                </div>
-              ) : null}
-            </li>
-          )
-        })}
-      </ul>
-
       {proposing ? (
         <form
           className="amendment-form"
@@ -225,8 +199,9 @@ export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
             void propose()
           }}
         >
+          <fieldset disabled={busy}>
           <label htmlFor="amendment-title">Title</label>
-          <input id="amendment-title" value={title} onChange={(event) => setTitle(event.target.value)} maxLength={160} placeholder="Round-up daily cap" required />
+          <input autoFocus id="amendment-title" value={title} onChange={(event) => setTitle(event.target.value)} maxLength={160} placeholder="Round-up daily cap" required />
           <label htmlFor="amendment-note">Note</label>
           <textarea id="amendment-note" value={note} onChange={(event) => setNote(event.target.value)} maxLength={8192} rows={3} placeholder="What should change, and why" required />
           <label htmlFor="amendment-screen">Screen</label>
@@ -245,17 +220,54 @@ export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
           </select>
           <label htmlFor="amendment-author">Author</label>
           <input id="amendment-author" value={author} onChange={(event) => setAuthor(event.target.value)} maxLength={160} placeholder="Your name" required />
+          </fieldset>
           {error ? <p className="amendment-error" role="alert">{error}</p> : null}
           <div className="amendment-form-actions">
-            <button type="submit" className="button-primary" disabled={busy}>Save amendment</button>
+            <button type="submit" className="button-primary" disabled={busy}>{busy ? 'Saving…' : 'Save amendment'}</button>
             <button type="button" className="button-ghost" disabled={busy} onClick={() => setProposing(false)}>Cancel</button>
           </div>
         </form>
       ) : (
         <div className="amendments-actions">
           {writable ? (
-            <button type="button" className="button-primary" onClick={() => setProposing(true)}>Propose amendment</button>
+            <button type="button" className="button-primary" onClick={() => { setScreenId(selection.screenId ?? ''); setError(null); setSaved(false); setProposing(true) }}>Propose amendment</button>
           ) : null}
+          {error ? <p className="amendment-error" role="alert">{error}</p> : null}
+        </div>
+      )}
+      {saved ? <p className="amendment-success" role="status">Changes saved.</p> : null}
+      <ul className="amendments-list">
+        {amendments.map((amendment) => {
+          const pinnedVariant = record.variants.find((candidate) => candidate.id === amendment.selection.variantId)
+          const screenLabel = pinnedVariant?.screens?.find((candidate) => candidate.id === amendment.screenId && candidate.scenarioId === amendment.selection.scenarioId)?.label ?? amendment.screenId
+          return (
+            <li key={amendment.id} className="amendment-card" data-status={amendment.status}>
+              <div className="amendment-head">
+                <button type="button" className="amendment-title" onClick={() => jump(amendment)} title="Jump to this screen">
+                  {amendment.title}
+                </button>
+                <span className={`amendment-status amendment-status-${amendment.status}`}>{STATUS_LABEL[amendment.status]}</span>
+              </div>
+              <p className="amendment-note">{amendment.note}</p>
+              <p className="amendment-meta">
+                {pinnedVariant?.label ?? amendment.selection.variantId} · {screenLabel}{amendment.requirementId ? ` — ${amendment.requirementId}` : ''} · {amendment.author}, {amendment.date}
+              </p>
+              {writable ? (
+                <div className="amendment-actions">
+                  {amendment.status === 'open' ? <button type="button" disabled={busy} onClick={() => setStatus(amendment.id, 'resolved')}>Resolve</button> : null}
+                  <details className="amendment-more"><summary>More</summary>
+                    <div>
+                      {amendment.status === 'open' ? <button type="button" disabled={busy} onClick={() => setStatus(amendment.id, 'dismissed')}>Dismiss</button> : <button type="button" disabled={busy} onClick={() => setStatus(amendment.id, 'open')}>Reopen</button>}
+                      <button type="button" className="amendment-delete" disabled={busy} onClick={() => remove(amendment.id)}>Delete</button>
+                    </div>
+                  </details>
+                </div>
+              ) : null}
+            </li>
+          )
+        })}
+      </ul>
+      <div className="amendment-exports">
           <CopyAction
             label="Copy review link"
             text={`${window.location.origin}${window.location.pathname}${selectionToQuery(selection)}`}
@@ -266,9 +278,9 @@ export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
             text={JSON.stringify({ schemaVersion: 1, amendments }, null, 2)}
             className="button-ghost"
           />
-          {error ? <p className="amendment-error" role="alert">{error}</p> : null}
-        </div>
-      )}
+      </div>
+
+
     </section>
   )
 }

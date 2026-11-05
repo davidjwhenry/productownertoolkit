@@ -18,8 +18,8 @@ export function CopyAction(props: { label: string; text: string; className?: str
   return (
     <>
       <button type="button" className={className ?? 'copy-button'} onClick={() => void onCopy()}>{label}</button>
-      {state === 'done' ? <p className="copy-status" style={{ color: 'var(--shell-accent)' }}>Copied.</p> : null}
-      {state === 'failed' ? <p className="copy-status">Copy failed — use the text below.</p> : null}
+      {state === 'done' ? <p className="copy-status" role="status" style={{ color: 'var(--shell-success)' }}>Copied.</p> : null}
+      {state === 'failed' ? <p className="copy-status" role="alert">Copy failed — use the text below.</p> : null}
       {state === 'failed' || state === 'fallback' ? (
         <label className="copy-status" style={{ display: 'block' }}>
           Manual copy
