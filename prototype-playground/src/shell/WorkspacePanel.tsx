@@ -1,6 +1,6 @@
 import { useEffect, useRef, type ReactNode, type JSX } from 'react'
 
-/** Native modal drawers isolate focus and restore it to their opener on close. */
+/** Keep panel contents mounted across layouts; only modal drawers transfer focus. */
 export function WorkspacePanel({ className, label, title, modal, open, onClose, children }: {
   className: string; label: string; title: string; modal: boolean; open: boolean
   onClose: () => void; children: ReactNode
@@ -12,7 +12,7 @@ export function WorkspacePanel({ className, label, title, modal, open, onClose, 
     if (node.open) node.close()
     if (open) {
       if (modal) node.showModal()
-      else node.show()
+      else node.setAttribute('open', '')
     }
     return () => { if (node.open) node.close() }
   }, [open, modal])

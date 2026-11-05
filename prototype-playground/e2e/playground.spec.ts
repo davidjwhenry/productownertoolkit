@@ -349,6 +349,31 @@ test('amendments round-trip through the dev-server write path', async ({ page, c
   await expect(page.locator('.amendment-card', { hasText: 'Round-up daily cap' }).locator('.amendment-status')).toHaveText('Resolved')
 })
 
+test('docked panels preserve keyboard focus on load, opening, and resizing', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  await page.addInitScript(() => {
+    document.addEventListener('focusin', event => {
+      if (event.target instanceof Element && event.target.closest('.workspace-panel:not(.workspace-drawer)')) {
+        document.documentElement.dataset.dockedFocusTaken = 'true'
+      }
+    })
+  })
+  await page.goto('/?prototype=savings-automation&variant=focused-control&surface=ios&scenario=happy-path&screen=overview&theme=light&examples=1')
+  await readyWithOverview(page)
+  await expect(page.locator('html')).not.toHaveAttribute('data-docked-focus-taken', 'true')
+  const review = page.getByRole('button', { name: /^Review ·/ })
+  await review.click()
+  await expect(page.getByRole('complementary', { name: 'Design notes and amendments' })).toBeVisible()
+  await expect(review).toBeFocused()
+  await page.getByRole('button', { name: 'Close Review' }).click()
+  await page.setViewportSize({ width: 1024, height: 900 })
+  const catalogue = page.getByRole('button', { name: 'Catalogue', exact: true })
+  await catalogue.focus()
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  await expect(page.getByRole('complementary', { name: 'Scenarios and screens' })).toBeVisible()
+  await expect(catalogue).toBeFocused()
+})
+
 test('compact drawers isolate focus, close with Escape, and preserve amendment drafts across resizing', async ({ page }) => {
   await page.getByRole('button', { name: 'Close All prototypes' }).click()
   await page.setViewportSize({ width: 1024, height: 900 })
