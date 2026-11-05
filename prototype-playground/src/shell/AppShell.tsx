@@ -1,19 +1,11 @@
-/**
- * The application shell in the Gallery direction: a 228 px catalogue
- * rail, a 260 px scenario/screen sub-menu, a centred stage (scenario
- * readout, PRD strip, device preview, control deck), and a 292 px notes
- * column with verbatim PRD design notes and the amendments subsystem.
- * `mode: 'handoff'` drops the catalogue rail for the permanent
- * prototype-only banner and makes amendments read-only. Below 1,240 px
- * the columns collapse into labelled drawers.
- */
-import { useMemo, useRef, useState, type CSSProperties, type JSX } from 'react'
+import { useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type JSX } from 'react'
 import type { CatalogueResult, PrototypeRecord, SurfaceId } from '../contracts'
 import { PrototypePreview, type PreviewHandle } from '../preview/PrototypePreview'
 import { SURFACE_PRESETS, ZOOM_MODES, type ZoomMode } from '../preview/surfaces'
-import { buildRevisionBrief, type Selection, type SelectionResolution, type SelectionUpdateOptions } from './useSelectionState'
+import { buildRevisionBrief, selectionToQuery, type Selection, type SelectionResolution, type SelectionUpdateOptions } from './useSelectionState'
 import { AmendmentsPanel } from './AmendmentsPanel'
 import { CopyAction } from './CopyAction'
+import { WorkspacePanel } from './WorkspacePanel'
 import './shell.css'
 
 export type ShellMode = 'catalogue' | 'handoff'
@@ -23,6 +15,13 @@ export type AppShellProps = {
   catalogue: CatalogueResult
   resolution: SelectionResolution
   update: (next: Partial<Selection>, options?: SelectionUpdateOptions) => void
+}
+
+const isCompact = (): boolean => window.matchMedia('(max-width: 1239px)').matches
+const subscribeCompact = (callback: () => void): (() => void) => {
+  const media = window.matchMedia('(max-width: 1239px)')
+  media.addEventListener('change', callback)
+  return () => media.removeEventListener('change', callback)
 }
 
 function groupRecords(records: PrototypeRecord[]): Array<{ key: string; records: PrototypeRecord[] }> {
@@ -48,6 +47,12 @@ export function AppShell(props: AppShellProps): JSX.Element {
   const [flowOpen, setFlowOpen] = useState(false)
   const [notesOpen, setNotesOpen] = useState(false)
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false)
+  const [reviewTab, setReviewTab] = useState<'amendments' | 'notes'>('amendments')
+  const [openAmendments, setOpenAmendments] = useState(0)
+  const [reloadKey, setReloadKey] = useState(0)
+  const compact = useSyncExternalStore(subscribeCompact, isCompact, () => false)
+  const showDiagnostics = (): void => { setDiagnosticsOpen(true); setNotesOpen(true); setRailOpen(false) }
+
   const previewRef = useRef<PreviewHandle | null>(null)
   const visibleRecords = useMemo(() => {
     const needle = query.trim().toLowerCase()
@@ -80,17 +85,17 @@ export function AppShell(props: AppShellProps): JSX.Element {
   const deviceChrome = record
     ? catalogue.profiles[`${record.designSystem.id}@${record.designSystem.version}`]?.deviceChrome
     : undefined
+  // Honour profile sizing hints with readable minimum widths for the new workspace.
   const layout = catalogue.activeProfile?.layout
-  const layoutStyle = layout
-    ? ({
-        '--shell-rail-w': `${layout.railWidth}px`,
-        '--shell-flow-w': `${layout.flowWidth}px`,
-        '--shell-notes-w': `${layout.notesWidth}px`,
-        '--shell-stage-max': `${layout.stageMaxWidth}px`,
-      } as CSSProperties)
-    : undefined
+  const layoutStyle = layout ? {
+    '--shell-rail-w': `${Math.max(320, layout.railWidth)}px`,
+    '--shell-flow-w': `${Math.max(256, layout.flowWidth)}px`,
+    '--shell-notes-w': `${Math.max(352, layout.notesWidth)}px`,
+    '--shell-stage-max': `${layout.stageMaxWidth}px`,
+  } as CSSProperties : undefined
   const activeScreen = scenarioScreens.find((screen) => screen.id === selection.screenId) ?? null
   const stepIndex = activeScreen ? scenarioScreens.findIndex((screen) => screen.id === activeScreen.id) + 1 : 0
+  const nextScreen = stepIndex > 0 ? scenarioScreens[stepIndex] : undefined
   const runtimeScreens = useMemo(
     () => scenarioScreens.map((screen) => ({ id: screen.id, ...(screen.fixture ? { fixture: screen.fixture } : {}) })),
     [scenarioScreens],
@@ -112,6 +117,7 @@ export function AppShell(props: AppShellProps): JSX.Element {
   const jumpToScreen = (screenId: string): void => {
     update({ screenId })
     previewRef.current?.goto(screenId)
+    setFlowOpen(false)
   }
 
   const prdUrl = (section: string): string | null => {
@@ -128,25 +134,32 @@ export function AppShell(props: AppShellProps): JSX.Element {
     : (scenario?.requirementIds ?? []).map((requirementId) => ({ section: null, heading: null, requirementIds: [requirementId] }))
   const stripRequirementIds = [...new Set(stripRefs.flatMap((ref) => ref.requirementIds))]
 
+  const comparison = record?.variants.find((item) => item.id === selection.compareVariantId)
+  const comparisonScreens = useMemo(() => (comparison?.screens ?? [])
+    .filter((screen) => screen.scenarioId === selection.scenarioId)
+    .sort((a, b) => a.order - b.order)
+    .map((screen) => ({ id: screen.id, ...(screen.fixture ? { fixture: screen.fixture } : {}) })), [comparison, selection.scenarioId])
+
   return (
     <div className={mode === 'handoff' ? 'app-shell app-shell-handoff' : 'app-shell'} style={layoutStyle}>
       {mode === 'handoff' ? (
         <div className="handoff-banner" role="status">Interactive prototype — not production code</div>
       ) : null}
 
-      <header className="shell-compactbar" aria-label="Playground controls">
-        <span className="compactbar-brand">Prototype Playground</span>
-        <span className="spacer" />
-        <button type="button" className="drawer-toggle" aria-expanded={railOpen} onClick={() => setRailOpen((v) => !v)}>Catalogue</button>
-        <button type="button" className="drawer-toggle" aria-expanded={flowOpen} onClick={() => setFlowOpen((v) => !v)}>Flows</button>
-        <button type="button" className="drawer-toggle" aria-expanded={notesOpen} onClick={() => setNotesOpen((v) => !v)}>Notes</button>
-        <button type="button" className="drawer-toggle" aria-expanded={diagnosticsOpen} onClick={() => setDiagnosticsOpen((v) => !v)}>
-          Diagnostics{diagnostics.length > 0 ? ` (${diagnostics.length})` : ''}
-        </button>
+      <header className="shell-topbar" aria-label="Playground controls">
+        <div className="shell-brand"><span className="rail-brand-mark" aria-hidden="true" /><h1>Playground</h1></div>
+        <span className="workspace-title">{record?.title ?? 'Prototype library'}</span>
+        {record ? <span className="workspace-revision">{record.origin === 'example' ? 'Example · ' : ''}Rev {record.revision}</span> : null}
+        <div className="topbar-actions">
+          {mode === 'catalogue' ? <button type="button" className="drawer-toggle catalogue-toggle" aria-expanded={railOpen} onClick={() => setRailOpen(true)}>Catalogue</button> : null}
+          {record ? <div className="topbar-copy"><CopyAction label="Copy review link" text={`${window.location.origin}${window.location.pathname}${selectionToQuery(selection)}`} className="drawer-toggle" /></div> : null}
+          <button type="button" className="drawer-toggle review-toggle" aria-expanded={notesOpen} onClick={() => setNotesOpen((v) => !v)}>Review{record ? ` · ${openAmendments} open` : ''}</button>
+          <button type="button" className="drawer-toggle diagnostics-toggle" aria-expanded={diagnosticsOpen && notesOpen} onClick={showDiagnostics}>Diagnostics{diagnostics.length ? ` (${diagnostics.length})` : ''}</button>
+        </div>
       </header>
 
       {mode === 'catalogue' ? (
-        <nav className="shell-rail" data-open={railOpen} aria-label="Prototype catalogue">
+        <WorkspacePanel className="shell-rail" label="Prototype catalogue" title="All prototypes" modal open={railOpen} onClose={() => setRailOpen(false)}>
           <div className="rail-brand">
             <span className="rail-brand-mark" aria-hidden="true" />
             <h1>Prototype Playground</h1>
@@ -154,7 +167,8 @@ export function AppShell(props: AppShellProps): JSX.Element {
           <input
             type="search"
             className="catalogue-search"
-            placeholder="Search id, title, summary, user, feature"
+            placeholder="Search prototypes"
+            aria-label="Search prototypes"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             maxLength={120}
@@ -170,7 +184,7 @@ export function AppShell(props: AppShellProps): JSX.Element {
           {visibleRecords.length === 0 ? (
             <div className="catalogue-empty">
               <p>No prototypes found.</p>
-              <p>Generate one with <code>prototype-builder</code> and a PRD path.</p>
+              {query ? <button type="button" className="button-secondary" onClick={() => setQuery('')}>Clear search</button> : <p>Include examples, or generate a prototype with <code>prototype-builder</code> and a PRD path.</p>}
             </div>
           ) : (
             groupRecords(visibleRecords).map((group) => (
@@ -182,7 +196,7 @@ export function AppShell(props: AppShellProps): JSX.Element {
                     className="catalogue-item"
                     key={item.id}
                     aria-current={record?.id === item.id}
-                    onClick={() =>
+                    onClick={() => {
                       update({
                         prototypeId: item.id,
                         variantId: item.defaults.variant,
@@ -191,8 +205,8 @@ export function AppShell(props: AppShellProps): JSX.Element {
                         themeId: item.defaults.theme,
                         screenId: null,
                         compareVariantId: null,
-                      })
-                    }
+                      }); setRailOpen(false)
+                    }}
                   >
                     <span className="title">{item.title}{item.origin === 'example' ? <span className="catalogue-badge">Example</span> : null}</span>
                     <span className="detail">{item.summary}</span>
@@ -213,13 +227,11 @@ export function AppShell(props: AppShellProps): JSX.Element {
             ) : (
               <p>No active design profile.</p>
             )}
-            <button type="button" className="diagnostics-toggle" aria-expanded={diagnosticsOpen} onClick={() => setDiagnosticsOpen((v) => !v)}>
-              Diagnostics{diagnostics.length > 0 ? ` (${diagnostics.length})` : ''}
-            </button>
           </div>
-        </nav>
+        </WorkspacePanel>
       ) : null}
 
+      <div className="shell-workspace">
       <main className="shell-canvas">
         {!catalogue.activeProfile ? (
           <div className="empty-state">
@@ -233,10 +245,12 @@ export function AppShell(props: AppShellProps): JSX.Element {
           </div>
         ) : (
           <>
-            <aside className="flow-column" data-open={flowOpen} aria-label="Scenarios and screens">
+            <WorkspacePanel className="flow-column" label="Scenarios and screens" title="Flows" modal={compact} open={!compact || flowOpen} onClose={() => setFlowOpen(false)}>
+              {mode === 'catalogue' ? <button type="button" className="drawer-toggle all-prototypes" onClick={() => { setFlowOpen(false); setRailOpen(true) }}>‹ All prototypes</button> : null}
               <h2 className="flow-heading">Flows — {record.scenarios.length} scenarios</h2>
               {record.scenarios.map((item, index) => {
                 const isActive = item.id === selection.scenarioId
+                const screenCount = variant?.screens?.filter((screen) => screen.scenarioId === item.id).length ?? 0
                 return (
                   <button
                     type="button"
@@ -247,8 +261,8 @@ export function AppShell(props: AppShellProps): JSX.Element {
                   >
                     <span className="scenario-number">{String(index + 1).padStart(2, '0')}</span>
                     <span className="scenario-label">{item.label}</span>
-                    <span className="scenario-description">{item.description}</span>
-                    <span className="scenario-refs">{item.requirementIds.join(' · ')}</span>
+                    <span className="scenario-description">{screenCount} {screenCount === 1 ? 'screen' : 'screens'}</span>
+
                   </button>
                 )
               })}
@@ -276,80 +290,15 @@ export function AppShell(props: AppShellProps): JSX.Element {
               ) : (
                 <p className="screens-empty">This prototype declares no addressable screens; walk the flow inside the preview.</p>
               )}
-            </aside>
+              <div className="flow-footer">
+                <span>Profile {record.designSystem.id}@{record.designSystem.version}</span>
+                <button type="button" className="button-ghost" onClick={() => { setFlowOpen(false); showDiagnostics() }}>{diagnostics.length ? `${diagnostics.length} diagnostics` : 'No diagnostics'}</button>
+              </div>
+            </WorkspacePanel>
 
             <section className="stage-column">
-              <header className="stage-header">
-                <p className="stage-eyebrow">
-                  Scenario {String(scenarioIndex).padStart(2, '0')} · {scenario?.label ?? selection.scenarioId}
-                  {activeScreen ? ` — step ${stepIndex} of ${scenarioScreens.length}` : ''}
-                </p>
-                <h2 className="stage-title">{activeScreen?.label ?? variant?.label ?? record.title}</h2>
-                <div className="prd-strip">
-                  {stripRefs.map((ref, index) =>
-                    ref.section !== null ? (
-                      <span className="prd-chip" key={`${ref.section}-${index}`}>
-                        {ref.heading ? `PRD §${ref.section} · ${ref.heading}` : `PRD §${ref.section}`}
-                      </span>
-                    ) : null,
-                  )}
-                  {stripRequirementIds.length > 0 ? (
-                    <span className="prd-covered">
-                      Covers <strong>{stripRequirementIds.join(' ')}</strong>
-                    </span>
-                  ) : null}
-                  {record.prdMap.url ? (
-                    <a
-                      className="prd-open"
-                      href={prdUrl(stripRefs[0]?.section ?? '') ?? record.prdMap.url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Open PRD ↗
-                    </a>
-                  ) : (
-                    <span className="prd-path" title={record.source.prd}><code>{record.source.prd}</code></span>
-                  )}
-                </div>
-              </header>
-
-              <div className="preview-canvas" data-compare={selection.compareVariantId !== null}>
-                <figure className="preview-pane">
-                  <PrototypePreview
-                    ref={previewRef}
-                    source={primarySource ?? Promise.reject(new Error('no record'))}
-                    prototypeId={record.id}
-                    variantId={selection.variantId}
-                    surfaceId={selection.surfaceId}
-                    scenarioId={selection.scenarioId}
-                    themeId={selection.themeId}
-                    screens={runtimeScreens}
-                    startScreen={selection.screenId}
-                    zoom={zoom}
-                    deviceChrome={deviceChrome}
-                    onScreen={onScreen}
-                  />
-                  {selection.compareVariantId ? <figcaption>{variant?.label}</figcaption> : null}
-                </figure>
-                {selection.compareVariantId ? (
-                  <figure className="preview-pane">
-                    <PrototypePreview
-                      source={compareSource ?? Promise.reject(new Error('no compare variant'))}
-                      prototypeId={record.id}
-                      variantId={selection.compareVariantId}
-                      surfaceId={selection.surfaceId}
-                      scenarioId={selection.scenarioId}
-                      themeId={selection.themeId}
-                      screens={[]}
-                      zoom={zoom}
-                      deviceChrome={deviceChrome}
-                    />
-                    <figcaption>{record.variants.find((v) => v.id === selection.compareVariantId)?.label}</figcaption>
-                  </figure>
-                ) : null}
-              </div>
-
               <div className="control-deck" role="group" aria-label="Preview controls">
+                {compact ? <button type="button" className="drawer-toggle" aria-expanded={flowOpen} onClick={() => setFlowOpen(true)}>Flows</button> : null}
                 <div className="deck-variant">
                   <div className="deck-label">Variant</div>
                   <div className="variant-segment" role="group" aria-label="Variant">
@@ -364,7 +313,7 @@ export function AppShell(props: AppShellProps): JSX.Element {
                       </button>
                     ))}
                   </div>
-                  <p className="deck-hypothesis">{variant?.hypothesis}</p>
+
                 </div>
                 <div className="deck-controls">
                   <div className="control-group">
@@ -376,7 +325,7 @@ export function AppShell(props: AppShellProps): JSX.Element {
                       onChange={(event) => update({ surfaceId: event.target.value as SurfaceId })}
                     >
                       {record.surfaces.map((surface) => (
-                        <option key={surface} value={surface}>{SURFACE_PRESETS[surface].label} · {SURFACE_PRESETS[surface].content.width} × {SURFACE_PRESETS[surface].content.height}</option>
+                        <option key={surface} value={surface}>{SURFACE_PRESETS[surface].label}</option>
                       ))}
                     </select>
                   </div>
@@ -417,17 +366,125 @@ export function AppShell(props: AppShellProps): JSX.Element {
                       Compare
                     </label>
                   ) : null}
+                  <button type="button" className="drawer-toggle" aria-label={selection.compareVariantId ? 'Reset previews' : 'Reset preview'} onClick={() => setReloadKey((key) => key + 1)}>Reset</button>
                 </div>
               </div>
+
+              <header className="stage-header">
+                <p className="stage-eyebrow">
+                  Scenario {String(scenarioIndex).padStart(2, '0')} · {scenario?.label ?? selection.scenarioId}
+                  {activeScreen ? ` — step ${stepIndex} of ${scenarioScreens.length}` : ''}
+                </p>
+                <h2 className="stage-title">{activeScreen?.label ?? variant?.label ?? record.title}</h2>
+
+                {selection.compareVariantId ? <p className="comparison-notice">Independent navigation · shared surface and theme</p> : null}
+                <details className="prd-details"><summary>Requirements{stripRequirementIds.length ? ` · ${stripRequirementIds.join(', ')}` : ''}</summary><p className="scenario-summary">{scenario?.description}</p><div className="prd-strip">
+                  {stripRefs.map((ref, index) =>
+                    ref.section !== null ? (
+                      <span className="prd-chip" key={`${ref.section}-${index}`}>
+                        {ref.heading ? `PRD §${ref.section} · ${ref.heading}` : `PRD §${ref.section}`}
+                      </span>
+                    ) : null,
+                  )}
+                  {stripRequirementIds.length > 0 ? (
+                    <span className="prd-covered">
+                      Covers <strong>{stripRequirementIds.join(' ')}</strong>
+                    </span>
+                  ) : null}
+                  {record.prdMap.url ? (
+                    <a
+                      className="prd-open"
+                      href={prdUrl(stripRefs[0]?.section ?? '') ?? record.prdMap.url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open PRD ↗
+                    </a>
+                  ) : (
+                    <span className="prd-path" title={record.source.prd}><code>{record.source.prd}</code></span>
+                  )}
+                </div></details>
+              </header>
+
+              <div className="preview-canvas" data-compare={selection.compareVariantId !== null}>
+                <figure className="preview-pane">
+                  <PrototypePreview
+                    ref={previewRef}
+                    reloadKey={reloadKey}
+                    source={primarySource ?? Promise.reject(new Error('no record'))}
+                    prototypeId={record.id}
+                    variantId={selection.variantId}
+                    surfaceId={selection.surfaceId}
+                    scenarioId={selection.scenarioId}
+                    themeId={selection.themeId}
+                    screens={runtimeScreens}
+                    startScreen={selection.screenId}
+                    zoom={zoom}
+                    deviceChrome={deviceChrome}
+                    onScreen={onScreen}
+                  />
+                  {selection.compareVariantId ? <figcaption>{variant?.label}</figcaption> : null}
+                </figure>
+                {selection.compareVariantId ? (
+                  <figure className="preview-pane">
+                    <PrototypePreview
+                      source={compareSource ?? Promise.reject(new Error('no compare variant'))}
+                      prototypeId={record.id}
+                      variantId={selection.compareVariantId}
+                      surfaceId={selection.surfaceId}
+                      scenarioId={selection.scenarioId}
+                      themeId={selection.themeId}
+                      screens={comparisonScreens}
+                      startScreen={comparisonScreens[0]?.id}
+                      reloadKey={reloadKey}
+                      zoom={zoom}
+                      deviceChrome={deviceChrome}
+                    />
+                    <figcaption>{record.variants.find((v) => v.id === selection.compareVariantId)?.label}</figcaption>
+                  </figure>
+                ) : null}
+              </div>
+
+              <footer className="stage-footer">
+                <span>{SURFACE_PRESETS[selection.surfaceId].content.width} × {SURFACE_PRESETS[selection.surfaceId].content.height} · {zoom === 'fit' ? 'Fit to stage' : `${zoom}%`}</span>
+                {nextScreen ? <button type="button" className="drawer-toggle" onClick={() => jumpToScreen(nextScreen.id)}>Next: {nextScreen.label} →</button> : null}
+                <span>Interactive prototype</span>
+              </footer>
+              <details className="hypothesis-strip"><summary><strong>Hypothesis</strong> {variant?.hypothesis}</summary>
+                <ul>{variant?.tradeOffs.map((tradeOff) => <li key={tradeOff}>{tradeOff}</li>)}</ul>
+                {comparison ? <p><strong>{comparison.label}:</strong> {comparison.hypothesis}</p> : null}
+              </details>
             </section>
           </>
         )}
       </main>
 
-      <aside className="notes-column" data-open={notesOpen} aria-label="Design notes and amendments">
+      <WorkspacePanel className="notes-column" label="Design notes and amendments" title="Review" modal={compact} open={notesOpen} onClose={() => setNotesOpen(false)}>
+        <div className="review-tabs" role="group" aria-label="Review view">
+          <button type="button" aria-pressed={reviewTab === 'amendments'} onClick={() => setReviewTab('amendments')}>Amendments</button>
+          <button type="button" aria-pressed={reviewTab === 'notes'} onClick={() => setReviewTab('notes')}>Design notes</button>
+        </div>
+        {diagnosticsOpen || (diagnostics.length > 0 && !record) ? (
+          <section className="inspector-section">
+            <div className="notes-heading"><h2>Diagnostics</h2><button type="button" className="button-ghost" onClick={() => setDiagnosticsOpen(false)}>Hide diagnostics</button></div>
+            {diagnostics.length === 0 ? (
+              <p className="notes-empty">No diagnostics.</p>
+            ) : (
+              <ul className="diagnostics-list">
+                {diagnostics.map((diagnostic, index) => (
+                  <li key={`${diagnostic.code}-${index}`}>
+                    <span className={`severity severity-${diagnostic.severity}`}>{diagnostic.severity}</span> {diagnostic.code}
+                    <code>{diagnostic.path}</code>
+                    <span>{diagnostic.message}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        ) : null}
         {record ? (
           <>
-            <section className="design-notes">
+            <section className="design-notes" hidden={reviewTab !== 'notes'}>
               <header className="notes-heading">
                 <h2>Design notes</h2>
                 <span className="notes-source">{record.source.prd.split('/').pop()}</span>
@@ -456,9 +513,14 @@ export function AppShell(props: AppShellProps): JSX.Element {
               )}
             </section>
 
-            <AmendmentsPanel record={record} selection={selection} update={update} writable={mode === 'catalogue'} />
+            <div hidden={reviewTab !== 'amendments'}><AmendmentsPanel record={record} selection={selection} update={update} writable={mode === 'catalogue'} onOpenCountChange={setOpenAmendments} /></div>
 
-            <section className="notes-footer">
+            {activeScreen ? <section className="screen-context">
+              <h2>This screen</h2><h3>{activeScreen.label}</h3>
+              <p>{stripRequirementIds.join(' · ') || 'No requirement IDs mapped to this screen.'}</p>
+              {stripRefs.map((ref, index) => ref.section ? <p key={index}>{prdUrl(ref.section) ? <a href={prdUrl(ref.section)!} target="_blank" rel="noreferrer">PRD §{ref.section}{ref.heading ? ` · ${ref.heading}` : ''} ↗</a> : `PRD §${ref.section}${ref.heading ? ` · ${ref.heading}` : ''}`}</p> : null)}
+            </section> : null}
+            <details className="notes-footer"><summary>Prototype-only limitations &amp; handoff</summary>
               <h2>Prototype-only limitations</h2>
               <ul>{record.prototypeOnly.map((limitation) => <li key={limitation}>{limitation}</li>)}</ul>
               <div className="notes-footer-actions">
@@ -469,30 +531,13 @@ export function AppShell(props: AppShellProps): JSX.Element {
                 {' '}Profile {record.designSystem.id}@{record.designSystem.version}
                 {record.designSystem.currentness === 'older' ? ' (older design profile)' : ''}.
               </p>
-            </section>
+            </details>
           </>
         ) : (
           <p className="notes-empty">Select a prototype to see its PRD notes and amendments.</p>
         )}
-        {diagnosticsOpen || (diagnostics.length > 0 && !record) ? (
-          <section className="inspector-section">
-            <h2>Diagnostics</h2>
-            {diagnostics.length === 0 ? (
-              <p className="notes-empty">No diagnostics.</p>
-            ) : (
-              <ul className="diagnostics-list">
-                {diagnostics.map((diagnostic, index) => (
-                  <li key={`${diagnostic.code}-${index}`}>
-                    <span className={`severity severity-${diagnostic.severity}`}>{diagnostic.severity}</span> {diagnostic.code}
-                    <code>{diagnostic.path}</code>
-                    <span>{diagnostic.message}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        ) : null}
-      </aside>
+      </WorkspacePanel>
+      </div>
     </div>
   )
 }
