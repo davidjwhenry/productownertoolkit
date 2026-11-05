@@ -513,7 +513,7 @@ export function AppShell(props: AppShellProps): JSX.Element {
               )}
             </section>
 
-            <div hidden={reviewTab !== 'amendments'}><AmendmentsPanel record={record} selection={selection} update={update} writable={mode === 'catalogue'} onOpenCountChange={setOpenAmendments} /></div>
+            <div hidden={reviewTab !== 'amendments'}><AmendmentsPanel key={record.id} record={record} selection={selection} update={update} writable={mode === 'catalogue'} onOpenCountChange={setOpenAmendments} /></div>
 
             {activeScreen ? <section className="screen-context">
               <h2>This screen</h2><h3>{activeScreen.label}</h3>
