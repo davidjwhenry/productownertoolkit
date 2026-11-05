@@ -98,6 +98,10 @@
       "category": "setup"
     },
     {
+      "name": "scan-first-design",
+      "category": "authoring"
+    },
+    {
       "name": "prototype-builder",
       "category": "writing"
     },
@@ -252,6 +256,7 @@
       "required": false,
       "skills": [
         "design-system-setup",
+        "scan-first-design",
         "prototype-builder",
         "prototype-reviewer"
       ],

@@ -63,6 +63,14 @@ Order sources from lowest to highest precedence when merging:
 
 A failed optional Figma read produces a warning and continues only when required local sources suffice. A missing or hash-drifted source marked `required` stops the run before any snapshot is written; optional ones are omitted with a warning.
 
+## Design quality review
+
+Read the sibling `scan-first-design` skill when assessing source completeness. Check whether the sources define type roles and line heights, spacing, radii, semantic colour pairs in each theme, component usage, and relevant focus, disabled, pending, validation, and recovery states. Distinguish missing guidance from a demonstrated usability defect, and report both with evidence.
+
+Preserve authored component usage in `components.json` and authored composition/state guidance in the profile's `guidance` files. The shared skill supplies design reasoning; it is not a brand-token source. Missing values remain reported gaps until approved source material defines them. Do not copy an entire skill into every immutable profile.
+
+Treat shell redesign proposals and feature mock-ups as explorations unless the user explicitly designates them canonical sources. Keep shell layout/device geometry separate from the embedded product's visual rules in the proposal.
+
 ## Proposal Gate
 
 Present a 3–5 bullet proposal covering: sources (with precedence order, and for each discovered source where it was found and whether it is copied or transcribed), themes and default theme, and the output version. Wait for explicit approval before copying external inputs or writing a new immutable version.

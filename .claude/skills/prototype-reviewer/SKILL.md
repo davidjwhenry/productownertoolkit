@@ -19,6 +19,8 @@ Close the loop from design review back into requirements. Amendments are the aud
 2. Read the prototype's `prototype.json` and `amendments.json`; filter to `status: "open"`.
 3. Read the feature PRD, especially the sections the amendments' requirement IDs belong to.
 
+For visual or interaction amendments, read the sibling `scan-first-design` skill and the pinned profile's guidance. Tie findings to a user task and an observed screen; distinguish usability defects, missing system guidance, and stylistic preferences. Keep this review scoped to the open amendments.
+
 ## The Walk
 
 For each open amendment, in date order:

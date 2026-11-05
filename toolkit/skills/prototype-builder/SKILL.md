@@ -28,6 +28,12 @@ Turn an approved PRD into two genuinely different, hypothesis-led prototype vari
 
 Whenever the actor, job, state, boundary, or trade-off stays unclear, invoke `product-grill`: ask exactly one question with **Question**, **Why it matters**, **My recommendation**, and **Artefact impact**, then wait.
 
+## Visual design guidance
+
+Read the sibling `scan-first-design` skill before composing or revising screens. Use it for hierarchy, data representation, readable density, semantic colour, and interaction states. Read the pinned profile's `guidance` files and component `usage` notes alongside its tokens; an inventory of component names is not an implementation specification.
+
+Keep source token values intact. When type, spacing, or state recipes are absent, make consistent prototype-local choices and identify them as provisional. Do not promote those choices to the canonical design system or import the playground shell's palette into the product preview.
+
 ## Build Brief Gate
 
 Present a 3–5 bullet brief naming: the source PRD, the output path, the pinned profile (`id@version` plus fingerprint), the exactly two hypotheses, the selected surfaces, and the scenarios (happy path plus meaningful unhappy states) with the screens each will declare. Wait for approval before writing or replacing any file.
@@ -44,7 +50,7 @@ Present a 3–5 bullet brief naming: the source PRD, the output path, the pinned
 
 ## Verification In The Playground
 
-Launch `cd prototype-playground && npm run dev`, open the catalogue, and exercise every declared scenario in both variants on every declared surface, in both themes. Jump to each screen from the scenario sub-menu and confirm fixture hydration (invalid states appear pre-filled, not walked). Confirm back and cancel paths work and entered choices survive validation errors. Confirm switching variants keeps an equivalent screen when one is declared. Capture visual evidence from the actual browser and iterate on feedback.
+Launch `cd prototype-playground && npm run dev`, open the catalogue, and exercise every declared scenario in both variants on every declared surface, in both themes. Jump to each screen from the scenario sub-menu and confirm fixture hydration (invalid states appear pre-filled, not walked). Confirm back and cancel paths work and entered choices survive validation errors. Confirm switching variants keeps an equivalent screen when one is declared. Capture visual evidence from the actual browser and iterate on feedback. Apply the scan-first-design verification checks to the rendered result: long labels, empty content, comparable values, focus visibility, contrast, and clear action feedback. Schema validation alone does not establish visual fidelity. Report unsupported runtime behaviour as a prototype limitation rather than suggesting it was tested.
 
 ## Review Gate And Hand-Off
 
