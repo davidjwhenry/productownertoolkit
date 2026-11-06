@@ -16,6 +16,8 @@ Recommended for most users. It pairs well with PRD writing and stakeholder commu
 - exploring UI or flow ideas quickly
 - creating artefacts stakeholders can react to
 
+The `scan-first-design` skill uses pen.dev for screen and state design on a canvas, `stakeholder-report` designs reports in it before HTML export, and `design-system-setup` compiles `.pen` files into design profiles.
+
 ## Setup
 
 pen.dev is the odd one out here: the official flow is extension-led rather than a published hand-written `mcp.json` block.

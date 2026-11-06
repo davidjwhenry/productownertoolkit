@@ -1,6 +1,6 @@
 ---
 name: scan-first-design
-description: Design, implement, or improve product interfaces around scannability, data, task hierarchy, and complete interaction states. Use for dashboards, tables, forms, settings, and other application screens, including focused UI reviews.
+description: Design, implement, or improve product interfaces around scannability, data, task hierarchy, and complete interaction states. Use for dashboards, tables, forms, settings, and other application screens, including focused UI reviews and design work on pen.dev `.pen` canvases.
 ---
 
 # Scan-first design
@@ -69,13 +69,14 @@ Use concrete tasks: Can the user find the relevant record, recognise an exceptio
 
 Finish with a concise account of what changed, why it helps the task, and what was verified. In a review, tie recommendations to a specific user difficulty and suggest a concrete correction; separate usability failures from stylistic preferences.
 
-## Working in Paper
+## Working in pen.dev
 
-When the requested deliverable is in Paper, use its MCP tools and read `get_guide({"topic": "paper-mcp-instructions"})` before design operations. If tools are unavailable, use the installed Paper skill's connection guidance; do not change unrelated agent configuration.
+Use pen.dev (formerly Pencil) when the requested deliverable is a design canvas rather than code: a screen exploration, a state specification, or a visual reference stakeholders can react to. Its MCP server may still be listed as `pencil`. If the tools are unavailable, follow `{toolkit}/mcp-config/pen-dev.md` for setup; do not change unrelated agent configuration. pen.dev helps explore and specify, but it is never required to implement or prototype a screen.
 
-- Confirm the target file/page, then inspect `get_basic_info`, the relevant nodes, styles, and tokens. Reuse existing patterns and token aliases.
-- Build editable canvas content incrementally, one visual group per `write_html` call. Use meaningful `layer-name` values, inline styles, and token variables. Follow the live guide's layout restrictions; use flexbox and padding/gap rather than CSS grid, margins, or HTML tables where required.
-- Token metadata alone is invisible. When creating a token system, also create a visible swatch/type/spacing reference wired to those variables.
-- Represent relevant interaction states as clearly named variants or artboards. Distinguish visual specifications from implemented behaviour.
-- Inspect `get_screenshot` after meaningful changes; correct clipping, alignment, contrast, and unresolved token values. Use content-fitting height when appropriate.
-- Call `finish_working_on_nodes` when done and share the file URL returned by Paper.
+- Open or create the target `.pen` file in the editor, then call `get_app_state` to confirm the active file, selection, and document structure. There is no tool to open documents. Keep prototype explorations under the prototype's `companions/` folder.
+- Call `get_guidelines` before design operations, then inspect the existing canvas with a shallow `execute` `Get` and read deeper with narrower JavaScript filters. Use `execute` `GetVariables` to read tokens. Start from the pinned profile's raw `.pen` source, such as `{content}/design-system/example-design-system.pen`, and reuse its components, variables, and patterns.
+- Build editable canvas content incrementally, one visual group at a time, with `execute` `Insert`, `Copy`, `Update`, `Replace`, and `Move`. Give frames and layers meaningful names, and bind fills, type, and spacing to variables rather than raw values.
+- Variables alone are invisible. When creating or extending a token system with `execute` `SetVariables`, also build a visible swatch, type, and spacing reference wired to those variables. Token changes to the design system itself go through `design-system-setup`.
+- Represent relevant interaction states as clearly named variants or frames. Distinguish visual specifications from implemented behaviour.
+- Run `execute` `TakeScreenshot` after meaningful changes and correct clipping, alignment, contrast, and unresolved variable values. Fit frame height to content when appropriate.
+- When done, report the `.pen` file path and what each frame shows. Use `execute` `Export` only when the user asks for an image, PDF, or HTML copy.

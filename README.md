@@ -67,7 +67,7 @@ The intended flow is:
 - `uat-writer` — black-box UAT test cases as structured JSON, one file per feature area
 - `meeting-distillation` — extract decisions, actions, open questions from a transcript
 - `stakeholder-report` — render any markdown artefact as a polished, brand-themed HTML report
-- `scan-first-design` — review and compose interfaces around task hierarchy, readable data, coherent visual rules, and complete interaction states; shared by the prototype and design-system workflows
+- `scan-first-design` — review and compose interfaces around task hierarchy, readable data, coherent visual rules, and complete interaction states, in code or on a pen.dev canvas; shared by the prototype and design-system workflows
 - `prototype-builder` — turn a PRD into two hypothesis-led, declarative HTML prototype variants pinned to the active design profile, validated and exercised in the playground
 - `weekly-review` — structured weekly summary across personal notes and committed/local corporate work, written to `personal/reports/`
 
