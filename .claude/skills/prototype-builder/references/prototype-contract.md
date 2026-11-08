@@ -31,7 +31,7 @@ Requires:
 - non-empty `prototypeOnly[]` limitations
 - optional `companions[]` with `kind` and repository-root-relative `path`
 
-The two-variant default is skill policy, not a schema restriction: manifests may contain one or more variants.
+Default to two variants and support up to three in the skill workflow. This is authoring policy, not a schema restriction: existing manifests with other counts remain valid.
 
 ## Screens
 

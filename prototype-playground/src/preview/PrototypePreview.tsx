@@ -78,7 +78,13 @@ export function PrototypePreview(props: PrototypePreviewProps): JSX.Element {
     if (!node || typeof ResizeObserver === 'undefined') return
     const measure = (): void => {
       setContainer((previous) => {
-        const next = { width: node.clientWidth, height: node.clientHeight }
+        // clientHeight rounds fractional layout sizes up, which can make a
+        // fitted frame overflow by half a pixel and expose a full scrollbar.
+        const bounds = node.getBoundingClientRect()
+        const next = {
+          width: Math.floor(Math.min(node.clientWidth, bounds.width)),
+          height: Math.floor(Math.min(node.clientHeight, bounds.height)),
+        }
         return previous && previous.width === next.width && previous.height === next.height ? previous : next
       })
     }

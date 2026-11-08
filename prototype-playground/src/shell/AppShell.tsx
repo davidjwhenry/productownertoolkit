@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type JSX } from 'react'
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type JSX } from 'react'
 import type { CatalogueResult, PrototypeRecord, SurfaceId } from '../contracts'
 import { PrototypePreview, type PreviewHandle } from '../preview/PrototypePreview'
 import { SURFACE_PRESETS, ZOOM_MODES, type ZoomMode } from '../preview/surfaces'
@@ -6,6 +6,7 @@ import { buildRevisionBrief, selectionToQuery, type Selection, type SelectionRes
 import { AmendmentsPanel } from './AmendmentsPanel'
 import { CopyAction } from './CopyAction'
 import { WorkspacePanel } from './WorkspacePanel'
+import { comparisonScreenId } from './comparisonScreen'
 import './shell.css'
 
 export type ShellMode = 'catalogue' | 'handoff'
@@ -54,6 +55,32 @@ export function AppShell(props: AppShellProps): JSX.Element {
   const showDiagnostics = (): void => { setDiagnosticsOpen(true); setNotesOpen(true); setRailOpen(false) }
 
   const previewRef = useRef<PreviewHandle | null>(null)
+  const comparisonRef = useRef<PreviewHandle | null>(null)
+  const thirdPreviewRef = useRef<PreviewHandle | null>(null)
+  const requirementsRef = useRef<HTMLDetailsElement | null>(null)
+  const hypothesisRef = useRef<HTMLDetailsElement | null>(null)
+  useEffect(() => {
+    const dismissOutside = (event: PointerEvent): void => {
+      for (const menu of [requirementsRef.current, hypothesisRef.current]) {
+        if (menu?.open && event.target instanceof Node && !menu.contains(event.target)) menu.open = false
+      }
+    }
+    const dismissWithEscape = (event: KeyboardEvent): void => {
+      const menu = [requirementsRef.current, hypothesisRef.current].find((candidate) => candidate?.open)
+      if (event.key === 'Escape' && menu?.open) {
+        event.preventDefault()
+        event.stopPropagation()
+        menu.open = false
+        menu.querySelector('summary')?.focus()
+      }
+    }
+    window.addEventListener('pointerdown', dismissOutside)
+    window.addEventListener('keydown', dismissWithEscape, true)
+    return () => {
+      window.removeEventListener('pointerdown', dismissOutside)
+      window.removeEventListener('keydown', dismissWithEscape, true)
+    }
+  }, [])
   const visibleRecords = useMemo(() => {
     const needle = query.trim().toLowerCase()
     const pool = selection.showExamples ? catalogue.records : catalogue.records.filter((r) => r.origin === 'requirement')
@@ -109,6 +136,13 @@ export function AppShell(props: AppShellProps): JSX.Element {
     () => (record && selection.compareVariantId ? record.loadVariant(selection.compareVariantId) : null),
     [record, selection.compareVariantId],
   )
+  const thirdVariant = selection.compareVariantId
+    ? record?.variants.find((item) => item.id !== selection.variantId && item.id !== selection.compareVariantId)
+    : undefined
+  const thirdSource = useMemo(
+    () => (record && thirdVariant ? record.loadVariant(thirdVariant.id) : null),
+    [record, thirdVariant],
+  )
 
   const onScreen = (screenId: string): void => {
     if (screenId !== selection.screenId) update({ screenId }, { history: 'replace' })
@@ -117,6 +151,10 @@ export function AppShell(props: AppShellProps): JSX.Element {
   const jumpToScreen = (screenId: string): void => {
     update({ screenId })
     previewRef.current?.goto(screenId)
+    const counterpart = comparisonScreenId(screenId, scenarioScreens, comparisonScreens)
+    if (counterpart) comparisonRef.current?.goto(counterpart)
+    const thirdCounterpart = comparisonScreenId(screenId, scenarioScreens, thirdScreens)
+    if (thirdCounterpart) thirdPreviewRef.current?.goto(thirdCounterpart)
     setFlowOpen(false)
   }
 
@@ -139,6 +177,10 @@ export function AppShell(props: AppShellProps): JSX.Element {
     .filter((screen) => screen.scenarioId === selection.scenarioId)
     .sort((a, b) => a.order - b.order)
     .map((screen) => ({ id: screen.id, ...(screen.fixture ? { fixture: screen.fixture } : {}) })), [comparison, selection.scenarioId])
+  const thirdScreens = useMemo(() => (thirdVariant?.screens ?? [])
+    .filter((screen) => screen.scenarioId === selection.scenarioId)
+    .sort((a, b) => a.order - b.order)
+    .map((screen) => ({ id: screen.id, ...(screen.fixture ? { fixture: screen.fixture } : {}) })), [thirdVariant, selection.scenarioId])
 
   return (
     <div className={mode === 'handoff' ? 'app-shell app-shell-handoff' : 'app-shell'} style={layoutStyle}>
@@ -147,9 +189,11 @@ export function AppShell(props: AppShellProps): JSX.Element {
       ) : null}
 
       <header className="shell-topbar" aria-label="Playground controls">
-        <div className="shell-brand"><span className="rail-brand-mark" aria-hidden="true" /><h1>Playground</h1></div>
-        <span className="workspace-title">{record?.title ?? 'Prototype library'}</span>
-        {record ? <span className="workspace-revision">{record.origin === 'example' ? 'Example · ' : ''}Rev {record.revision}</span> : null}
+        <div className="workspace-identity">
+          <div className="shell-brand"><span className="rail-brand-mark" aria-hidden="true" /><h1>Playground</h1></div>
+          <span className="workspace-title">{record?.title ?? 'Prototype library'}</span>
+          {record ? <span className="workspace-revision">{record.origin === 'example' ? 'Example · ' : ''}Rev {record.revision}</span> : null}
+        </div>
         <div className="topbar-actions">
           {mode === 'catalogue' ? <button type="button" className="drawer-toggle catalogue-toggle" aria-expanded={railOpen} onClick={() => setRailOpen(true)}>Catalogue</button> : null}
           {record ? <div className="topbar-copy"><CopyAction label="Copy review link" text={`${window.location.origin}${window.location.pathname}${selectionToQuery(selection)}`} className="drawer-toggle" /></div> : null}
@@ -257,7 +301,12 @@ export function AppShell(props: AppShellProps): JSX.Element {
                     key={item.id}
                     className={isActive ? 'scenario-card scenario-card-active' : 'scenario-card'}
                     aria-current={isActive}
-                    onClick={() => update({ scenarioId: item.id })}
+                    onClick={() => update({
+                      scenarioId: item.id,
+                      screenId: variant?.screens
+                        ?.filter((screen) => screen.scenarioId === item.id)
+                        .sort((a, b) => a.order - b.order)[0]?.id ?? null,
+                    })}
                   >
                     <span className="scenario-number">{String(index + 1).padStart(2, '0')}</span>
                     <span className="scenario-label">{item.label}</span>
@@ -377,8 +426,8 @@ export function AppShell(props: AppShellProps): JSX.Element {
                 </p>
                 <h2 className="stage-title">{activeScreen?.label ?? variant?.label ?? record.title}</h2>
 
-                {selection.compareVariantId ? <p className="comparison-notice">Independent navigation · shared surface and theme</p> : null}
-                <details className="prd-details"><summary>Requirements{stripRequirementIds.length ? ` · ${stripRequirementIds.join(', ')}` : ''}</summary><p className="scenario-summary">{scenario?.description}</p><div className="prd-strip">
+                {selection.compareVariantId ? <p className="comparison-notice">Screen list syncs previews · explore each independently</p> : null}
+                <details ref={requirementsRef} className="prd-details"><summary>Requirements{stripRequirementIds.length ? ` · ${stripRequirementIds.join(', ')}` : ''}</summary><div className="requirements-popover"><p className="scenario-summary">{scenario?.description}</p><div className="prd-strip">
                   {stripRefs.map((ref, index) =>
                     ref.section !== null ? (
                       <span className="prd-chip" key={`${ref.section}-${index}`}>
@@ -403,10 +452,10 @@ export function AppShell(props: AppShellProps): JSX.Element {
                   ) : (
                     <span className="prd-path" title={record.source.prd}><code>{record.source.prd}</code></span>
                   )}
-                </div></details>
+                </div></div></details>
               </header>
 
-              <div className="preview-canvas" data-compare={selection.compareVariantId !== null}>
+              <div className="preview-canvas" data-compare={selection.compareVariantId !== null} data-preview-count={thirdVariant ? 3 : selection.compareVariantId ? 2 : 1}>
                 <figure className="preview-pane">
                   <PrototypePreview
                     ref={previewRef}
@@ -428,6 +477,7 @@ export function AppShell(props: AppShellProps): JSX.Element {
                 {selection.compareVariantId ? (
                   <figure className="preview-pane">
                     <PrototypePreview
+                      ref={comparisonRef}
                       source={compareSource ?? Promise.reject(new Error('no compare variant'))}
                       prototypeId={record.id}
                       variantId={selection.compareVariantId}
@@ -443,6 +493,25 @@ export function AppShell(props: AppShellProps): JSX.Element {
                     <figcaption>{record.variants.find((v) => v.id === selection.compareVariantId)?.label}</figcaption>
                   </figure>
                 ) : null}
+                {thirdVariant && thirdSource ? (
+                  <figure className="preview-pane">
+                    <PrototypePreview
+                      ref={thirdPreviewRef}
+                      source={thirdSource}
+                      prototypeId={record.id}
+                      variantId={thirdVariant.id}
+                      surfaceId={selection.surfaceId}
+                      scenarioId={selection.scenarioId}
+                      themeId={selection.themeId}
+                      screens={thirdScreens}
+                      startScreen={thirdScreens[0]?.id}
+                      reloadKey={reloadKey}
+                      zoom={zoom}
+                      deviceChrome={deviceChrome}
+                    />
+                    <figcaption>{thirdVariant.label}</figcaption>
+                  </figure>
+                ) : null}
               </div>
 
               <footer className="stage-footer">
@@ -450,9 +519,12 @@ export function AppShell(props: AppShellProps): JSX.Element {
                 {nextScreen ? <button type="button" className="drawer-toggle" onClick={() => jumpToScreen(nextScreen.id)}>Next: {nextScreen.label} →</button> : null}
                 <span>Interactive prototype</span>
               </footer>
-              <details className="hypothesis-strip"><summary><strong>Hypothesis</strong> {variant?.hypothesis}</summary>
+              <details ref={hypothesisRef} className="hypothesis-strip"><summary><strong>Hypothesis</strong> {variant?.hypothesis}</summary>
+                <div className="hypothesis-popover">
                 <ul>{variant?.tradeOffs.map((tradeOff) => <li key={tradeOff}>{tradeOff}</li>)}</ul>
                 {comparison ? <p><strong>{comparison.label}:</strong> {comparison.hypothesis}</p> : null}
+                {thirdVariant ? <p><strong>{thirdVariant.label}:</strong> {thirdVariant.hypothesis}</p> : null}
+                </div>
               </details>
             </section>
           </>
