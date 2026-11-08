@@ -1,21 +1,54 @@
 import { useEffect, useRef, type ReactNode, type JSX } from 'react'
 
-/** Keep panel contents mounted across layouts; only modal drawers transfer focus. */
+/** Keep drafts mounted across layouts and keep floating panels mounted through exit. */
 export function WorkspacePanel({ className, label, title, modal, open, onClose, children }: {
   className: string; label: string; title: string; modal: boolean; open: boolean
   onClose: () => void; children: ReactNode
 }): JSX.Element {
   const dialog = useRef<HTMLDialogElement>(null)
+  const returnFocus = useRef<HTMLElement | null>(null)
   useEffect(() => {
     const node = dialog.current
     if (!node) return
-    if (node.open) node.close()
     if (open) {
-      if (modal) node.showModal()
-      else node.setAttribute('open', '')
+      delete node.dataset.closing
+      node.inert = false
+      if (node.open && node.matches(':modal') !== modal) node.close()
+      if (!node.open) {
+        returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
+        if (modal) node.showModal()
+        else node.setAttribute('open', '')
+      }
+    } else if (node.open) {
+      const focusInside = node.contains(document.activeElement)
+      const close = (): void => {
+        node.close()
+        delete node.dataset.closing
+        node.inert = false
+        if (focusInside) returnFocus.current?.focus()
+      }
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !node.matches('.shell-rail, .notes-column, .workspace-drawer')) {
+        close()
+      } else {
+        node.dataset.closing = 'true'
+        node.inert = true
+        const timer = window.setTimeout(close, 480)
+        return () => window.clearTimeout(timer)
+      }
     }
-    return () => { if (node.open) node.close() }
   }, [open, modal])
+  useEffect(() => {
+    if (!open || modal || className !== 'notes-column') return
+    const dismiss = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape' && !document.querySelector('dialog:modal')) {
+        event.preventDefault()
+        onClose()
+      }
+    }
+    window.addEventListener('keydown', dismiss)
+    return () => window.removeEventListener('keydown', dismiss)
+  }, [open, modal, onClose, className])
+  useEffect(() => () => { dialog.current?.close() }, [])
   const content = <>
     <header className="panel-heading"><h2>{title}</h2>
       {(modal || className === 'notes-column') ? <button type="button" className="drawer-toggle" aria-label={`Close ${title}`} onClick={onClose}>×</button> : null}

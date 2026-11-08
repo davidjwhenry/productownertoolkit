@@ -112,7 +112,11 @@ export function resolveSelection(query: string, catalogue: CatalogueResult): Sel
     warn(`Unknown compare variant "${compareRequested}"; comparison disabled`)
   }
 
-  const declaredScreen = variant?.screens?.find((screen) => screen.id === params.screen)?.id ?? null
+  const selectedVariant = variant ?? record.variants.find((candidate) => candidate.id === variantId)
+  const scenarioId = scenario?.id ?? record.defaults.scenario
+  const declaredScreen = params.screen === undefined
+    ? [...(selectedVariant?.screens ?? [])].filter((screen) => screen.scenarioId === scenarioId).sort((a, b) => a.order - b.order)[0]?.id ?? null
+    : selectedVariant?.screens?.find((screen) => screen.id === params.screen)?.id ?? null
   if (params.screen !== undefined && !declaredScreen) {
     warn(`Unknown screen "${params.screen}"; fell back to the variant's entry screen`)
   }
@@ -122,7 +126,7 @@ export function resolveSelection(query: string, catalogue: CatalogueResult): Sel
       prototypeId: record.id,
       variantId,
       surfaceId: surface ?? record.defaults.surface,
-      scenarioId: scenario?.id ?? record.defaults.scenario,
+      scenarioId,
       themeId: theme ?? record.defaults.theme,
       screenId: declaredScreen,
       compareVariantId: compare,

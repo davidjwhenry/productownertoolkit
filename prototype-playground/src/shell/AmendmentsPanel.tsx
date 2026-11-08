@@ -12,6 +12,8 @@ import { useCallback, useEffect, useMemo, useState, type JSX } from 'react'
 import type { Amendment, AmendmentStatus, PrototypeRecord } from '../contracts'
 import { selectionToQuery, type Selection, type SelectionUpdateOptions } from './useSelectionState'
 import { CopyAction } from './CopyAction'
+import { buildAmendmentsBrief } from './amendmentsBrief'
+import { AmendmentMenu } from './AmendmentMenu'
 
 type AmendmentsPanelProps = {
   record: PrototypeRecord
@@ -38,6 +40,7 @@ function nextAmendmentId(existing: Amendment[]): string {
   return id
 }
 
+/** Manage screen-pinned review feedback with conflict-aware persistence and an open-amendment agent hand-off. */
 export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
   const { record, selection, update, writable, onOpenCountChange } = props
   const [amendments, setAmendments] = useState<Amendment[]>(record.amendments)
@@ -255,12 +258,10 @@ export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
               {writable ? (
                 <div className="amendment-actions">
                   {amendment.status === 'open' ? <button type="button" disabled={busy} onClick={() => setStatus(amendment.id, 'resolved')}>Resolve</button> : null}
-                  <details className="amendment-more"><summary>More</summary>
-                    <div>
+                  <AmendmentMenu>
                       {amendment.status === 'open' ? <button type="button" disabled={busy} onClick={() => setStatus(amendment.id, 'dismissed')}>Dismiss</button> : <button type="button" disabled={busy} onClick={() => setStatus(amendment.id, 'open')}>Reopen</button>}
                       <button type="button" className="amendment-delete" disabled={busy} onClick={() => remove(amendment.id)}>Delete</button>
-                    </div>
-                  </details>
+                  </AmendmentMenu>
                 </div>
               ) : null}
             </li>
@@ -268,6 +269,14 @@ export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
         })}
       </ul>
       <div className="amendment-exports">
+          <CopyAction
+            label="Copy amendments for agent"
+            text={buildAmendmentsBrief(record, amendments, window.location.href)}
+            className="button-secondary"
+            disabled={openCount === 0}
+            successMessage={`Copied ${openCount} open amendment${openCount === 1 ? '' : 's'} for your agent.`}
+          />
+          <p className="notes-fineprint">{openCount === 0 ? 'No open amendments to hand off. Propose a change or reopen an amendment first.' : 'Copies open suggestions, screen links, and instructions for an agent to address them.'}</p>
           <CopyAction
             label="Copy review link"
             text={`${window.location.origin}${window.location.pathname}${selectionToQuery(selection)}`}
@@ -277,6 +286,7 @@ export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
             label="Copy amendments JSON"
             text={JSON.stringify({ schemaVersion: 1, amendments }, null, 2)}
             className="button-ghost"
+            successMessage="Copied amendments JSON."
           />
       </div>
 

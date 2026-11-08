@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -14,6 +14,8 @@ const frame = (page: Page) => page.frameLocator('iframe.preview-iframe').first()
  * is the readiness barrier for any interaction with the preview.
  */
 async function readyWithOverview(page: Page): Promise<void> {
+  // Native modal drawers keep the canvas inert until their exit finishes.
+  await expect(page.locator('.shell-rail')).toBeHidden()
   // `data-status="ready"` proves the *current* iframe's runtime posted
   // `prototype:ready`; the overview heading proves it unhid the start screen.
   await expect(page.locator('.preview-stage').first()).toHaveAttribute('data-status', 'ready', { timeout: 15_000 })
@@ -73,11 +75,9 @@ test('variant, surface, scenario, and theme controls drive the URL and the previ
 
   await page.locator('.scenario-card', { hasText: 'Validation error' }).click()
   await expect(page).toHaveURL(/scenario=validation-error/)
-  await readyWithOverview(page)
-  await frame(page).getByRole('button', { name: 'Start guided setup' }).click()
-  await expect(frame(page).getByRole('heading', { name: 'How often should saving happen?' })).toBeVisible()
-  await frame(page).getByRole('button', { name: 'Continue', exact: true }).click()
   await expect(frame(page).getByRole('heading', { name: 'How much each time?' })).toBeVisible()
+  await expect(frame(page).locator('input[name="amount"]')).toHaveValue('750')
+  await expect(frame(page).getByText('Enter an amount between £1 and £500')).toBeVisible()
   await expect(frame(page).getByText('Try an amount outside the range')).toBeVisible()
   // Let the in-phone navigation reach the URL before a remounting switch:
   // the message crossing is asynchronous and the URL is the source of truth.
@@ -141,10 +141,8 @@ test('contribution failure shows the specified copy with working recovery action
   await page.getByRole('button', { name: /Savings pots and round-ups automation/ }).click()
   await readyWithOverview(page)
   await page.locator('.scenario-card', { hasText: 'Contribution failure' }).click()
-  await readyWithOverview(page)
-  await frame(page).getByRole('button', { name: 'Set up automation' }).click()
-  await expect(frame(page).getByRole('heading', { name: 'Set up saving' })).toBeVisible()
-  await frame(page).getByRole('button', { name: 'Review automation' }).click()
+  await expect(frame(page).getByRole('heading', { name: 'Review your automation' })).toBeVisible()
+  await expect(page.locator('.screen-row[aria-current="true"]')).toContainText('Review your automation')
   await frame(page).getByRole('button', { name: 'Confirm automation' }).click()
   await expect(frame(page).getByRole('heading', { name: 'Contribution failed' })).toBeVisible()
   await frame(page).getByRole('button', { name: 'Pause automation' }).click()
@@ -203,8 +201,15 @@ test('compare renders both variants against shared settings with no third iframe
   await expect(captions.nth(1)).toHaveText('Guided trust')
 })
 
-test('copy revision brief carries the current safe IDs and manifest path', async ({ context, page }) => {
-  await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new URL(page.url()).origin })
+test('copy revision brief carries the current safe IDs and manifest path', async ({ page }) => {
+  // Keep the test deterministic without invoking the host OS pasteboard.
+  await page.evaluate(() => {
+    let copied = ''
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: {
+      writeText: async (text: string) => { copied = text },
+      readText: async () => copied,
+    } })
+  })
   await page.getByRole('button', { name: /Savings pots and round-ups automation/ }).click()
   await readyWithOverview(page)
   await page.getByRole('button', { name: 'Guided trust' }).click()
@@ -212,18 +217,12 @@ test('copy revision brief carries the current safe IDs and manifest path', async
   await page.getByRole('button', { name: /^Review ·/ }).click()
   await page.locator('.notes-footer summary').click()
   await page.getByRole('button', { name: 'Copy revision brief' }).click()
-  // Headless hosts may deny the OS pasteboard, so accept either the
-  // success indicator or the labelled fallback textarea; both prove the
-  // exact brief content reached the user.
-  const fallback = page.locator('.copy-fallback')
-  await expect(page.getByText('Copied.').or(fallback)).toBeVisible({ timeout: 5_000 })
-  if ((await fallback.count()) > 0) {
-    await expect(fallback).toHaveValue(/Revise prototype `savings-automation`/)
-    await expect(fallback).toHaveValue(/examples\/example-feature\/prototypes\/savings-automation\/prototype\.json/)
-    await expect(fallback).toHaveValue(/variant `guided-trust`, surface `ios`/)
-  } else {
-    await expect(page.getByText('Copied.')).toBeVisible()
-  }
+  await expect(page.getByText('Copied.')).toBeVisible()
+  const copied = await page.evaluate(() => navigator.clipboard.readText())
+  expect(copied).toContain('Revise prototype `savings-automation`')
+  expect(copied).toContain('examples/example-feature/prototypes/savings-automation/prototype.json')
+  expect(copied).toContain('variant `guided-trust`, surface `ios`')
+  await expect(page.getByText('Copied.')).toBeHidden({ timeout: 4_000 })
 })
 
 test('invalid query parameters recover to manifest defaults and warn in diagnostics', async ({ page }) => {
@@ -279,6 +278,10 @@ test('the canvas never scrolls behind the device frame at Fit', async ({ page })
   // Scrolling still reaches the device screen only.
   await frame(page).getByRole('button', { name: 'Set up automation' }).click()
   await expect(frame(page).getByRole('heading', { name: 'Set up saving' })).toBeVisible()
+  // The compact form fits on a phone; validation creates genuinely long content.
+  await frame(page).locator('input[name="amount"]').fill('750')
+  await frame(page).getByRole('button', { name: 'Review automation' }).click()
+  await expect(frame(page).getByText('Enter an amount between £1 and £500')).toBeVisible()
   const scrolledInDevice = await frame(page).locator('body').evaluate(() => {
     window.scrollTo(0, 200)
     return window.scrollY > 0
@@ -467,4 +470,137 @@ test('amendments preserve the active scenario when a screen belongs to multiple 
   expect(amendment.selection.scenarioId).toBe('validation-error')
   expect(amendment.screenId).toBe('configure')
   await expect(page.getByRole('status')).toContainText('Changes saved.')
+})
+
+
+test('scenario switches select the first screen and keep the fitted phone size stable', async ({ page }) => {
+  await page.getByRole('button', { name: /Savings pots and round-ups automation/ }).click()
+  await page.getByLabel('Surface').selectOption('ios')
+  for (const variant of ['Focused control', 'Guided trust']) {
+    await page.getByRole('button', { name: variant, exact: true }).click()
+    await page.locator('.scenario-card', { hasText: 'Happy path' }).click()
+    await readyWithOverview(page)
+    const phone = page.locator('.preview-frame-ios')
+    const initial = await phone.boundingBox()
+    expect(initial).not.toBeNull()
+    for (const scenario of ['Validation error', 'Contribution failure', 'Happy path']) {
+      await page.locator('.scenario-card', { hasText: scenario }).click()
+      await expect(page.locator('.screens-list .screen-row').first()).toHaveAttribute('aria-current', 'true')
+      if (scenario === 'Validation error') {
+        await expect(frame(page).locator('input[name="amount"]')).toHaveValue('750')
+        await expect(frame(page).getByText('Enter an amount between £1 and £500')).toBeVisible()
+      } else if (scenario === 'Contribution failure') {
+        await expect(frame(page).getByRole('button', { name: 'Confirm automation' })).toBeVisible()
+      } else {
+        await readyWithOverview(page)
+      }
+      await expect.poll(async () => {
+        const box = await phone.boundingBox()
+        return box ? Math.max(Math.abs(box.width - initial!.width), Math.abs(box.height - initial!.height)) : Infinity
+      }).toBeLessThan(1)
+    }
+  }
+})
+
+test('the shared screen list moves both comparison previews', async ({ page }) => {
+  await page.goto('/?prototype=savings-automation&variant=focused-control&surface=ios&scenario=happy-path&screen=overview&theme=light&compare=guided-trust&examples=1')
+  const secondary = page.frameLocator('iframe.preview-iframe').nth(1)
+  await readyWithOverview(page)
+  await expect(secondary.getByRole('heading', { name: 'Flat deposit' })).toBeVisible()
+  await page.locator('.screen-row', { hasText: 'Set up saving' }).click()
+  await expect(frame(page).getByRole('heading', { name: 'Set up saving' })).toBeVisible()
+  await expect(secondary.getByRole('heading', { name: 'How often should saving happen?' })).toBeVisible()
+  await page.locator('.screen-row', { hasText: 'Review your automation' }).click()
+  await expect(frame(page).getByRole('heading', { name: 'Review your automation' })).toBeVisible()
+  await expect(secondary.getByRole('heading', { name: 'Review and confirm' })).toBeVisible()
+  await page.locator('.screen-row', { hasText: 'Pot overview' }).click()
+  await readyWithOverview(page)
+  await expect(secondary.getByRole('heading', { name: 'Flat deposit' })).toBeVisible()
+})
+
+
+test('Compare shows three variants and navigates every preview', async ({ page }) => {
+  const base = path.join(fixtureRoot, 'examples/example-feature/prototypes/savings-automation')
+  const manifestPath = path.join(base, 'prototype.json')
+  const original = await readFile(manifestPath, 'utf8')
+  const manifest = JSON.parse(original)
+  const third = structuredClone(manifest.variants[0])
+  third.id = 'third-fixture'
+  third.label = 'Third hypothesis'
+  third.entry = 'examples/example-feature/prototypes/savings-automation/variants/third-fixture.html'
+  manifest.variants.push(third)
+  const thirdVariantPath = path.join(base, 'variants/third-fixture.html')
+  try {
+    await writeFile(thirdVariantPath, await readFile(path.join(base, 'variants/focused-control.html')))
+    await writeFile(manifestPath, JSON.stringify(manifest, null, 2))
+    // Both writes trigger registry reloads; let them land before navigating.
+    await page.waitForTimeout(1500)
+    await page.goto('/?prototype=savings-automation&variant=focused-control&surface=ios&scenario=happy-path&screen=overview&theme=light&compare=guided-trust&examples=1')
+    await expect(page.locator('iframe.preview-iframe')).toHaveCount(3)
+    await expect(page.getByRole('group', { name: 'Variant', exact: true }).getByRole('button')).toHaveCount(3)
+    const previews = [0, 1, 2].map((index) => page.frameLocator('iframe.preview-iframe').nth(index))
+    for (const preview of previews) await expect(preview.getByRole('heading', { name: 'Flat deposit' })).toBeVisible()
+    await page.locator('.screen-row', { hasText: 'Review your automation' }).click()
+    for (const preview of previews) await expect(preview.locator('#review')).toBeVisible()
+    await page.locator('.scenario-card', { hasText: 'Validation error' }).click()
+    for (const preview of previews) {
+      await expect(preview.locator('input[name="amount"]')).toHaveValue('750')
+      await expect(preview.getByText('Enter an amount between £1 and £500')).toBeVisible()
+    }
+    await page.getByLabel('Theme').selectOption('dark')
+    await expect(page.locator('iframe.preview-iframe')).toHaveCount(3)
+    for (const preview of previews) await expect(preview.locator('input[name="amount"]')).toHaveValue('750')
+    await page.getByLabel('Compare', { exact: true }).uncheck()
+    await expect(page.locator('iframe.preview-iframe')).toHaveCount(1)
+  } finally {
+    await writeFile(manifestPath, original)
+    await rm(thirdVariantPath, { force: true })
+    // Restoration triggers reloads too; do not leak them into the next test.
+    await page.waitForTimeout(1500)
+  }
+})
+
+test('floating catalogue and review preserve preview geometry and dismiss with Escape', async ({ page }) => {
+  await page.getByRole('button', { name: 'Close All prototypes' }).click()
+  await readyWithOverview(page)
+  const stage = page.locator('.preview-canvas')
+  const before = await stage.boundingBox()
+  await page.getByRole('button', { name: /^Review ·/ }).click()
+  const review = page.getByRole('complementary', { name: 'Design notes and amendments' })
+  await expect(review).toBeVisible()
+  await expect.poll(() => review.evaluate(el => el.getBoundingClientRect().right)).toBeLessThan(1280)
+  expect(await stage.boundingBox()).toEqual(before)
+  await page.getByRole('button', { name: 'Close Review' }).click()
+  await expect(review).toBeHidden()
+  await expect(page.getByRole('button', { name: /^Review ·/ })).toBeFocused()
+  await page.getByRole('button', { name: 'Catalogue', exact: true }).click()
+  const catalogue = page.getByRole('dialog', { name: 'Prototype catalogue' })
+  await expect(catalogue).toBeVisible()
+  await expect.poll(() => catalogue.evaluate(el => el.getBoundingClientRect().left)).toBeGreaterThan(0)
+  await page.keyboard.press('Escape')
+  await expect(catalogue).toBeHidden()
+  await expect(page.getByRole('button', { name: 'Catalogue', exact: true })).toBeFocused()
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.getByRole('button', { name: 'Catalogue', exact: true }).click()
+  await expect(catalogue).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(catalogue).toBeHidden()
+})
+
+test('hypothesis details preserve preview geometry and entered values', async ({ page }) => {
+  await page.getByRole('button', { name: /Savings pots and round-ups automation/ }).click()
+  await readyWithOverview(page)
+  await frame(page).getByRole('button', { name: 'Set up automation' }).click()
+  await frame(page).locator('input[name="amount"]').fill('37')
+  const iframe = page.locator('iframe.preview-iframe').first()
+  const before = await iframe.boundingBox()
+  const source = await iframe.getAttribute('srcdoc')
+  await page.locator('.hypothesis-strip summary').click()
+  await expect(page.locator('.hypothesis-popover')).toBeVisible()
+  expect(await iframe.boundingBox()).toEqual(before)
+  expect(await iframe.getAttribute('srcdoc')).toBe(source)
+  await expect(frame(page).locator('input[name="amount"]')).toHaveValue('37')
+  await page.keyboard.press('Escape')
+  await expect(page.locator('.hypothesis-popover')).toBeHidden()
+  expect(await iframe.boundingBox()).toEqual(before)
 })

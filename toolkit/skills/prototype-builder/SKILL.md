@@ -1,14 +1,14 @@
 ---
 name: prototype-builder
-description: Generate or revise feature-local interactive prototypes from a PRD using the repository's pinned design profile and declarative HTML runtime. Use when the user supplies a PRD path and wants clickable variants for review, or asks to update an existing prototype. Establishes user/job/journey/decision, proposes exactly two hypothesis-led variants, waits for approval, writes `prototype.json` with screen-addressable navigation, per-screen fixtures, a design-notes companion, and an amendments scaffold, validates, exercises every scenario in the real playground, and stops at the review gate before any hand-off.
+description: Generate or revise feature-local interactive prototypes from a PRD using the repository's pinned design profile and declarative HTML runtime. Use when the user supplies a PRD path and wants clickable variants for review, or asks to update an existing prototype. Establishes user/job/journey/decision, proposes two hypothesis-led variants by default, with an optional third, waits for approval, writes `prototype.json` with screen-addressable navigation, per-screen fixtures, a design-notes companion, and an amendments scaffold, validates, exercises every scenario in the real playground, and stops at the review gate before any hand-off.
 ---
 
 # Prototype Builder
 
-Turn an approved PRD into two genuinely different, hypothesis-led prototype variants rendered by the repository's declarative runtime. The output is review material, never production code.
+Turn an approved PRD into hypothesis-led prototype variants rendered by the repository's declarative runtime: two by default, with an optional third for a distinct hypothesis. The output is review material, never production code.
 
 - read the PRD and the pinned profile before designing anything
-- default to exactly two variants expressing different hypotheses; a third is allowed only for a genuinely separate decision hypothesis in the PRD
+- default to two variants expressing different hypotheses; support up to three when the PRD supports a genuinely separate third decision hypothesis or the user requests one. Do not add a third cosmetic variation merely to fill a slot
 - generate only declarative HTML: no executable JavaScript, no remote URLs, no navigation, no storage
 - declare every screen in the manifest with PRD § references and jump fixtures; screens are the addressable review surface
 - quote the PRD verbatim in the design-notes companion; never paraphrase at runtime
@@ -36,7 +36,7 @@ Keep source token values intact. When type, spacing, or state recipes are absent
 
 ## Build Brief Gate
 
-Present a 3–5 bullet brief naming: the source PRD, the output path, the pinned profile (`id@version` plus fingerprint), the exactly two hypotheses, the selected surfaces, and the scenarios (happy path plus meaningful unhappy states) with the screens each will declare. Wait for approval before writing or replacing any file.
+Present a 3–5 bullet brief naming: the source PRD, the output path, the pinned profile (`id@version` plus fingerprint), the two hypotheses (or three when a distinct third is in scope), the selected surfaces, and the scenarios (happy path plus meaningful unhappy states) with the screens each will declare. Wait for approval before writing or replacing any file.
 
 ## Generating
 
@@ -50,7 +50,7 @@ Present a 3–5 bullet brief naming: the source PRD, the output path, the pinned
 
 ## Verification In The Playground
 
-Launch `cd prototype-playground && npm run dev`, open the catalogue, and exercise every declared scenario in both variants on every declared surface, in both themes. Jump to each screen from the scenario sub-menu and confirm fixture hydration (invalid states appear pre-filled, not walked). Confirm back and cancel paths work and entered choices survive validation errors. Confirm switching variants keeps an equivalent screen when one is declared. Capture visual evidence from the actual browser and iterate on feedback. Apply the scan-first-design verification checks to the rendered result: long labels, empty content, comparable values, focus visibility, contrast, and clear action feedback. Schema validation alone does not establish visual fidelity. Report unsupported runtime behaviour as a prototype limitation rather than suggesting it was tested.
+Launch `cd prototype-playground && npm run dev`, open the catalogue, and exercise every declared scenario in every declared variant on every declared surface, in both themes. Jump to each screen from the scenario sub-menu and confirm fixture hydration (invalid states appear pre-filled, not walked). Confirm back and cancel paths work and entered choices survive validation errors. Confirm switching variants keeps an equivalent screen when one is declared. Skip Compare for a single-variant manifest. For two or three variants, verify they appear side by side. For existing manifests with more than three variants, switch the primary variant and check groups of up to three until every variant has been covered. In each comparison group, verify shared screen jumps move every preview to its corresponding screen and controls inside each preview remain independent. Capture visual evidence from the actual browser and iterate on feedback. Apply the scan-first-design verification checks to the rendered result: long labels, empty content, comparable values, focus visibility, contrast, and clear action feedback. Schema validation alone does not establish visual fidelity. Report unsupported runtime behaviour as a prototype limitation rather than suggesting it was tested.
 
 ## Review Gate And Hand-Off
 

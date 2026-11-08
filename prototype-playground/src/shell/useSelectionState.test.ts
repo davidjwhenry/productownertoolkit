@@ -86,7 +86,7 @@ describe('resolveSelection', () => {
       surfaceId: 'desktop',
       scenarioId: 'happy-path',
       themeId: 'light',
-      screenId: null,
+      screenId: 'overview',
       compareVariantId: null,
       showExamples: false,
     })
@@ -108,6 +108,17 @@ describe('resolveSelection', () => {
     expect(resolution.selection).toMatchObject({ variantId: 'guided', surfaceId: 'ios', themeId: 'dark', compareVariantId: null, showExamples: true })
     const compared = resolveSelection('?prototype=demo&variant=focused&compare=guided', makeCatalogue())
     expect(compared.selection.compareVariantId).toBe('guided')
+  })
+
+  it('opens the first ordered screen of a scenario even without a variant or screen query', () => {
+    const catalogue = makeCatalogue()
+    catalogue.records[0]!.variants[0]!.screens!.push(
+      { id: 'review', label: 'Review', order: 2, scenarioId: 'validation-error', prdRefs: [] },
+      { id: 'configure', label: 'Invalid amount', order: 1, scenarioId: 'validation-error', prdRefs: [] },
+    )
+    const resolution = resolveSelection('?scenario=validation-error', catalogue)
+    expect(resolution.selection.screenId).toBe('configure')
+    expect(resolution.warnings).toEqual([])
   })
 
   it('shows examples by default only when no requirement prototypes exist', () => {

@@ -3,7 +3,7 @@
   "id": "savings-automation",
   "title": "Savings pots and round-ups automation",
   "summary": "Two hypothesis-led setups for enabling weekly recurring saving and card round-ups on an existing savings pot, drawn from the savings example PRD.",
-  "revision": 3,
+  "revision": 4,
   "source": {
     "prd": "examples/example-feature/prd/savings-example-prd.md",
     "requirementIds": ["AF.1", "AF.2", "AF.3", "AF.4", "CT.1", "CT.2", "PM.1"]
