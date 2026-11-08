@@ -40,6 +40,7 @@ function nextAmendmentId(existing: Amendment[]): string {
   return id
 }
 
+/** Manage screen-pinned review feedback with conflict-aware persistence and an open-amendment agent hand-off. */
 export function AmendmentsPanel(props: AmendmentsPanelProps): JSX.Element {
   const { record, selection, update, writable, onOpenCountChange } = props
   const [amendments, setAmendments] = useState<Amendment[]>(record.amendments)

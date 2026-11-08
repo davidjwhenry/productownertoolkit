@@ -39,6 +39,7 @@ function groupRecords(records: PrototypeRecord[]): Array<{ key: string; records:
   return [...groups.entries()].map(([key, grouped]) => ({ key, records: grouped }))
 }
 
+/** Render the review workspace and coordinate scenario selection and shared jumps across up to three previews. */
 export function AppShell(props: AppShellProps): JSX.Element {
   const { mode, catalogue, resolution, update } = props
   const { record, selection, warnings } = resolution

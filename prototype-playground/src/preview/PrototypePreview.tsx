@@ -62,6 +62,7 @@ function makeChannelId(): string {
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
 }
 
+/** Render a sandboxed variant and coordinate validated screen navigation while fitting its device frame without reloading on zoom. */
 export function PrototypePreview(props: PrototypePreviewProps): JSX.Element {
   const { source, prototypeId, variantId, surfaceId, scenarioId, themeId, screens, startScreen, zoom, deviceChrome, reloadKey = 0, onStatus, onScreen, ref } = props
   const [status, setStatus] = useState<PreviewStatus>({ kind: 'loading' })

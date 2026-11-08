@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -528,10 +528,13 @@ test('Compare shows three variants and navigates every preview', async ({ page }
   third.id = 'third-fixture'
   third.label = 'Third hypothesis'
   third.entry = 'examples/example-feature/prototypes/savings-automation/variants/third-fixture.html'
-  await writeFile(path.join(base, 'variants/third-fixture.html'), await readFile(path.join(base, 'variants/focused-control.html')))
   manifest.variants.push(third)
+  const thirdVariantPath = path.join(base, 'variants/third-fixture.html')
   try {
+    await writeFile(thirdVariantPath, await readFile(path.join(base, 'variants/focused-control.html')))
     await writeFile(manifestPath, JSON.stringify(manifest, null, 2))
+    // Both writes trigger registry reloads; let them land before navigating.
+    await page.waitForTimeout(1500)
     await page.goto('/?prototype=savings-automation&variant=focused-control&surface=ios&scenario=happy-path&screen=overview&theme=light&compare=guided-trust&examples=1')
     await expect(page.locator('iframe.preview-iframe')).toHaveCount(3)
     await expect(page.getByRole('group', { name: 'Variant', exact: true }).getByRole('button')).toHaveCount(3)
@@ -551,6 +554,9 @@ test('Compare shows three variants and navigates every preview', async ({ page }
     await expect(page.locator('iframe.preview-iframe')).toHaveCount(1)
   } finally {
     await writeFile(manifestPath, original)
+    await rm(thirdVariantPath, { force: true })
+    // Restoration triggers reloads too; do not leak them into the next test.
+    await page.waitForTimeout(1500)
   }
 })
 

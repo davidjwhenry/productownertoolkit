@@ -4,6 +4,7 @@
  */
 import { useEffect, useState, type JSX } from 'react'
 
+/** Copy the supplied payload with short-lived success feedback and a persistent manual fallback when clipboard access fails. */
 export function CopyAction(props: { label: string; text: string; className?: string; disabled?: boolean; successMessage?: string }): JSX.Element {
   const { label, text, className, disabled = false, successMessage = 'Copied.' } = props
   const [state, setState] = useState<'idle' | 'done' | 'failed' | 'fallback'>('idle')
